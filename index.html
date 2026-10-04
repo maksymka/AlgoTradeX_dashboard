@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K-BOT ANALYTICS · Terminal</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0a0a0a;
+    --bg-panel: #0f0f0f;
+    --bg-card: #141414;
+    --bg-hover: #1a1a1a;
+    --border: #222;
+    --border-bright: #333;
+    --text: #e8e8e8;
+    --text-dim: #999;
+    --text-muted: #666;
+    --green: #00e676;
+    --green-bg: rgba(0, 230, 118, 0.12);
+    --green-border: rgba(0, 230, 118, 0.35);
+    --red: #ff1744;
+    --red-bg: rgba(255, 23, 68, 0.12);
+    --red-border: rgba(255, 23, 68, 0.35);
+    --amber: #ffc400;
+    --amber-bg: rgba(255, 196, 0, 0.12);
+    --amber-border: rgba(255, 196, 0, 0.35);
+    --cyan: #00e5ff;
+    --cyan-bg: rgba(0, 229, 255, 0.1);
+    --blue: #448aff;
+    --white: #fff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .terminal {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    background: var(--bg-panel);
+  }
+
+  .header-left { display: flex; align-items: center; gap: 24px; }
+
+  .brand {
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    color: var(--white);
+  }
+
+  .tabs { display: flex; gap: 4px; }
+
+  .tab {
+    padding: 6px 14px;
+    cursor: pointer;
+    color: var(--text-dim);
+    border: 1px solid transparent;
+    border-radius: 3px;
+    transition: all 0.15s;
+    font-size: 12px;
+  }
+
+  .tab:hover { color: var(--text); background: var(--bg-hover); }
+  .tab.active {
+    color: var(--green);
+    border-color: var(--green-border);
+    background: var(--green-bg);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 12px;
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-dim);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .period {
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+
+  .period:hover { border-color: var(--border-bright); color: var(--text); }
+
+  /* Metrics */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--border);
+    border-top: none;
+    background: var(--bg-panel);
+  }
+
+  .metric {
+    padding: 18px 20px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+
+  .metric:last-child { border-right: none; }
+
+  .metric-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .metric-value.pos { color: var(--green); }
+  .metric-value.neg { color: var(--red); }
+  .metric-value.amber { color: var(--amber); }
+  .metric-value.neutral { color: var(--white); }
+
+  .metric-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* Charts row */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+
+  .chart-box {
+    padding: 16px;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+  }
+
+  .chart-box:last-child { border-right: none; }
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .chart-title {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .chart-legend {
+    display: flex;
+    gap: 14px;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 3px;
+    border-radius: 1px;
+  }
+
+  .chart-wrap {
+    height: 240px;
+    position: relative;
+  }
+
+  .chart-wrap.sm { height: 200px; }
+
+  /* Strategies */
+  .strategies {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+
+  .strategy-panel {
+    padding: 18px 20px;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+  }
+
+  .strategy-panel:last-child { border-right: none; }
+  .strategy-panel.dimmed { opacity: 0.4; pointer-events: none; }
+
+  .strategy-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 400;
+    padding: 2px 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-dim);
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .stat-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+  }
+
+  .stat-item .label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .stat-item .value {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .stat-item .value.pos { color: var(--green); }
+  .stat-item .value.neg { color: var(--red); }
+  .stat-item .value.amber { color: var(--amber); }
+  .stat-item .value.neutral { color: var(--text); }
+
+  /* Risk badge */
+  .risk-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .risk-badge.high {
+    background: var(--amber-bg);
+    color: var(--amber);
+    border: 1px solid var(--amber-border);
+  }
+
+  .risk-badge.vhigh {
+    background: var(--red-bg);
+    color: var(--red);
+    border: 1px solid var(--red-border);
+  }
+
+  /* Positions table */
+  .pos-table {
+    margin-top: 12px;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+  }
+
+  .pos-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+
+  .pos-table th {
+    text-align: left;
+    color: var(--text-muted);
+    font-weight: 400;
+    padding: 5px 6px;
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .pos-table td {
+    padding: 6px;
+    color: var(--text-dim);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .pos-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .side-L {
+    color: var(--green);
+    font-weight: 600;
+    background: var(--green-bg);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
+  .side-S {
+    color: var(--red);
+    font-weight: 600;
+    background: var(--red-bg);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
+  .pnl-pos { color: var(--green); font-weight: 600; }
+  .pnl-neg { color: var(--red); font-weight: 600; }
+
+  /* Forecast */
+  .forecast {
+    border: 1px solid var(--border);
+    border-top: none;
+    background: var(--bg-panel);
+    padding: 16px 20px;
+  }
+
+  .forecast-title {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 14px;
+  }
+
+  .forecast-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .forecast-card {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px;
+    background: var(--bg-card);
+    transition: border-color 0.2s;
+  }
+
+  .forecast-card.base { border-color: var(--amber-border); }
+  .forecast-card.bear { border-color: var(--red-border); }
+  .forecast-card.bull { border-color: var(--green-border); }
+
+  .fc-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .fc-value {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .fc-value.pos { color: var(--green); }
+  .fc-value.neg { color: var(--red); }
+  .fc-value.amber { color: var(--amber); }
+
+  .fc-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.45;
+    margin-bottom: 8px;
+  }
+
+  .fc-conf {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .fc-conf span { color: var(--cyan); font-weight: 600; }
+
+  /* Risk zones */
+  .risk-zones {
+    margin-top: 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: var(--bg-card);
+  }
+
+  .risk-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .risk-bar-track {
+    height: 10px;
+    background: var(--border);
+    border-radius: 2px;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .risk-seg { height: 100%; transition: width 0.3s; }
+  .risk-seg.safe { background: var(--green); }
+  .risk-seg.warn { background: var(--amber); }
+  .risk-seg.danger { background: var(--red); }
+
+  .risk-markers {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* Bottom charts row */
+  .bottom-charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+
+  .bottom-charts .chart-box {
+    border-right: 1px solid var(--border);
+  }
+
+  .bottom-charts .chart-box:last-child { border-right: none; }
+
+  /* Footer */
+  .footer {
+    border: 1px solid var(--border);
+    border-top: none;
+    padding: 8px 16px;
+    background: var(--bg-panel);
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .footer span { color: var(--text-dim); }
+
+  /* Visibility */
+  .content-a, .content-b, .content-all { display: none; }
+  .content-a.active, .content-b.active, .content-all.active { display: block; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+
+  @media (max-width: 1000px) {
+    .metrics { grid-template-columns: 1fr 1fr; }
+    .charts-row { grid-template-columns: 1fr; }
+    .strategies { grid-template-columns: 1fr; }
+    .forecast-grid { grid-template-columns: 1fr; }
+    .bottom-charts { grid-template-columns: 1fr; }
+    .strategy-panel { border-right: none; border-bottom: 1px solid var(--border); }
+    .header { flex-direction: column; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="terminal">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="brand">K-BOT ANALYTICS</div>
+      <div class="tabs">
+        <div class="tab active" data-tab="a">Strategy A</div>
+        <div class="tab" data-tab="b">Strategy B</div>
+        <div class="tab" data-tab="all">All strategies</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div>Binance Futures</div>
+      <div class="status"><span class="status-dot"></span> Online</div>
+      <div class="period">30D ▾</div>
+    </div>
+  </div>
+
+  <!-- ==================== STRATEGY A ==================== -->
+  <div class="content-a active">
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Current Balance</div>
+        <div class="metric-value neutral">1,207 USDT</div>
+        <div class="metric-sub">Start Jun: 1,187 USDT</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Unrealized PnL</div>
+        <div class="metric-value neg">−132 USDT</div>
+        <div class="metric-sub">Open positions</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Return (from start)</div>
+        <div class="metric-value pos">+1.7%</div>
+        <div class="metric-sub">1,187 → 1,207</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Max Drawdown</div>
+        <div class="metric-value amber">−19.5%</div>
+        <div class="metric-sub">peak to trough</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">Equity Curve</div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Equity</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Forecast</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-a-equity"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">PnL by Position</div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-a-pnl"></canvas></div>
+      </div>
+    </div>
+
+    <div class="strategies">
+      <div class="strategy-panel">
+        <div class="strategy-name">
+          Strategy A · THE Dual
+          <span class="badge">k-bot_0512</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">PnL</div>
+            <div class="value neg">−132 USDT</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Win rate</div>
+            <div class="value neutral">42%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Drawdown</div>
+            <div class="value neg">−19%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Risk</div>
+            <div class="value"><span class="risk-badge high">High</span></div>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">Positions</div>
+            <div class="value neutral">2 open</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Used margin</div>
+            <div class="value neutral">54.00</div>
+          </div>
+        </div>
+
+        <div class="pos-table">
+          <table>
+            <thead>
+              <tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>THEUSDT</td>
+                <td><span class="side-L">LONG</span></td>
+                <td>0.0863</td>
+                <td>0.0708</td>
+                <td class="pnl-neg">−22.46</td>
+              </tr>
+              <tr>
+                <td>THEUSDT</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.0548</td>
+                <td>0.0735</td>
+                <td class="pnl-neg">−109.84</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="strategy-panel dimmed">
+        <div class="strategy-name">
+          Strategy B · Multi
+          <span class="badge">k-bot_0493</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">PnL</div>
+            <div class="value neg">−223 USDT</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Win rate</div>
+            <div class="value neutral">48%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Drawdown</div>
+            <div class="value neg">−24%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Risk</div>
+            <div class="value"><span class="risk-badge vhigh">Very high</span></div>
+          </div>
+        </div>
+        <div style="margin-top:24px;text-align:center;font-size:11px;color:var(--text-muted)">
+          Switch to Strategy B tab →
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-charts">
+      <div class="chart-box">
+        <div class="chart-header"><div class="chart-title">Win / Loss Ratio</div></div>
+        <div class="chart-wrap sm"><canvas id="chart-a-winloss"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-header"><div class="chart-title">Margin Usage</div></div>
+        <div class="chart-wrap sm"><canvas id="chart-a-margin"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-header"><div class="chart-title">Daily PnL (7D)</div></div>
+        <div class="chart-wrap sm"><canvas id="chart-a-daily"></canvas></div>
+      </div>
+    </div>
+
+    <div class="forecast">
+      <div class="forecast-title">Forecast · expected range · risk zones · confidence</div>
+      <div class="forecast-grid">
+        <div class="forecast-card base">
+          <div class="fc-label">Base case · 24h</div>
+          <div class="fc-value amber">−95 → −60</div>
+          <div class="fc-desc">Mean-reversion. THE recovers 8–12% from mark. Net improves.</div>
+          <div class="fc-conf">Confidence: <span>45%</span></div>
+        </div>
+        <div class="forecast-card bear">
+          <div class="fc-label">Bear case · 24h</div>
+          <div class="fc-value neg">−160</div>
+          <div class="fc-desc">Continued dump. SHORT profits, LONG deepens. Net still red.</div>
+          <div class="fc-conf">Confidence: <span>30%</span></div>
+        </div>
+        <div class="forecast-card bull">
+          <div class="fc-label">Bull case · 24h</div>
+          <div class="fc-value pos">−40</div>
+          <div class="fc-desc">Sharp bounce. LONG recovers faster than SHORT loses.</div>
+          <div class="fc-conf">Confidence: <span>25%</span></div>
+        </div>
+      </div>
+      <div class="risk-zones">
+        <div class="risk-label">Risk zones · next 24h PnL distribution</div>
+        <div class="risk-bar-track">
+          <div class="risk-seg safe" style="width:25%"></div>
+          <div class="risk-seg warn" style="width:40%"></div>
+          <div class="risk-seg danger" style="width:35%"></div>
+        </div>
+        <div class="risk-markers">
+          <span style="color:var(--green)">−40 safe</span>
+          <span style="color:var(--amber)">−95 base</span>
+          <span style="color:var(--red)">−160 danger</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== STRATEGY B ==================== -->
+  <div class="content-b">
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Current Balance</div>
+        <div class="metric-value neutral">782 USDT</div>
+        <div class="metric-sub">Start May: 700 · Out: 81</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Unrealized PnL</div>
+        <div class="metric-value neg">−223 USDT</div>
+        <div class="metric-sub">Open positions</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Net from start</div>
+        <div class="metric-value pos">+163 USDT</div>
+        <div class="metric-sub">+23.3% (incl. withdrawn)</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Max Drawdown</div>
+        <div class="metric-value amber">−28.5%</div>
+        <div class="metric-sub">peak to trough</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">Equity Curve</div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Equity</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Forecast</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-b-equity"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">PnL by Position</div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-b-pnl"></canvas></div>
+      </div>
+    </div>
+
+    <div class="strategies">
+      <div class="strategy-panel dimmed">
+        <div class="strategy-name">
+          Strategy A · THE Dual
+          <span class="badge">k-bot_0512</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">PnL</div>
+            <div class="value neg">−132 USDT</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Win rate</div>
+            <div class="value neutral">42%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Drawdown</div>
+            <div class="value neg">−19%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Risk</div>
+            <div class="value"><span class="risk-badge high">High</span></div>
+          </div>
+        </div>
+        <div style="margin-top:24px;text-align:center;font-size:11px;color:var(--text-muted)">
+          ← Switch to Strategy A tab
+        </div>
+      </div>
+
+      <div class="strategy-panel">
+        <div class="strategy-name">
+          Strategy B · Multi
+          <span class="badge">k-bot_0493</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">PnL</div>
+            <div class="value neg">−223 USDT</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Win rate</div>
+            <div class="value neutral">48%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Drawdown</div>
+            <div class="value neg">−28%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Risk</div>
+            <div class="value"><span class="risk-badge vhigh">Very high</span></div>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">Positions</div>
+            <div class="value neutral">7 open</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Used margin</div>
+            <div class="value neutral">158.85</div>
+          </div>
+        </div>
+
+        <div class="pos-table">
+          <table>
+            <thead>
+              <tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>HOME</td>
+                <td><span class="side-L">LONG</span></td>
+                <td>0.0110</td>
+                <td>0.0056</td>
+                <td class="pnl-neg">−88.16</td>
+              </tr>
+              <tr>
+                <td>HOME</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.0068</td>
+                <td>0.0056</td>
+                <td class="pnl-pos">+64.20</td>
+              </tr>
+              <tr>
+                <td>PUMP</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.0064</td>
+                <td>0.0064</td>
+                <td class="pnl-neg">−0.02</td>
+              </tr>
+              <tr>
+                <td>DASH</td>
+                <td><span class="side-L">LONG</span></td>
+                <td>67.78</td>
+                <td>58.63</td>
+                <td class="pnl-neg">−18.35</td>
+              </tr>
+              <tr>
+                <td>DASH</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>54.19</td>
+                <td>58.63</td>
+                <td class="pnl-neg">−29.68</td>
+              </tr>
+              <tr>
+                <td>STRK</td>
+                <td><span class="side-L">LONG</span></td>
+                <td>0.0503</td>
+                <td>0.0511</td>
+                <td class="pnl-pos">+2.50</td>
+              </tr>
+              <tr>
+                <td>STRK</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.0361</td>
+                <td>0.0511</td>
+                <td class="pnl-neg">−153.07</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-charts">
+      <div class="chart-box">
+        <div class="chart-header"><div class="chart-title">Win / Loss Ratio</div></div>
+        <div class="chart-wrap sm"><canvas id="chart-b-winloss"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-header"><div class="chart-title">Exposure by Pair</div></div>
+        <div class="chart-wrap sm"><canvas id="chart-b-exposure"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-header"><div class="chart-title">Daily PnL (7D)</div></div>
+        <div class="chart-wrap sm"><canvas id="chart-b-daily"></canvas></div>
+      </div>
+    </div>
+
+    <div class="forecast">
+      <div class="forecast-title">Forecast · expected range · risk zones · confidence</div>
+      <div class="forecast-grid">
+        <div class="forecast-card base">
+          <div class="fc-label">Base case · 24h</div>
+          <div class="fc-value amber">−110 → −70</div>
+          <div class="fc-desc">HOME range holds. SHORT keeps edge. DASH & STRK stabilize.</div>
+          <div class="fc-conf">Confidence: <span>40%</span></div>
+        </div>
+        <div class="forecast-card bear">
+          <div class="fc-label">Bear case · 24h</div>
+          <div class="fc-value neg">−200</div>
+          <div class="fc-desc">Alt cascade. LONG legs suffer. SHORT only partially offsets.</div>
+          <div class="fc-conf">Confidence: <span>35%</span></div>
+        </div>
+        <div class="forecast-card bull">
+          <div class="fc-label">Bull case · 24h</div>
+          <div class="fc-value pos">−30</div>
+          <div class="fc-desc">Relief rally. HOME LONG recovers hard. Net improves sharply.</div>
+          <div class="fc-conf">Confidence: <span>25%</span></div>
+        </div>
+      </div>
+      <div class="risk-zones">
+        <div class="risk-label">Risk zones · next 24h PnL distribution</div>
+        <div class="risk-bar-track">
+          <div class="risk-seg safe" style="width:20%"></div>
+          <div class="risk-seg warn" style="width:40%"></div>
+          <div class="risk-seg danger" style="width:40%"></div>
+        </div>
+        <div class="risk-markers">
+          <span style="color:var(--green)">−30 safe</span>
+          <span style="color:var(--amber)">−90 base</span>
+          <span style="color:var(--red)">−200 danger</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ALL STRATEGIES ==================== -->
+  <div class="content-all">
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Total Balance</div>
+        <div class="metric-value neutral">1,989 USDT</div>
+        <div class="metric-sub">Start: 1,887 · Out: 81</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Unrealized PnL</div>
+        <div class="metric-value neg">−355 USDT</div>
+        <div class="metric-sub">Open positions</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Net from start</div>
+        <div class="metric-value pos">+183 USDT</div>
+        <div class="metric-sub">+9.7% (incl. withdrawn)</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Max Drawdown</div>
+        <div class="metric-value amber">−24.0%</div>
+        <div class="metric-sub">combined peak</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">Combined Equity</div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Strategy A</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div> Strategy B</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Forecast</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-all-equity"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">PnL Comparison</div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-all-pnl"></canvas></div>
+      </div>
+    </div>
+
+    <div class="strategies">
+      <div class="strategy-panel">
+        <div class="strategy-name">
+          Strategy A · THE Dual
+          <span class="badge">k-bot_0512</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">PnL</div>
+            <div class="value neg">−132 USDT</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Win rate</div>
+            <div class="value neutral">42%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Drawdown</div>
+            <div class="value neg">−19%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Risk</div>
+            <div class="value"><span class="risk-badge high">High</span></div>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">Net bias</div>
+            <div class="value neutral">Short-heavy</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Hedge eff.</div>
+            <div class="value neg">Low</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="strategy-panel">
+        <div class="strategy-name">
+          Strategy B · Multi
+          <span class="badge">k-bot_0493</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">PnL</div>
+            <div class="value neg">−223 USDT</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Win rate</div>
+            <div class="value neutral">48%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Drawdown</div>
+            <div class="value neg">−24%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Risk</div>
+            <div class="value"><span class="risk-badge vhigh">Very high</span></div>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">Net bias</div>
+            <div class="value neutral">Mixed</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Hedge eff.</div>
+            <div class="value amber">Partial</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-charts">
+      <div class="chart-box">
+        <div class="chart-header"><div class="chart-title">Capital Allocation</div></div>
+        <div class="chart-wrap sm"><canvas id="chart-all-alloc"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-header"><div class="chart-title">Risk Distribution</div></div>
+        <div class="chart-wrap sm"><canvas id="chart-all-risk"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-header"><div class="chart-title">Daily Combined PnL</div></div>
+        <div class="chart-wrap sm"><canvas id="chart-all-daily"></canvas></div>
+      </div>
+    </div>
+
+    <div class="forecast">
+      <div class="forecast-title">Forecast · expected range · risk zones · confidence</div>
+      <div class="forecast-grid">
+        <div class="forecast-card base">
+          <div class="fc-label">Expected 24h PnL</div>
+          <div class="fc-value amber">−180 → −100</div>
+          <div class="fc-desc">Moderate mean-reversion across alts. Partial LONG recovery.</div>
+          <div class="fc-conf">Most likely · <span>42%</span></div>
+        </div>
+        <div class="forecast-card bear">
+          <div class="fc-label">Tail risk</div>
+          <div class="fc-value neg">−320</div>
+          <div class="fc-desc">Alts cascade 10–15%. Combined loss ≈ −16% of capital.</div>
+          <div class="fc-conf">Confidence: <span>28%</span></div>
+        </div>
+        <div class="forecast-card bull">
+          <div class="fc-label">Recovery target</div>
+          <div class="fc-value pos">−40</div>
+          <div class="fc-desc">Simultaneous bounce THE + HOME + STRK. High payoff.</div>
+          <div class="fc-conf">Confidence: <span>20%</span></div>
+        </div>
+      </div>
+      <div class="risk-zones">
+        <div class="risk-label">Risk zones · combined next 24h</div>
+        <div class="risk-bar-track">
+          <div class="risk-seg safe" style="width:18%"></div>
+          <div class="risk-seg warn" style="width:42%"></div>
+          <div class="risk-seg danger" style="width:40%"></div>
+        </div>
+        <div class="risk-markers">
+          <span style="color:var(--green)">−40 safe</span>
+          <span style="color:var(--amber)">−140 base</span>
+          <span style="color:var(--red)">−320 danger</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>K-BOT ANALYTICS · <span>Terminal v1.1</span></div>
+    <div>Data: iTradingBot · <span>Not financial advice</span></div>
+  </div>
+
+</div>
+
+<script>
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.content-a, .content-b, .content-all').forEach(c => c.classList.remove('active'));
+      const map = { a: 'content-a', b: 'content-b', all: 'content-all' };
+      document.querySelector('.' + map[tab.dataset.tab]).classList.add('active');
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 40);
+    });
+  });
+
+  // Chart defaults
+  Chart.defaults.color = '#666';
+  Chart.defaults.borderColor = '#1a1a1a';
+  Chart.defaults.font.family = "'JetBrains Mono', monospace";
+  Chart.defaults.font.size = 11;
+
+  const G = '#00e676';
+  const R = '#ff1744';
+  const A = '#ffc400';
+  const C = '#00e5ff';
+  const grid = '#1a1a1a';
+
+  function equityChart(id, data) {
+    return new Chart(document.getElementById(id), {
+      type: 'line',
+      data: {
+        labels: ['D-6','D-5','D-4','D-3','D-2','D-1','Now','F+1','F+2'],
+        datasets: [{
+          data,
+          borderColor: G,
+          backgroundColor: 'rgba(0,230,118,0.06)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: ctx => ctx.dataIndex >= 6 ? 4 : 2,
+          pointBackgroundColor: ctx => ctx.dataIndex >= 6 ? A : G,
+          pointBorderColor: '#0a0a0a',
+          pointBorderWidth: 1.5,
+          borderWidth: 2,
+          segment: {
+            borderColor: ctx => ctx.p0DataIndex >= 6 ? A : G,
+            borderDash: ctx => ctx.p0DataIndex >= 6 ? [5,4] : undefined
+          }
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: grid, drawBorder: false }, ticks: { color: '#555' } },
+          y: { grid: { color: grid, drawBorder: false }, ticks: { color: '#555', callback: v => v.toLocaleString() } }
+        },
+        interaction: { intersect: false, mode: 'index' }
+      }
+    });
+  }
+
+  function barChart(id, labels, data, colors) {
+    return new Chart(document.getElementById(id), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: colors,
+          borderColor: colors.map(c => c.replace('0.75','1').replace('0.8','1')),
+          borderWidth: 1,
+          borderRadius: 3
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#555', font: { size: 10 } } },
+          y: { grid: { color: grid, drawBorder: false }, ticks: { color: '#555' } }
+        }
+      }
+    });
+  }
+
+  function doughnutChart(id, labels, data, colors) {
+    return new Chart(document.getElementById(id), {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: colors,
+          borderColor: '#0f0f0f',
+          borderWidth: 3
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: '65%',
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: { boxWidth: 10, boxHeight: 10, color: '#888', font: { size: 10 }, padding: 10 }
+          }
+        }
+      }
+    });
+  }
+
+  // ===== Strategy A charts =====
+  equityChart('chart-a-equity', [1320, 1295, 1270, 1245, 1220, 1210, 1082, 1110, 1145]);
+
+  barChart('chart-a-pnl',
+    ['THE LONG', 'THE SHORT'],
+    [-27.15, -94.21],
+    ['rgba(255,23,68,0.75)', 'rgba(255,23,68,0.75)']
+  );
+
+  doughnutChart('chart-a-winloss',
+    ['Wins', 'Losses'],
+    [42, 58],
+    ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']
+  );
+
+  doughnutChart('chart-a-margin',
+    ['Used', 'Free'],
+    [54, 1149],
+    ['rgba(255,196,0,0.8)', 'rgba(0,230,118,0.35)']
+  );
+
+  barChart('chart-a-daily',
+    ['D-6','D-5','D-4','D-3','D-2','D-1','Now'],
+    [-25, -25, -25, -25, -10, -10, -121],
+    ['rgba(255,23,68,0.6)','rgba(255,23,68,0.6)','rgba(255,23,68,0.6)','rgba(255,23,68,0.6)','rgba(255,23,68,0.5)','rgba(255,23,68,0.5)','rgba(255,23,68,0.85)']
+  );
+
+  // ===== Strategy B charts =====
+  equityChart('chart-b-equity', [910, 880, 850, 820, 800, 790, 649, 690, 730]);
+
+  barChart('chart-b-pnl',
+    ['HOME L','HOME S','DASH L','DASH S','STRK L','STRK S'],
+    [-88.11, 64.05, -24.48, -9.01, -18.57, -55.57],
+    [
+      'rgba(255,23,68,0.75)', 'rgba(0,230,118,0.8)',
+      'rgba(255,23,68,0.75)', 'rgba(255,23,68,0.6)',
+      'rgba(255,23,68,0.75)', 'rgba(255,23,68,0.75)'
+    ]
+  );
+
+  doughnutChart('chart-b-winloss',
+    ['Wins', 'Losses'],
+    [48, 52],
+    ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']
+  );
+
+  doughnutChart('chart-b-exposure',
+    ['HOME', 'DASH', 'STRK'],
+    [39.5, 48.2, 55.1],
+    ['rgba(0,229,255,0.8)', 'rgba(255,196,0,0.8)', 'rgba(68,138,255,0.8)']
+  );
+
+  barChart('chart-b-daily',
+    ['D-6','D-5','D-4','D-3','D-2','D-1','Now'],
+    [-30, -30, -30, -20, -10, -10, -132],
+    ['rgba(255,23,68,0.55)','rgba(255,23,68,0.55)','rgba(255,23,68,0.55)','rgba(255,23,68,0.5)','rgba(255,23,68,0.45)','rgba(255,23,68,0.45)','rgba(255,23,68,0.85)']
+  );
+
+  // ===== All strategies charts =====
+  new Chart(document.getElementById('chart-all-equity'), {
+    type: 'line',
+    data: {
+      labels: ['D-6','D-5','D-4','D-3','D-2','D-1','Now','F+1','F+2'],
+      datasets: [
+        {
+          label: 'Strategy A',
+          data: [1320, 1295, 1270, 1245, 1220, 1210, 1082, 1110, 1145],
+          borderColor: G, backgroundColor: 'transparent', tension: 0.3,
+          pointRadius: 2, borderWidth: 2,
+          segment: {
+            borderDash: ctx => ctx.p0DataIndex >= 6 ? [5,4] : undefined,
+            borderColor: ctx => ctx.p0DataIndex >= 6 ? A : G
+          }
+        },
+        {
+          label: 'Strategy B',
+          data: [910, 880, 850, 820, 800, 790, 649, 690, 730],
+          borderColor: C, backgroundColor: 'transparent', tension: 0.3,
+          pointRadius: 2, borderWidth: 2,
+          segment: {
+            borderDash: ctx => ctx.p0DataIndex >= 6 ? [5,4] : undefined,
+            borderColor: ctx => ctx.p0DataIndex >= 6 ? A : C
+          }
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true, position: 'top', align: 'end',
+          labels: { boxWidth: 12, boxHeight: 2, color: '#888', font: { size: 10 } }
+        }
+      },
+      scales: {
+        x: { grid: { color: grid, drawBorder: false }, ticks: { color: '#555' } },
+        y: { grid: { color: grid, drawBorder: false }, ticks: { color: '#555', callback: v => v.toLocaleString() } }
+      },
+      interaction: { intersect: false, mode: 'index' }
+    }
+  });
+
+  barChart('chart-all-pnl',
+    ['Strategy A', 'Strategy B'],
+    [-121, -132],
+    ['rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)']
+  );
+
+  doughnutChart('chart-all-alloc',
+    ['Strategy A', 'Strategy B'],
+    [1203, 781],
+    ['rgba(0,230,118,0.8)', 'rgba(0,229,255,0.8)']
+  );
+
+  doughnutChart('chart-all-risk',
+    ['High', 'Very High'],
+    [1, 1],
+    ['rgba(255,196,0,0.8)', 'rgba(255,23,68,0.8)']
+  );
+
+  barChart('chart-all-daily',
+    ['D-6','D-5','D-4','D-3','D-2','D-1','Now'],
+    [-55, -55, -55, -45, -20, -20, -253],
+    ['rgba(255,23,68,0.55)','rgba(255,23,68,0.55)','rgba(255,23,68,0.55)','rgba(255,23,68,0.5)','rgba(255,23,68,0.45)','rgba(255,23,68,0.45)','rgba(255,23,68,0.9)']
+  );
+</script>
+</body>
+</html>
