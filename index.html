@@ -217,12 +217,20 @@
 
   .contact-btn { display:inline-flex; align-items:center; justify-content:center; padding:6px 10px; border:1px solid rgba(0,230,118,.35); border-radius:6px; color:#00e676; background:rgba(0,230,118,.06); text-decoration:none; font-size:10px; letter-spacing:.04em; text-transform:uppercase; transition:all .18s ease; }
   .contact-btn:hover { background:rgba(0,230,118,.13); border-color:rgba(0,230,118,.65); transform:translateY(-1px); }
-  .copy-email { cursor:pointer; position:relative; color:#00e5ff; transition:color .18s ease; }
-  .copy-email:hover { color:#fff; }
-  .copy-email.copied { color:#00e676; }
-  .copy-feedback { position:absolute; left:50%; bottom:calc(100% + 8px); transform:translateX(-50%) translateY(4px); padding:4px 7px; border:1px solid rgba(0,230,118,.35); border-radius:4px; background:#0b0d0f; color:#00e676; font-size:9px; line-height:1; opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease; white-space:nowrap; z-index:20; }
-  .copy-email.copied .copy-feedback { opacity:1; transform:translateX(-50%) translateY(0); }
-  @media (max-width:760px) { .contact-btn { padding:5px 7px; font-size:9px; } }
+  .contact-btn { cursor:pointer; font-family:inherit; }
+  .contact-caret { font-size:9px; margin-left:2px; opacity:.8; }
+  .contact-wrap { position:relative; }
+  .contact-menu { display:none; position:absolute; top:calc(100% + 6px); right:0; min-width:270px; background:var(--bg-card); border:1px solid var(--border-bright); border-radius:6px; box-shadow:0 10px 30px rgba(0,0,0,.55); z-index:60; overflow:hidden; }
+  .contact-menu.open { display:block; }
+  .contact-item { position:relative; display:flex; align-items:center; gap:10px; padding:10px 14px; color:var(--text); text-decoration:none; font-size:12px; cursor:pointer; user-select:none; }
+  .contact-item + .contact-item { border-top:1px solid var(--border); }
+  .contact-item:hover, .contact-item:focus-visible { background:var(--bg-hover); color:#fff; outline:none; }
+  .contact-ico { width:14px; text-align:center; color:var(--cyan); }
+  .contact-label { flex:1; white-space:nowrap; }
+  .contact-hint { color:var(--text-muted); font-size:11px; }
+  .copy-feedback { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--bg-hover); color:var(--green); font-size:12px; opacity:0; pointer-events:none; transition:opacity .18s ease; }
+  .copy-email.copied .copy-feedback { opacity:1; }
+  @media (max-width:760px) { .contact-btn { padding:5px 7px; font-size:9px; } .contact-menu { right:auto; left:0; min-width:250px; } }
   .header-right { position: relative; }
 
   /* Metrics */
@@ -650,6 +658,33 @@
 
   .footer span { color: var(--text-dim); }
 
+  /* Bottom navigation + sheets */
+  body { padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)); }
+  .bottom-nav { position:fixed; left:0; right:0; bottom:0; z-index:70; background:rgba(12,12,12,.97); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); border-top:1px solid var(--border-bright); padding-bottom:env(safe-area-inset-bottom, 0px); }
+  .bn-inner { display:flex; max-width:1360px; margin:0 auto; }
+  .bn-btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:9px 6px 8px; background:none; border:none; border-top:2px solid transparent; margin-top:-1px; color:var(--text-muted); font-family:inherit; font-size:10px; letter-spacing:.8px; text-transform:uppercase; cursor:pointer; transition:color .15s ease, background .15s ease; }
+  .bn-btn svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  .bn-btn:hover { color:var(--text); background:var(--bg-hover); }
+  .bn-btn.active { color:var(--green); border-top-color:var(--green); }
+  .sheet-backdrop { position:fixed; inset:0; z-index:65; background:rgba(0,0,0,.55); opacity:0; visibility:hidden; transition:opacity .2s ease, visibility 0s linear .2s; }
+  .sheet-backdrop.open { opacity:1; visibility:visible; transition:opacity .2s ease; }
+  .sheet { position:fixed; left:50%; bottom:calc(62px + env(safe-area-inset-bottom, 0px)); z-index:68; width:min(520px, calc(100% - 24px)); padding:16px; background:var(--bg-card); border:1px solid var(--border-bright); border-radius:10px; box-shadow:0 14px 40px rgba(0,0,0,.6); opacity:0; visibility:hidden; transform:translate(-50%, 20px); transition:opacity .2s ease, transform .2s ease, visibility 0s linear .2s; }
+  .sheet.open { opacity:1; visibility:visible; transform:translate(-50%, 0); transition:opacity .2s ease, transform .2s ease; }
+  .sheet-title { font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--white); }
+  .sheet-sub { margin:4px 0 12px; font-size:11px; color:var(--text-muted); }
+  .sheet-note { margin-top:12px; font-size:10px; line-height:1.5; color:var(--text-muted); }
+  .cur-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; }
+  .cur-opt { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--bg-panel); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:inherit; font-size:12px; text-align:left; cursor:pointer; transition:border-color .15s ease, background .15s ease; }
+  .cur-opt:hover { background:var(--bg-hover); border-color:var(--border-bright); }
+  .cur-opt.active { border-color:var(--green); background:var(--green-bg); color:var(--green); }
+  .cur-sym { width:22px; font-size:17px; font-weight:700; text-align:center; }
+  .cur-name { flex:1; line-height:1.25; }
+  .cur-name small { display:block; font-size:10px; color:var(--text-muted); }
+  .cur-opt.active .cur-name small { color:var(--green); opacity:.75; }
+  .sheet-list { border:1px solid var(--border); border-radius:6px; overflow:hidden; background:var(--bg-panel); }
+  .sheet-list .contact-item { padding:13px 14px; font-size:13px; }
+  @media (max-width:760px) { .bn-btn { font-size:9px; } }
+
   /* Visibility */
   .content-a, .content-b, .content-all { display: none; }
   .content-a.active, .content-b.active, .content-all.active { display: block; }
@@ -779,7 +814,18 @@
     </div>
     <div class="header-right">
       <div>Binance Futures</div>
-      <a class="contact-btn" href="https://t.me/mktiv" target="_blank" rel="noopener noreferrer">Contact Us</a>
+      <div class="contact-wrap" id="contact-wrap">
+        <button type="button" class="contact-btn" id="contact-toggle" aria-haspopup="menu" aria-expanded="false">Contact Us <span class="contact-caret">▾</span></button>
+        <div class="contact-menu" id="contact-menu" role="menu">
+          <a class="contact-item" role="menuitem" href="https://t.me/mktiv" target="_blank" rel="noopener noreferrer">
+            <span class="contact-ico">✈</span><span class="contact-label">Telegram</span><span class="contact-hint">@mktiv</span>
+          </a>
+          <div class="contact-item copy-email" id="copy-email" role="menuitem" tabindex="0" aria-label="Copy email address">
+            <span class="contact-ico">✉</span><span class="contact-label">Maksym.Kryvenko@gmail.com</span>
+            <span class="copy-feedback" aria-live="polite">Copied!</span>
+          </div>
+        </div>
+      </div>
       <div class="status"><span class="status-dot"></span> Online</div>
       <div class="period" id="period-toggle">30D ▾</div>
       <div class="period-menu" id="period-menu" style="display:none">
@@ -1403,10 +1449,52 @@
   <!-- FOOTER -->
   <div class="footer">
     <div>AlgoTradeX · <span>Terminal v1.1</span></div>
-    <div><span class="copy-email" id="copy-email" role="button" tabindex="0" aria-label="Copy email address">Maksym.Kryvenko@gmail.com<span class="copy-feedback" aria-live="polite">Copied!</span></span> · Data: <a href="https://itradingbot.net/register=1999" target="_blank" rel="noopener" style="color:#00e676;text-decoration:none;">iTradingBot</a> · <span>Not financial advice</span></div>
+    <div>Data: <a href="https://itradingbot.net/register=1999" target="_blank" rel="noopener" style="color:#00e676;text-decoration:none;">iTradingBot</a> · <span>Not financial advice</span></div>
   </div>
 
 </div>
+
+<div class="sheet-backdrop" id="sheet-backdrop"></div>
+
+<div class="sheet" id="sheet-settings" role="dialog" aria-label="Settings">
+  <div class="sheet-title">Settings</div>
+  <div class="sheet-sub">Display currency · <span id="fx-status">approx. rates</span></div>
+  <div class="cur-grid">
+    <button type="button" class="cur-opt active" data-cur="USD"><span class="cur-sym">$</span><span class="cur-name">US Dollar<small data-rate-for="USD">USDT</small></span></button>
+    <button type="button" class="cur-opt" data-cur="EUR"><span class="cur-sym">€</span><span class="cur-name">Euro<small data-rate-for="EUR"></small></span></button>
+    <button type="button" class="cur-opt" data-cur="UAH"><span class="cur-sym">₴</span><span class="cur-name">Hryvnia<small data-rate-for="UAH"></small></span></button>
+    <button type="button" class="cur-opt" data-cur="GBP"><span class="cur-sym">£</span><span class="cur-name">Pound<small data-rate-for="GBP"></small></span></button>
+  </div>
+  <div class="sheet-note">All amounts are tracked in USDT and converted for display only (1 USDT ≈ 1 USD).</div>
+</div>
+
+<div class="sheet" id="sheet-support" role="dialog" aria-label="Support">
+  <div class="sheet-title">Support</div>
+  <div class="sheet-sub">Questions? Write to us:</div>
+  <div class="sheet-list">
+    <a class="contact-item" id="support-tg" href="https://t.me/mktiv" target="_blank" rel="noopener noreferrer">
+      <span class="contact-ico">✈</span><span class="contact-label">Telegram</span><span class="contact-hint">@mktiv</span>
+    </a>
+    <div class="contact-item copy-email" role="button" tabindex="0" aria-label="Copy email address">
+      <span class="contact-ico">✉</span><span class="contact-label">Maksym.Kryvenko@gmail.com</span><span class="contact-hint">tap to copy</span>
+      <span class="copy-feedback" aria-live="polite">Copied!</span>
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav" aria-label="Main">
+  <div class="bn-inner">
+    <button type="button" class="bn-btn active" data-nav="strategy" aria-current="page">
+      <svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Strategy
+    </button>
+    <button type="button" class="bn-btn" data-nav="settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings
+    </button>
+    <button type="button" class="bn-btn" data-nav="support">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-9 9H4l2.2-3.3A9 9 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/></svg>Support
+    </button>
+  </div>
+</nav>
 
 <!-- Gamma modal -->
 <div class="modal-overlay" id="gamma-modal">
@@ -1470,11 +1558,9 @@
     if (e.key === 'Escape') closeGammaModal();
   });
 
-  // Copy email with clipboard API + legacy fallback
-  const copyEmail = document.getElementById('copy-email');
+  // Copy email with clipboard API + legacy fallback (header menu + Support sheet)
   const emailToCopy = 'Maksym.Kryvenko@gmail.com';
-  async function copyEmailToClipboard() {
-    if (!copyEmail) return;
+  async function copyEmailToClipboard(el) {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(emailToCopy);
@@ -1489,21 +1575,23 @@
         document.execCommand('copy');
         ta.remove();
       }
-      copyEmail.classList.add('copied');
-      setTimeout(() => copyEmail.classList.remove('copied'), 1400);
+      el.classList.add('copied');
+      setTimeout(() => el.classList.remove('copied'), 1400);
+      if (el.closest('#contact-menu')) setTimeout(closeContactMenu, 1100);
+      else if (el.closest('.sheet')) setTimeout(closeSheets, 1100);
     } catch (err) {
       console.warn('Unable to copy email:', err);
     }
   }
-  if (copyEmail) {
-    copyEmail.addEventListener('click', copyEmailToClipboard);
-    copyEmail.addEventListener('keydown', (e) => {
+  document.querySelectorAll('.copy-email').forEach(el => {
+    el.addEventListener('click', () => copyEmailToClipboard(el));
+    el.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        copyEmailToClipboard();
+        copyEmailToClipboard(el);
       }
     });
-  }
+  });
 
   // Chart defaults
   Chart.defaults.color = '#666';
@@ -1630,7 +1718,8 @@
           legend: { display: false },
           tooltip: {
             callbacks: {
-              title: items => items[0] ? labels[items[0].dataIndex] : ''
+              title: items => items[0] ? labels[items[0].dataIndex] : '',
+              label: c => ' ' + fmtDisp(c.parsed.y)
             }
           }
         },
@@ -1737,7 +1826,7 @@
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + fmtDisp(c.parsed.y) } } },
         scales: {
           x: { grid: { display: false }, ticks: { color: '#555', font: { size: 10 } } },
           y: { grid: { color: grid, drawBorder: false }, ticks: { color: '#555' } }
@@ -1778,19 +1867,20 @@
     const alpha = buildEquitySeries(1187, 1207, days, forecastDays, 28);
     const beta = buildEquitySeries(700, 783, days, forecastDays, 40);
 
-    charts.aEq = makeLineChart('chart-a-equity', labels, alpha.all, nowIdx, G);
-    charts.bEq = makeLineChart('chart-b-equity', labels, beta.all, nowIdx, G);
-    charts.allEq = makeCombinedChart('chart-all-equity', labels, alpha.all, beta.all, nowIdx);
+    const aAll = alpha.all.map(S), bAll = beta.all.map(S);   // USDT -> display currency
+    charts.aEq = makeLineChart('chart-a-equity', labels, aAll, nowIdx, G);
+    charts.bEq = makeLineChart('chart-b-equity', labels, bAll, nowIdx, G);
+    charts.allEq = makeCombinedChart('chart-all-equity', labels, aAll, bAll, nowIdx);
 
     // Static bar / doughnut charts
     charts.aPnl = barChart('chart-a-pnl',
       ['THE L','THE S'],
-      [-20.90, -115.05],
+      [-20.90, -115.05].map(S),
       ['rgba(255,23,68,0.7)', 'rgba(255,23,68,0.75)', 'rgba(255,23,68,0.75)']
     );
     charts.bPnl = barChart('chart-b-pnl',
       ['HOME L','HOME S','DASH L','DASH S','STRK L','STRK S'],
-      [-85.46, 55.21, -16.49, -35.86, 3.31, -184.39],
+      [-85.46, 55.21, -16.49, -35.86, 3.31, -184.39].map(S),
       [
         'rgba(255,23,68,0.75)', 'rgba(0,230,118,0.8)',
         'rgba(255,23,68,0.75)', 'rgba(255,23,68,0.7)',
@@ -1801,27 +1891,27 @@
       ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']);
     charts.bWin = doughnutChart('chart-b-winloss', ['Wins','Losses'], [48,52],
       ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.aMarg = doughnutChart('chart-a-margin', ['Used','Free'], [56.5, 1150],
+    charts.aMarg = doughnutChart('chart-a-margin', ['Used','Free'], [56.5, 1150].map(S),
       ['rgba(255,196,0,0.8)', 'rgba(0,230,118,0.35)']);
-    charts.bExp = doughnutChart('chart-b-exposure', ['HOME','DASH','STRK'], [40, 52, 71],
+    charts.bExp = doughnutChart('chart-b-exposure', ['HOME','DASH','STRK'], [40, 52, 71].map(S),
       ['rgba(0,229,255,0.8)', 'rgba(255,196,0,0.8)', 'rgba(68,138,255,0.8)']);
-    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta'], [1207, 783],
+    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta'], [1207, 783].map(S),
       ['rgba(0,230,118,0.8)', 'rgba(0,229,255,0.8)']);
     charts.allRisk = doughnutChart('chart-all-risk', ['High','Very High'], [1,1],
       ['rgba(255,196,0,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta'], [-135.96, -263.68],
+    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta'], [-135.96, -263.68].map(S),
       ['rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)']);
 
     // Daily PnL last 7 of the selected window
     const dailyLabels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
     charts.aDaily = barChart('chart-a-daily', dailyLabels,
-      [-8,-12,-5,-15,-10,-20,-135].slice(-dailyLabels.length),
+      [-8,-12,-5,-15,-10,-20,-135].map(S).slice(-dailyLabels.length),
       dailyLabels.map(() => 'rgba(255,23,68,0.6)'));
     charts.bDaily = barChart('chart-b-daily', dailyLabels,
-      [-15,-20,-10,-25,-18,-30,-260].slice(-dailyLabels.length),
+      [-15,-20,-10,-25,-18,-30,-260].map(S).slice(-dailyLabels.length),
       dailyLabels.map(() => 'rgba(255,23,68,0.6)'));
     charts.allDaily = barChart('chart-all-daily', dailyLabels,
-      [-23,-32,-15,-40,-28,-50,-395].slice(-dailyLabels.length),
+      [-23,-32,-15,-40,-28,-50,-395].map(S).slice(-dailyLabels.length),
       dailyLabels.map(() => 'rgba(255,23,68,0.65)'));
   }
 
@@ -1846,12 +1936,50 @@
     });
   });
 
-  // Live-style PnL animation (visual only).
-  // Position PnLs wobble in the tenths/hundredths; Unrealized PnL, "To BE", strategy PnL
-  // and the PnL bar charts are all recomputed from the same position values, so every number
-  // on the page stays consistent. Balance and Net PnL are realised figures and stay fixed.
-  const fmtAbs = v => Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const fmtSigned = (v, plus) => (v < 0 ? '−' : (plus ? '+' : '')) + fmtAbs(v);
+  // Contact Us dropdown: Telegram link + click-to-copy email
+  const contactToggle = document.getElementById('contact-toggle');
+  const contactMenu = document.getElementById('contact-menu');
+  function closeContactMenu() {
+    contactMenu.classList.remove('open');
+    contactToggle.setAttribute('aria-expanded', 'false');
+  }
+  contactToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    periodMenu.style.display = 'none';
+    const open = contactMenu.classList.toggle('open');
+    contactToggle.setAttribute('aria-expanded', String(open));
+  });
+  contactMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const link = e.target.closest('a.contact-item');
+    if (!link) return;
+    // Navigate explicitly (inside the click gesture) instead of relying on the default
+    // action, and close the menu only afterwards so hiding it can't cancel the navigation.
+    e.preventDefault();
+    const win = window.open(link.href, '_blank');
+    if (win) { try { win.opener = null; } catch (err) {} }
+    else window.location.href = link.href;        // popup blocked -> same-tab fallback
+    setTimeout(closeContactMenu, 150);
+  });
+  periodBtn.addEventListener('click', closeContactMenu);
+  document.addEventListener('click', closeContactMenu);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeContactMenu(); });
+
+  // ===== Currency (display only; all source data stays in USDT) =====
+  const FX_DEFAULT = { USD: 1, EUR: 0.86, UAH: 44.7, GBP: 0.74 };   // per 1 USD (≈ 44.7 ₴/$, 52.0 ₴/€, 60.4 ₴/£)
+  const FX_META = { USD: { sym: '$' }, EUR: { sym: '€' }, UAH: { sym: '₴' }, GBP: { sym: '£' } };
+  const FX = { code: 'USD', rates: Object.assign({}, FX_DEFAULT), live: false };
+  const S = v => v * (FX.rates[FX.code] || 1);                       // USDT -> display currency
+  const fmtNum = (v, dec = 2) => Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  function fmtDisp(v, o) {                                            // v is already in display currency
+    const { sign = false, unit = true, dec = 2 } = o || {};
+    const k = Math.pow(10, dec), r = Math.round(Math.abs(v) * k) / k;
+    const sg = (v < 0 && r !== 0) ? '−' : (sign ? '+' : '');
+    if (FX.code === 'USD') return sg + fmtNum(r, dec) + (unit ? ' USDT' : '');
+    return sg + FX_META[FX.code].sym + fmtNum(r, dec);
+  }
+  const fmtMoney = (usd, o) => fmtDisp(S(usd), o);
+  const moneyPlain = (usd, o) => fmtMoney(usd, Object.assign({}, o, { unit: false }));
   const parseNum = t => {
     const m = t.replace(/,/g, '').match(/([+−-]?)(\d+(?:\.\d+)?)/);
     return m ? (m[1] === '−' || m[1] === '-' ? -1 : 1) * parseFloat(m[2]) : 0;
@@ -1862,6 +1990,47 @@
     el.classList.toggle(pos, v >= 0);
   }
 
+  // Every element that shows money registers a render function; applyCurrency() re-runs them all.
+  const fxItems = [];
+  function fxReg(el, fn, usd) { if (!el) return; el._fx = fn; if (usd !== undefined) el._usd = usd; fxItems.push(el); fn(el); }
+  const rVal   = el => { el.textContent = fmtMoney(el._usd, { sign: el._sign }); };             // "1,208.19 USDT"
+  const rPlain = el => { el.textContent = moneyPlain(el._usd); };                                // margin
+  const rCell  = el => { const v = S(el._usd), r = Math.round(Math.abs(v) * 100) / 100; el.textContent = (v < 0 && r !== 0 ? '−' : '+') + fmtNum(r); };
+  const rToBe  = el => { el.textContent = el._toBe < 0 ? 'To BE: +' + moneyPlain(-el._toBe) + ' needed' : 'Above break-even'; };
+  const rTpl   = el => { el.textContent = el._orig.replace(/(Start [\d.]+: |Out: )([\d,]+(?:\.\d+)?)/g, (m, pre, n) => {
+                    const v = parseFloat(n.replace(/,/g, '')); return pre + (v === 0 ? '0' : moneyPlain(v)); }); };
+  const rInts  = el => { el.textContent = el._orig.replace(/[−+]?\d[\d,]*/g, m => moneyPlain(parseNum(m), { dec: 0 })); };
+  const rZone  = el => { el.textContent = el._orig.replace(/^[−+]?\d[\d,]*/, m => moneyPlain(parseNum(m), { dec: 0 })); };
+  const rNow   = el => { el.setAttribute('data-label', el._orig.replace(/[−+]?\d[\d,]*\.\d+/, m => fmtMoney(parseNum(m), { unit: false, sign: false }))); };
+  const rTh    = el => { el.textContent = 'PnL' + (FX.code === 'USD' ? '' : ' (' + FX_META[FX.code].sym + ')'); };
+
+  // static money values
+  document.querySelectorAll('.metric-value, .stat-item .value').forEach(el => {
+    const t = el.textContent.trim();
+    if (/USDT$/.test(t)) { el._sign = t.charAt(0) === '+'; fxReg(el, rVal, parseNum(t)); }
+  });
+  document.querySelectorAll('.stat-item').forEach(item => {
+    const l = item.querySelector('.label'), v = item.querySelector('.value');
+    if (l && v && l.textContent.trim() === 'Used margin') fxReg(v, rPlain, parseNum(v.textContent));
+  });
+  document.querySelectorAll('.metric-sub').forEach(el => {
+    const t = el.textContent.trim();
+    if (/^Start /.test(t)) { el._orig = t; fxReg(el, rTpl); }
+  });
+  document.querySelectorAll('.fc-value').forEach(el => { el._orig = el.textContent.trim(); fxReg(el, rInts); });
+  document.querySelectorAll('.forecast span').forEach(el => {
+    const t = el.textContent.trim();
+    if (/^[−+]?\d[\d,]* (safe|base|danger)$/.test(t)) { el._orig = t; fxReg(el, rZone); }
+  });
+  document.querySelectorAll('.risk-marker[data-label]').forEach(el => { el._orig = el.getAttribute('data-label'); fxReg(el, rNow); });
+  document.querySelectorAll('.pos-table th:last-child').forEach(el => fxReg(el, rTh));
+
+  // ===== Live-style PnL animation (visual only) =====
+  // Position PnLs wobble in the tenths/hundredths; Unrealized PnL, "To BE", strategy PnL
+  // and the PnL bar charts are all recomputed from the same position values, so every number
+  // on the page stays consistent. Balance and Net PnL are realised figures and stay fixed.
+  const fmtAbs = v => fmtNum(v, 2);
+
   // Positions: every row of both position tables
   const tableCells = {
     alpha: [...document.querySelectorAll('.content-a .pos-table td:last-child')],
@@ -1869,7 +2038,9 @@
   };
   const pos = { alpha: [], beta: [] };
   Object.keys(tableCells).forEach(k => tableCells[k].forEach(cell => {
-    pos[k].push({ cell, base: parseNum(cell.textContent), off: 0, cur: parseNum(cell.textContent) });
+    const v = parseNum(cell.textContent);
+    pos[k].push({ cell, base: v, off: 0, cur: v });
+    fxReg(cell, rCell, v);
   }));
 
   // Targets: element + strategy ('alpha' | 'beta' | 'all')
@@ -1878,11 +2049,9 @@
     const label = metric.querySelector('.metric-label');
     if (!label || !/unrealized pnl/i.test(label.textContent)) return;
     const scope = metric.closest('.content-a') ? 'alpha' : metric.closest('.content-b') ? 'beta' : 'all';
-    metricTargets.push({
-      scope,
-      value: metric.querySelector('.metric-value'),
-      sub: metric.querySelector('.metric-sub')
-    });
+    const sub = metric.querySelector('.metric-sub');
+    if (sub) { sub._toBe = metric.querySelector('.metric-value')._usd; fxReg(sub, rToBe); }
+    metricTargets.push({ scope, value: metric.querySelector('.metric-value'), sub });
   });
   const statTargets = [];
   document.querySelectorAll('.stat-item').forEach(item => {
@@ -1894,8 +2063,8 @@
 
   // Keep today's displayed totals exactly, any rounding gap is held constant
   const baseTotals = {
-    alpha: metricTargets.find(t => t.scope === 'alpha') ? parseNum(metricTargets.find(t => t.scope === 'alpha').value.textContent) : 0,
-    beta:  metricTargets.find(t => t.scope === 'beta')  ? parseNum(metricTargets.find(t => t.scope === 'beta').value.textContent)  : 0
+    alpha: metricTargets.find(t => t.scope === 'alpha') ? metricTargets.find(t => t.scope === 'alpha').value._usd : 0,
+    beta:  metricTargets.find(t => t.scope === 'beta')  ? metricTargets.find(t => t.scope === 'beta').value._usd  : 0
   };
   const sumPos = k => pos[k].reduce((a, p) => a + p.cur, 0);
   const residual = { alpha: baseTotals.alpha - sumPos('alpha'), beta: baseTotals.beta - sumPos('beta') };
@@ -1905,7 +2074,7 @@
     ['alpha', 'beta'].forEach(k => pos[k].forEach(p => {
       p.off = p.off * 0.55 + (Math.random() - 0.5) * 0.24;
       p.cur = Math.round((p.base + p.off) * 100) / 100;
-      p.cell.textContent = fmtSigned(p.cur, true);
+      p.cell._usd = p.cur; rCell(p.cell);
       setSignClass(p.cell, p.cur, 'pnl-pos', 'pnl-neg');
     }));
     // 2) totals derived from positions
@@ -1917,22 +2086,20 @@
 
     metricTargets.forEach(t => {
       const v = totals[t.scope];
-      t.value.textContent = fmtSigned(v, true) + ' USDT';
+      t.value._sign = true; t.value._usd = v; rVal(t.value);
       setSignClass(t.value, v, 'pos', 'neg');
-      if (t.sub && /to be/i.test(t.sub.textContent)) {
-        t.sub.textContent = v < 0 ? 'To BE: +' + fmtAbs(v) + ' needed' : 'Above break-even';
-      }
+      if (t.sub) { t.sub._toBe = v; rToBe(t.sub); }
     });
     statTargets.forEach(t => {
       const v = totals[t.scope];
-      t.value.textContent = fmtSigned(v, true) + ' USDT';
+      t.value._sign = true; t.value._usd = v; rVal(t.value);
       setSignClass(t.value, v, 'pos', 'neg');
     });
 
-    // 3) PnL bar charts
+    // 3) PnL bar charts (display currency)
     const redraw = (chart, values) => {
       if (!chart) return;
-      chart.data.datasets[0].data = values;
+      chart.data.datasets[0].data = values.map(S);
       chart.data.datasets[0].backgroundColor = values.map(v => v < 0 ? 'rgba(255,23,68,0.75)' : 'rgba(0,230,118,0.8)');
       chart.update('none');
     };
@@ -1942,8 +2109,94 @@
   }
   setInterval(animatePnl, 1800);
 
+  function updateFxUi() {
+    document.querySelectorAll('.cur-opt').forEach(b => b.classList.toggle('active', b.dataset.cur === FX.code));
+    document.querySelectorAll('[data-rate-for]').forEach(el => {
+      const c = el.dataset.rateFor;
+      el.textContent = c === 'USD' ? 'USDT' : '1 $ = ' + FX_META[c].sym + FX.rates[c].toLocaleString('en-US', { maximumFractionDigits: c === 'UAH' ? 2 : 4 });
+    });
+    const st = document.getElementById('fx-status');
+    if (st) st.textContent = FX.live ? 'live rates' : 'approx. rates';
+  }
+  function applyCurrency() {
+    fxItems.forEach(el => el._fx(el));
+    renderAllCharts(currentDays);
+    updateFxUi();
+  }
+  function setCurrency(code) {
+    if (!FX_META[code]) return;
+    FX.code = code;
+    try { localStorage.setItem('atx-currency', code); } catch (e) {}
+    applyCurrency();
+  }
+
+  // ===== Bottom navigation: Strategy / Settings / Support =====
+  const sheets = { settings: document.getElementById('sheet-settings'), support: document.getElementById('sheet-support') };
+  const sheetBackdrop = document.getElementById('sheet-backdrop');
+  const navBtns = [...document.querySelectorAll('.bn-btn')];
+  function setNavActive(name) {
+    navBtns.forEach(b => {
+      const on = b.dataset.nav === name;
+      b.classList.toggle('active', on);
+      if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+  }
+  function closeSheets() {
+    Object.values(sheets).forEach(el => el.classList.remove('open'));
+    sheetBackdrop.classList.remove('open');
+    setNavActive('strategy');
+  }
+  function openSheet(name) {
+    Object.entries(sheets).forEach(([k, el]) => el.classList.toggle('open', k === name));
+    sheetBackdrop.classList.add('open');
+    setNavActive(name);
+  }
+  navBtns.forEach(btn => btn.addEventListener('click', () => {
+    const name = btn.dataset.nav;
+    if (name === 'strategy') {
+      closeSheets();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (sheets[name].classList.contains('open')) {
+      closeSheets();
+    } else {
+      openSheet(name);
+    }
+  }));
+  sheetBackdrop.addEventListener('click', closeSheets);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheets(); });
+  document.querySelectorAll('.cur-opt').forEach(btn => btn.addEventListener('click', () => {
+    setCurrency(btn.dataset.cur);
+    setTimeout(closeSheets, 250);
+  }));
+  // Telegram link in Support: open explicitly inside the click gesture
+  document.getElementById('support-tg').addEventListener('click', (e) => {
+    e.preventDefault();
+    const link = e.currentTarget;
+    const win = window.open(link.href, '_blank');
+    if (win) { try { win.opener = null; } catch (err) {} }
+    else window.location.href = link.href;
+    setTimeout(closeSheets, 150);
+  });
+
   // Initial render
   renderAllCharts(30);
+  updateFxUi();
+  try { const saved = localStorage.getItem('atx-currency'); if (saved && FX_META[saved] && saved !== 'USD') setCurrency(saved); } catch (e) {}
+
+  // Refresh rates from a public API (falls back silently to the built-in approximate rates)
+  try {
+    fetch('https://open.er-api.com/v6/latest/USD')
+      .then(r => r.json())
+      .then(j => {
+        const r = j && j.rates;
+        if (r && r.EUR > 0 && r.UAH > 0 && r.GBP > 0) {
+          FX.rates = { USD: 1, EUR: r.EUR, UAH: r.UAH, GBP: r.GBP };
+          FX.live = true;
+          if (FX.code === 'USD') updateFxUi(); else applyCurrency();
+        }
+      })
+      .catch(() => {});
+  } catch (e) {}
 
 </script>
 
