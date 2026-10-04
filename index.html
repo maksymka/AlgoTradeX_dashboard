@@ -738,7 +738,7 @@
     .metric-value { font-size: 20px; }
   }
 
-  /* Gamma modal */
+  /* "Data will be added later" modal */
   .modal-overlay {
     display: flex;
     position: fixed;
@@ -809,7 +809,9 @@
         <div class="tab active" data-tab="all">All Strategies</div>
         <div class="tab" data-tab="a">Strategy Alpha</div>
         <div class="tab" data-tab="b">Strategy Beta</div>
-        <div class="tab" data-tab="g" id="tab-gamma">Strategy Gamma</div>
+        <div class="tab" data-tab="g" data-soon="Strategy Gamma" id="tab-gamma">Strategy Gamma</div>
+        <div class="tab" data-tab="d" data-soon="Strategy Delta" id="tab-delta">Strategy Delta</div>
+        <div class="tab" data-tab="e" data-soon="Strategy Epsilon" id="tab-epsilon">Strategy Epsilon</div>
       </div>
     </div>
     <div class="header-right">
@@ -1496,12 +1498,12 @@
   </div>
 </nav>
 
-<!-- Gamma modal -->
-<div class="modal-overlay" id="gamma-modal">
+<!-- "Data will be added later" modal (Gamma / Delta / Epsilon) -->
+<div class="modal-overlay" id="soon-modal">
   <div class="modal-box">
-    <h3>Strategy Gamma</h3>
+    <h3 id="soon-title">Strategy Gamma</h3>
     <p>Дані будуть додані пізніше.<br>Data will be added later.</p>
-    <button type="button" class="modal-close" id="gamma-close">OK</button>
+    <button type="button" class="modal-close" id="soon-close">OK</button>
   </div>
 </div>
 
@@ -1509,8 +1511,8 @@
   // Tabs
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
-      if (tab.dataset.tab === 'g') {
-        openGammaModal();
+      if (tab.dataset.soon) {
+        openSoonModal(tab.dataset.soon);
         return;
       }
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1522,40 +1524,40 @@
     });
   });
 
-  let gammaCloseTimer = null;
-  let gammaFadeTimer = null;
-  function clearGammaTimers() {
-    clearTimeout(gammaCloseTimer);
-    clearTimeout(gammaFadeTimer);
+  let soonCloseTimer = null;
+  let soonFadeTimer = null;
+  const soonModal = document.getElementById('soon-modal');
+  function clearSoonTimers() {
+    clearTimeout(soonCloseTimer);
+    clearTimeout(soonFadeTimer);
   }
-  function openGammaModal() {
-    const m = document.getElementById('gamma-modal');
-    if (!m) return;
-    clearGammaTimers();
-    m.classList.remove('closing', 'slow');
-    m.classList.add('open');
+  function openSoonModal(name) {
+    if (!soonModal) return;
+    clearSoonTimers();
+    document.getElementById('soon-title').textContent = name;
+    soonModal.classList.remove('closing', 'slow');
+    soonModal.classList.add('open');
     // Auto-dismiss: start fading after 2s, fully gone by 4s
-    gammaFadeTimer = setTimeout(() => closeGammaModal(true), 2000);
+    soonFadeTimer = setTimeout(() => closeSoonModal(true), 2000);
   }
-  function closeGammaModal(slow) {
-    const m = document.getElementById('gamma-modal');
-    if (!m || !m.classList.contains('open')) return;
-    clearGammaTimers();
-    m.classList.remove('open');
-    m.classList.toggle('slow', slow === true);
-    m.classList.add('closing');
-    gammaCloseTimer = setTimeout(() => m.classList.remove('closing', 'slow'), slow === true ? 2000 : 400);
+  function closeSoonModal(slow) {
+    if (!soonModal || !soonModal.classList.contains('open')) return;
+    clearSoonTimers();
+    soonModal.classList.remove('open');
+    soonModal.classList.toggle('slow', slow === true);
+    soonModal.classList.add('closing');
+    soonCloseTimer = setTimeout(() => soonModal.classList.remove('closing', 'slow'), slow === true ? 2000 : 400);
   }
-  document.getElementById('gamma-close').addEventListener('click', function(e) {
+  document.getElementById('soon-close').addEventListener('click', function(e) {
     e.preventDefault();
     e.stopPropagation();
-    closeGammaModal();
+    closeSoonModal();
   });
-  document.getElementById('gamma-modal').addEventListener('click', function(e) {
-    if (e.target === this) closeGammaModal();
+  soonModal.addEventListener('click', function(e) {
+    if (e.target === this) closeSoonModal();
   });
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeGammaModal();
+    if (e.key === 'Escape') closeSoonModal();
   });
 
   // Copy email with clipboard API + legacy fallback (header menu + Support sheet)
