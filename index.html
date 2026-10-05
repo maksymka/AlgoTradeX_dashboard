@@ -65,7 +65,7 @@
   .header > .pairs-strip, .header > .tabs-row, .header > .header-main { position: relative; z-index: 1; }
   .header > .header-main { z-index: 3; }              /* dropdowns must paint above the tabs row */
   .header-topline { position: absolute; top: -1px; left: -1px; right: -1px; height: 2px; z-index: 2; opacity: .9;
-    background: linear-gradient(90deg, transparent 0%, #c9a84c 20%, var(--green) 50%, var(--cyan) 80%, transparent 100%); background-size: 220% 100%; animation: topline-run 7s linear infinite; }
+    background: linear-gradient(90deg, transparent 0%, var(--green) 25%, var(--cyan) 55%, transparent 100%); background-size: 220% 100%; animation: topline-run 7s linear infinite; }
   @keyframes topline-run { from { background-position: 120% 0; } to { background-position: -120% 0; } }
   .header-glow { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
   .header-glow::before { content: ""; position: absolute; inset: -40% -10%;
@@ -85,6 +85,12 @@
   .pairs-mask { flex: 1; min-width: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent); }
   .pairs-track { display: inline-flex; white-space: nowrap; will-change: transform; animation: pairs-run 50s linear infinite; }
   .pairs-strip:hover .pairs-track { animation-play-state: paused; }
+  .pr .px { margin-left: 6px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+  .pr .px.up { color: var(--green); }
+  .pr .px.dn { color: var(--red); }
+  .pr .ch { margin-left: 4px; font-size: 9px; opacity: .9; }
+  .pairs-live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin: 0 8px 0 10px; box-shadow: 0 0 6px var(--green); flex-shrink: 0; }
+  .pairs-live-label { color: var(--text-muted); font-size: 9px; letter-spacing: 1px; margin-right: 8px; flex-shrink: 0; text-transform: uppercase; }
   .pr { display: inline-flex; align-items: center; padding: 0 18px; color: var(--text-dim); }
   .pr b { color: var(--text); font-weight: 600; }
   .pr em { font-style: normal; margin-left: 7px; padding: 1px 4px; font-size: 8px; letter-spacing: .8px; color: var(--text-muted); border: 1px solid var(--border-bright); border-radius: 3px; }
@@ -92,7 +98,7 @@
   @keyframes pairs-run { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   /* main row */
-  .header-main { display: flex; align-items: center; gap: 20px; padding: 10px 22px; }
+  .header-main { display: flex; align-items: center; gap: 16px; padding: 10px 22px; width: 100%; }
   .brand-block { display: flex; align-items: center; gap: 16px; flex: 0 0 auto; }
   .logo-icon { width: 104px; height: 104px; object-fit: contain; display: block; background: transparent; border-radius: 0;
     filter: drop-shadow(0 0 10px rgba(201,168,76,.25)); animation: lion-glow 4.5s ease-in-out infinite; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
@@ -143,12 +149,22 @@
     background-size: 260% 100%, 100% 100%; background-position: 100% 0, 0 0;
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: wordmark-shine 6s ease-in-out 1.4s infinite; }
   @keyframes wordmark-shine { 0% { background-position: 100% 0, 0 0; } 45%, 100% { background-position: 0% 0, 0 0; } }
-  .brand-tag { font-size: 9px; letter-spacing: 2.4px; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+  .brand-tag { display: none !important; font-size: 9px; letter-spacing: 2.4px; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
   .brand-tag::before { content: ""; display: inline-block; width: 18px; height: 1px; margin-right: 8px; vertical-align: middle; background: linear-gradient(90deg, #c9a84c, transparent); }
 
-  .brand-chart { width: 158px; flex: 0 0 auto; margin: 0 auto; padding: 7px 10px 6px; border: 1px solid var(--border); border-radius: 8px;
-    background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.008)); box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 6px 24px rgba(0,0,0,.35);
-    transition: border-color .3s ease, box-shadow .3s ease; }
+  .brand-chart {
+    flex: 1 1 auto;
+    min-width: 180px;
+    max-width: 420px;
+    width: 100%;
+    margin: 0;
+    padding: 8px 12px 7px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.008));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 6px 24px rgba(0,0,0,.35);
+    transition: border-color .3s ease, box-shadow .3s ease;
+  }
   .brand-chart:hover { border-color: var(--green-border); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 6px 24px rgba(0,0,0,.35), 0 0 26px rgba(0,230,118,.12); }
   .chart-cap { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 8px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); }
   .chart-cap i { display: inline-block; width: 5px; height: 5px; margin-right: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s infinite; vertical-align: 1px; }
@@ -417,11 +433,16 @@
   }
 
   .chart-wrap {
-    height: 240px;
+    height: 340px;
     position: relative;
   }
 
-  .chart-wrap.sm { height: 200px; }
+  .chart-wrap.sm { height: 220px; }
+
+  @media (max-width: 760px) {
+    .chart-wrap { height: 280px; }
+    .chart-wrap.sm { height: 200px; }
+  }
 
   /* Strategies */
   .strategies {
@@ -767,7 +788,7 @@
     .bottom-charts { grid-template-columns: 1fr; }
     .strategy-panel { border-right: none; border-bottom: 1px solid var(--border); }
     .header-main { flex-wrap: wrap; gap: 14px 16px; padding: 12px 14px; }
-    .brand-chart { margin: 0 0 0 auto; }
+    .brand-chart { margin: 0; max-width: none; width: 100%; }
     .header-right { width: 100%; justify-content: flex-start; flex-wrap: wrap; gap: 10px; }
     .tabs-row { padding: 0 6px; }
     .terminal { padding: 10px; }
@@ -781,7 +802,7 @@
     .brand-block { gap: 9px; flex: 1 1 auto; min-width: 0; }
     .logo-text { font-size: 19px; }
     .brand-tag, .chart-cap, .chart-legend-mini { display: none; }
-    .brand-chart { width: 112px; padding: 6px 8px 5px; margin: 0 0 0 auto; }
+    .brand-chart { width: 100%; max-width: none; min-width: 0; padding: 6px 8px 5px; margin: 0; }
     .ex-chip { padding: 4px 8px; font-size: 10px; }
     .ex-ico { display: none; }
     .status { font-size: 11px; }
@@ -858,9 +879,10 @@
   <div class="header">
     <div class="header-topline" aria-hidden="true"></div>
     <div class="header-glow" aria-hidden="true"></div>
-    <div class="pairs-strip hdr-in" aria-hidden="true">
-      <span class="pairs-tag">◆ PAIRS</span>
-      <div class="pairs-mask"><div class="pairs-track"><span class="pr"><b>GALA</b>USDT<em>PERP</em></span><span class="pr"><b>THE</b>USDT<em>PERP</em></span><span class="pr"><b>HOME</b>USDT<em>PERP</em></span><span class="pr"><b>PUMP</b>USDT<em>PERP</em></span><span class="pr"><b>DASH</b>USDT<em>PERP</em></span><span class="pr"><b>STRK</b>USDT<em>PERP</em></span><span class="pr"><b>GALA</b>USDT<em>PERP</em></span><span class="pr"><b>THE</b>USDT<em>PERP</em></span><span class="pr"><b>HOME</b>USDT<em>PERP</em></span><span class="pr"><b>PUMP</b>USDT<em>PERP</em></span><span class="pr"><b>DASH</b>USDT<em>PERP</em></span><span class="pr"><b>STRK</b>USDT<em>PERP</em></span><span class="pr"><b>GALA</b>USDT<em>PERP</em></span><span class="pr"><b>THE</b>USDT<em>PERP</em></span><span class="pr"><b>HOME</b>USDT<em>PERP</em></span><span class="pr"><b>PUMP</b>USDT<em>PERP</em></span><span class="pr"><b>DASH</b>USDT<em>PERP</em></span><span class="pr"><b>STRK</b>USDT<em>PERP</em></span><span class="pr"><b>GALA</b>USDT<em>PERP</em></span><span class="pr"><b>THE</b>USDT<em>PERP</em></span><span class="pr"><b>HOME</b>USDT<em>PERP</em></span><span class="pr"><b>PUMP</b>USDT<em>PERP</em></span><span class="pr"><b>DASH</b>USDT<em>PERP</em></span><span class="pr"><b>STRK</b>USDT<em>PERP</em></span><span class="pr"><b>GALA</b>USDT<em>PERP</em></span><span class="pr"><b>THE</b>USDT<em>PERP</em></span><span class="pr"><b>HOME</b>USDT<em>PERP</em></span><span class="pr"><b>PUMP</b>USDT<em>PERP</em></span><span class="pr"><b>DASH</b>USDT<em>PERP</em></span><span class="pr"><b>STRK</b>USDT<em>PERP</em></span><span class="pr"><b>GALA</b>USDT<em>PERP</em></span><span class="pr"><b>THE</b>USDT<em>PERP</em></span><span class="pr"><b>HOME</b>USDT<em>PERP</em></span><span class="pr"><b>PUMP</b>USDT<em>PERP</em></span><span class="pr"><b>DASH</b>USDT<em>PERP</em></span><span class="pr"><b>STRK</b>USDT<em>PERP</em></span></div></div>
+        <div class="pairs-strip hdr-in" aria-label="Live Binance Futures prices">
+      <span class="pairs-live-dot" title="Binance public API"></span>
+      <span class="pairs-live-label">Live</span>
+      <div class="pairs-mask"><div class="pairs-track" id="pairs-track"><span class="pr" data-symbol="GALAUSDT"><b>GALA</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="THEUSDT"><b>THE</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="HOMEUSDT"><b>HOME</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="PUMPUSDT"><b>PUMP</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="DASHUSDT"><b>DASH</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="STRKUSDT"><b>STRK</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="GALAUSDT"><b>GALA</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="THEUSDT"><b>THE</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="HOMEUSDT"><b>HOME</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="PUMPUSDT"><b>PUMP</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="DASHUSDT"><b>DASH</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="STRKUSDT"><b>STRK</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="GALAUSDT"><b>GALA</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="THEUSDT"><b>THE</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="HOMEUSDT"><b>HOME</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="PUMPUSDT"><b>PUMP</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="DASHUSDT"><b>DASH</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="STRKUSDT"><b>STRK</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="GALAUSDT"><b>GALA</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="THEUSDT"><b>THE</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="HOMEUSDT"><b>HOME</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="PUMPUSDT"><b>PUMP</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="DASHUSDT"><b>DASH</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span><span class="pr" data-symbol="STRKUSDT"><b>STRK</b>USDT<em>PERP</em><span class="px">—</span><span class="ch"></span></span></div></div>
     </div>
     <div class="header-main">
       <div class="brand-block hdr-in" style="--d:0s">
@@ -900,7 +922,7 @@
         </svg>
         <div class="brand-text">
           <div class="logo-text">AlgoTradeX.ai</div>
-          <div class="brand-tag">Algorithmic trading terminal</div>
+          
         </div>
       </div>
       <div class="brand-chart hdr-in" style="--d:.12s">
@@ -936,7 +958,7 @@
         <button type="button" class="contact-btn" id="contact-toggle" aria-haspopup="menu" aria-expanded="false">Contact Us <span class="contact-caret">▾</span></button>
         <div class="contact-menu" id="contact-menu" role="menu">
           <a class="contact-item" role="menuitem" href="https://t.me/mktiv" target="_blank" rel="noopener noreferrer">
-            <span class="contact-ico">✈</span><span class="contact-label">Telegram</span><span class="contact-hint">@mktiv</span>
+            <span class="contact-ico">✈</span><span class="contact-label">Telegram</span><span class="contact-hint">tap to write · @mktiv</span>
           </a>
           <div class="contact-item copy-email" id="copy-email" role="menuitem" tabindex="0" aria-label="Copy email address">
             <span class="contact-ico">✉</span><span class="contact-label">Maksym.Kryvenko@gmail.com</span>
@@ -970,18 +992,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">1,208.19 USDT</div>
+        <div class="metric-value neutral">1,215.79 USDT</div>
         <div class="metric-sub">Start 01.06.26: 1,187.00 · Out: 0</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−135.96 USDT</div>
-        <div class="metric-sub">To BE: +135.96 needed</div>
+        <div class="metric-value neg">−134.86 USDT</div>
+        <div class="metric-sub">To BE: +134.86 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+21.19 USDT</div>
-        <div class="metric-sub">+1.78% · bal+out − start</div>
+        <div class="metric-value pos">+28.79 USDT</div>
+        <div class="metric-sub">+2.43% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -1026,7 +1048,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−135.96 USDT</div>
+            <div class="value neg">−134.86 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1058,26 +1080,27 @@
               <tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr>
             </thead>
             <tbody>
-              <tr>
-                <td>GALA</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.00271</td>
-                <td>0.00274</td>
-                <td class="pnl-neg">−0.32</td>
-              </tr>
+
               <tr>
                 <td>THEUSDT</td>
                 <td><span class="side-L">LONG</span></td>
-                <td>0.0863</td>
-                <td>0.0742</td>
-                <td class="pnl-neg">−20.90</td>
+                <td>0.08628</td>
+                <td>0.07405</td>
+                <td class="pnl-neg">−21.52</td>
               </tr>
               <tr>
                 <td>THEUSDT</td>
                 <td><span class="side-S">SHORT</span></td>
-                <td>0.0548</td>
-                <td>0.0735</td>
-                <td class="pnl-neg">−115.05</td>
+                <td>0.05478</td>
+                <td>0.07405</td>
+                <td class="pnl-neg">−113.00</td>
+              </tr>
+              <tr>
+                <td>EDU</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.06187</td>
+                <td>0.06222</td>
+                <td class="pnl-neg">−0.33</td>
               </tr>
             </tbody>
           </table>
@@ -1092,7 +1115,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−263.68 USDT</div>
+            <div class="value neg">−249.14 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1156,7 +1179,7 @@
           <div class="risk-seg safe" style="width:25%"></div>
           <div class="risk-seg warn" style="width:40%"></div>
           <div class="risk-seg danger" style="width:35%"></div>
-          <div class="risk-marker" style="left:80%" data-label="NOW −135.96"></div>
+          <div class="risk-marker" style="left:80%" data-label="NOW −134.86"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−40 safe</span>
@@ -1172,18 +1195,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">783.01 USDT</div>
+        <div class="metric-value neutral">784.64 USDT</div>
         <div class="metric-sub">Start 01.06.26: 700.00 · Out: 81.00</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−263.68 USDT</div>
-        <div class="metric-sub">To BE: +263.68 needed</div>
+        <div class="metric-value neg">−249.14 USDT</div>
+        <div class="metric-sub">To BE: +249.14 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+164.01 USDT</div>
-        <div class="metric-sub">+23.43% · bal+out − start</div>
+        <div class="metric-value pos">+165.64 USDT</div>
+        <div class="metric-sub">+23.66% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -1228,7 +1251,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−135.96 USDT</div>
+            <div class="value neg">−134.86 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1256,7 +1279,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−263.68 USDT</div>
+            <div class="value neg">−249.14 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1291,53 +1314,46 @@
               <tr>
                 <td>HOME</td>
                 <td><span class="side-L">LONG</span></td>
-                <td>0.0110</td>
-                <td>0.0056</td>
-                <td class="pnl-neg">−85.46</td>
+                <td>0.01100</td>
+                <td>0.00563</td>
+                <td class="pnl-neg">−87.51</td>
               </tr>
               <tr>
                 <td>HOME</td>
                 <td><span class="side-S">SHORT</span></td>
-                <td>0.0068</td>
-                <td>0.0056</td>
-                <td class="pnl-pos">+55.21</td>
-              </tr>
-              <tr>
-                <td>PUMP</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.0064</td>
-                <td>0.0064</td>
-                <td class="pnl-neg">−0.02</td>
+                <td>0.00678</td>
+                <td>0.00563</td>
+                <td class="pnl-pos">+62.05</td>
               </tr>
               <tr>
                 <td>DASH</td>
                 <td><span class="side-L">LONG</span></td>
-                <td>67.78</td>
-                <td>58.63</td>
-                <td class="pnl-neg">−16.49</td>
+                <td>67.7845</td>
+                <td>58.53</td>
+                <td class="pnl-neg">−18.55</td>
               </tr>
               <tr>
                 <td>DASH</td>
                 <td><span class="side-S">SHORT</span></td>
-                <td>54.19</td>
-                <td>58.63</td>
-                <td class="pnl-neg">−35.86</td>
+                <td>54.1865</td>
+                <td>58.53</td>
+                <td class="pnl-neg">−29.01</td>
               </tr>
               <tr>
                 <td>STRK</td>
                 <td><span class="side-L">LONG</span></td>
-                <td>0.0503</td>
-                <td>0.0511</td>
-                <td class="pnl-pos">+3.31</td>
+                <td>0.05616</td>
+                <td>0.05208</td>
+                <td class="pnl-neg">−12.48</td>
               </tr>
               <tr>
                 <td>STRK</td>
                 <td><span class="side-S">SHORT</span></td>
-                <td>0.0361</td>
-                <td>0.0511</td>
-                <td class="pnl-neg">−184.39</td>
+                <td>0.03606</td>
+                <td>0.05208</td>
+                <td class="pnl-neg">−163.67</td>
               </tr>
-            </tbody>
+</tbody>
           </table>
         </div>
       </div>
@@ -1386,7 +1402,7 @@
           <div class="risk-seg safe" style="width:20%"></div>
           <div class="risk-seg warn" style="width:40%"></div>
           <div class="risk-seg danger" style="width:40%"></div>
-          <div class="risk-marker" style="left:92%" data-label="NOW −263.68"></div>
+          <div class="risk-marker" style="left:92%" data-label="NOW −249.14"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−30 safe</span>
@@ -1402,18 +1418,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Total Balance</div>
-        <div class="metric-value neutral">1,991.20 USDT</div>
+        <div class="metric-value neutral">2,000.43 USDT</div>
         <div class="metric-sub">Start 01.06.26: 1,887.00 · Out: 81.00</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−399.64 USDT</div>
-        <div class="metric-sub">To BE: +399.64 needed</div>
+        <div class="metric-value neg">−384.00 USDT</div>
+        <div class="metric-sub">To BE: +384.00 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+185.20 USDT</div>
-        <div class="metric-sub">+9.81% · bal+out − start</div>
+        <div class="metric-value pos">+194.43 USDT</div>
+        <div class="metric-sub">+10.30% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -1459,7 +1475,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−135.96 USDT</div>
+            <div class="value neg">−134.86 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1494,7 +1510,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−263.68 USDT</div>
+            <div class="value neg">−249.14 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1565,7 +1581,7 @@
           <div class="risk-seg safe" style="width:18%"></div>
           <div class="risk-seg warn" style="width:42%"></div>
           <div class="risk-seg danger" style="width:40%"></div>
-          <div class="risk-marker" style="left:96%" data-label="NOW −399.64"></div>
+          <div class="risk-marker" style="left:96%" data-label="NOW −384.00"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−40 safe</span>
@@ -1603,7 +1619,7 @@
   <div class="sheet-sub">Questions? Write to us:</div>
   <div class="sheet-list">
     <a class="contact-item" id="support-tg" href="https://t.me/mktiv" target="_blank" rel="noopener noreferrer">
-      <span class="contact-ico">✈</span><span class="contact-label">Telegram</span><span class="contact-hint">@mktiv</span>
+      <span class="contact-ico">✈</span><span class="contact-label">Telegram</span><span class="contact-hint">tap to write · @mktiv</span>
     </a>
     <div class="contact-item copy-email" role="button" tabindex="0" aria-label="Copy email address">
       <span class="contact-ico">✉</span><span class="contact-label">Maksym.Kryvenko@gmail.com</span><span class="contact-hint">tap to copy</span>
@@ -1630,7 +1646,7 @@
 <div class="modal-overlay" id="soon-modal">
   <div class="modal-box">
     <h3 id="soon-title">Strategy Gamma</h3>
-    <p>Дані будуть додані пізніше.<br>Data will be added later.</p>
+    <p>Data will be added later.</p>
     <button type="button" class="modal-close" id="soon-close">OK</button>
   </div>
 </div>
@@ -2085,8 +2101,8 @@
 
     // Alpha: start 1187, current ~1207 (equity after uPnL roughly balance)
     // Use balance as equity proxy
-    const alpha = buildEquitySeries(1187, 1207, days, forecastDays, 28);
-    const beta = buildEquitySeries(700, 783, days, forecastDays, 40);
+    const alpha = buildEquitySeries(1187, 1216, days, forecastDays, 28);
+    const beta = buildEquitySeries(700, 785, days, forecastDays, 40);
 
     const aAll = alpha.all.map(S), bAll = beta.all.map(S);   // USDT -> display currency
     charts.aEq = makeLineChart('chart-a-equity', labels, aAll, nowIdx, G);
@@ -2095,13 +2111,13 @@
 
     // Static bar / doughnut charts
     charts.aPnl = barChart('chart-a-pnl',
-      ['THE L','THE S'],
-      [-20.90, -115.05].map(S),
+      ['THE L','THE S','EDU S'],
+      [-21.52, -113.00, -0.33].map(S),
       ['rgba(255,23,68,0.7)', 'rgba(255,23,68,0.75)', 'rgba(255,23,68,0.75)']
     );
     charts.bPnl = barChart('chart-b-pnl',
       ['HOME L','HOME S','DASH L','DASH S','STRK L','STRK S'],
-      [-85.46, 55.21, -16.49, -35.86, 3.31, -184.39].map(S),
+      [-87.51, 62.05, -18.55, -29.01, -12.48, -163.67].map(S),
       [
         'rgba(255,23,68,0.75)', 'rgba(0,230,118,0.8)',
         'rgba(255,23,68,0.75)', 'rgba(255,23,68,0.7)',
@@ -2120,7 +2136,7 @@
       ['rgba(0,230,118,0.8)', 'rgba(0,229,255,0.8)']);
     charts.allRisk = doughnutChart('chart-all-risk', ['High','Very High'], [1,1],
       ['rgba(255,196,0,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta'], [-135.96, -263.68].map(S),
+    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta'], [-134.86, -249.14].map(S),
       ['rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)']);
 
     // Daily PnL last 7 of the selected window
@@ -2214,7 +2230,7 @@
   // Every element that shows money registers a render function; applyCurrency() re-runs them all.
   const fxItems = [];
   function fxReg(el, fn, usd) { if (!el) return; el._fx = fn; if (usd !== undefined) el._usd = usd; fxItems.push(el); fn(el); }
-  const rVal   = el => { el.textContent = fmtMoney(el._usd, { sign: el._sign }); };             // "1,208.19 USDT"
+  const rVal   = el => { el.textContent = fmtMoney(el._usd, { sign: el._sign }); };             // "1,215.79 USDT"
   const rPlain = el => { el.textContent = moneyPlain(el._usd); };                                // margin
   const rCell  = el => { const v = S(el._usd), r = Math.round(Math.abs(v) * 100) / 100; el.textContent = (v < 0 && r !== 0 ? '−' : '+') + fmtNum(r); };
   const rToBe  = el => { el.textContent = el._toBe < 0 ? 'To BE: +' + moneyPlain(-el._toBe) + ' needed' : 'Above break-even'; };
@@ -2363,13 +2379,13 @@
     });
   }
   function closeSheets() {
-    Object.values(sheets).forEach(el => el.classList.remove('open'));
-    sheetBackdrop.classList.remove('open');
+    Object.values(sheets).forEach(el => { if (el) el.classList.remove('open'); });
+    if (sheetBackdrop) sheetBackdrop.classList.remove('open');
     setNavActive('strategy');
   }
   function openSheet(name) {
-    Object.entries(sheets).forEach(([k, el]) => el.classList.toggle('open', k === name));
-    sheetBackdrop.classList.add('open');
+    Object.entries(sheets).forEach(([k, el]) => { if (el) el.classList.toggle('open', k === name); });
+    if (sheetBackdrop) sheetBackdrop.classList.add('open');
     setNavActive(name);
   }
   navBtns.forEach(btn => btn.addEventListener('click', () => {
@@ -2377,20 +2393,22 @@
     if (name === 'strategy') {
       closeSheets();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (sheets[name].classList.contains('open')) {
-      closeSheets();
-    } else {
-      openSheet(name);
+      return;
     }
+    const sheet = sheets[name];
+    if (!sheet) return;
+    if (sheet.classList.contains('open')) closeSheets();
+    else openSheet(name);
   }));
-  sheetBackdrop.addEventListener('click', closeSheets);
+  if (sheetBackdrop) sheetBackdrop.addEventListener('click', closeSheets);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheets(); });
   document.querySelectorAll('.cur-opt').forEach(btn => btn.addEventListener('click', () => {
     setCurrency(btn.dataset.cur);
     setTimeout(closeSheets, 250);
   }));
   // Telegram link in Support: open explicitly inside the click gesture
-  document.getElementById('support-tg').addEventListener('click', (e) => {
+  const supportTg = document.getElementById('support-tg');
+  if (supportTg) supportTg.addEventListener('click', (e) => {
     e.preventDefault();
     const link = e.currentTarget;
     const win = window.open(link.href, '_blank');
@@ -2398,6 +2416,243 @@
     else window.location.href = link.href;
     setTimeout(closeSheets, 150);
   });
+
+
+  // ===== Live Binance Futures public prices (no API keys needed) =====
+  // Market data is public. NEVER put secret API keys in frontend HTML.
+  const BINANCE_SYMBOLS = ['GALAUSDT','THEUSDT','HOMEUSDT','PUMPUSDT','DASHUSDT','STRKUSDT'];
+  const lastPrices = {};
+
+  function formatPx(p) {
+    const n = parseFloat(p);
+    if (!isFinite(n)) return '—';
+    if (n >= 100) return n.toFixed(2);
+    if (n >= 1) return n.toFixed(4);
+    if (n >= 0.01) return n.toFixed(5);
+    return n.toFixed(6);
+  }
+
+  async function fetchJson(url) {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+
+  async function fetchBinanceTickers() {
+    try {
+      // Public market data only — no API keys. Try futures hosts in order.
+      const hosts = [
+        'https://fapi.binance.com',
+        'https://fstream.binance.com'
+      ];
+      let data = null, marks = null;
+      for (const host of hosts) {
+        try {
+          data = await fetchJson(host + '/fapi/v1/ticker/24hr');
+          try { marks = await fetchJson(host + '/fapi/v1/premiumIndex'); } catch (e2) {}
+          break;
+        } catch (e1) { /* try next host */ }
+      }
+      if (!data || !Array.isArray(data)) throw new Error('No ticker data');
+
+      const map = {};
+      data.forEach(t => { if (BINANCE_SYMBOLS.includes(t.symbol)) map[t.symbol] = t; });
+      const markMap = {};
+      if (Array.isArray(marks)) marks.forEach(m => { if (BINANCE_SYMBOLS.includes(m.symbol)) markMap[m.symbol] = parseFloat(m.markPrice); });
+
+      document.querySelectorAll('.pr[data-symbol]').forEach(el => {
+        const sym = el.dataset.symbol;
+        const t = map[sym];
+        if (!t) return;
+        const px = el.querySelector('.px');
+        const ch = el.querySelector('.ch');
+        const price = parseFloat(t.lastPrice);
+        const pct = parseFloat(t.priceChangePercent);
+        const prev = lastPrices[sym];
+        lastPrices[sym] = price;
+        if (px) {
+          px.textContent = formatPx(price);
+          px.classList.remove('up','dn');
+          if (prev !== undefined && price !== prev) px.classList.add(price > prev ? 'up' : 'dn');
+          else if (pct >= 0) px.classList.add('up');
+          else px.classList.add('dn');
+        }
+        if (ch) {
+          const sign = pct >= 0 ? '+' : '';
+          ch.textContent = sign + pct.toFixed(2) + '%';
+          ch.style.color = pct >= 0 ? 'var(--green)' : 'var(--red)';
+        }
+      });
+
+      document.querySelectorAll('.pos-table tbody tr').forEach(tr => {
+        const pairTd = tr.children[0];
+        const markTd = tr.children[3];
+        if (!pairTd || !markTd) return;
+        let sym = pairTd.textContent.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+        if (!sym.endsWith('USDT')) sym += 'USDT';
+        const mp = markMap[sym] != null ? markMap[sym] : (map[sym] ? parseFloat(map[sym].lastPrice) : null);
+        if (mp != null) markTd.textContent = formatPx(mp);
+      });
+    } catch (e) {
+      console.warn('Binance ticker fetch failed', e);
+    }
+  }
+  fetchBinanceTickers();
+  setInterval(fetchBinanceTickers, 8000);
+
+  (function(){
+    const input = document.getElementById('binance-proxy-input');
+    const btn = document.getElementById('binance-proxy-save');
+    const hint = document.getElementById('binance-proxy-hint');
+    if (!input || !btn) return;
+    try { input.value = localStorage.getItem('atx-binance-proxy') || ''; } catch(e) {}
+    btn.addEventListener('click', () => {
+      const url = (input.value || '').trim().replace(/\/$/, '');
+      try {
+        if (url) localStorage.setItem('atx-binance-proxy', url);
+        else localStorage.removeItem('atx-binance-proxy');
+      } catch(e) {}
+      if (hint) hint.textContent = url ? 'Saved. Reloading…' : 'Cleared. Reloading…';
+      setTimeout(() => location.reload(), 400);
+    });
+  })();
+
+
+  // ===== Live account data from YOUR Binance (via private proxy) =====
+  // Set the Worker URL after deploy. Leave empty to keep manual numbers.
+  // Example: 'https://algotradex-binance.YOUR_SUBDOMAIN.workers.dev'
+  const BINANCE_PROXY_URL = localStorage.getItem('atx-binance-proxy') || '';
+
+  const START_CAPITAL = { alpha: 1187, beta: 700, withdrawn: { alpha: 0, beta: 81 } };
+
+  function fmtSide(side) {
+    return side === 'LONG'
+      ? '<span class="side-L">LONG</span>'
+      : '<span class="side-S">SHORT</span>';
+  }
+
+  function updatePosTable(scopeSel, positions) {
+    const tbody = document.querySelector(scopeSel + ' .pos-table tbody');
+    if (!tbody) return;
+    if (!positions || !positions.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text-muted)">No open positions</td></tr>';
+      return;
+    }
+    tbody.innerHTML = positions.map(p => {
+      const pnl = p.unRealizedProfit;
+      const cls = pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+      const sign = pnl >= 0 ? '+' : '−';
+      const pair = p.symbol.replace('USDT', '');
+      return `<tr>
+        <td>${pair}</td>
+        <td>${fmtSide(p.side)}</td>
+        <td>${formatPx(p.entryPrice)}</td>
+        <td>${formatPx(p.markPrice)}</td>
+        <td class="${cls}">${sign}${fmtNum(Math.abs(pnl))}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function setMetricBalance(scopeSel, balance, start, withdrawn) {
+    const metrics = document.querySelectorAll(scopeSel + ' .metric');
+    metrics.forEach(m => {
+      const label = (m.querySelector('.metric-label') || {}).textContent || '';
+      const val = m.querySelector('.metric-value');
+      const sub = m.querySelector('.metric-sub');
+      if (!val) return;
+      if (/current balance|total balance/i.test(label)) {
+        val.textContent = fmtDisp(S(balance));
+        val.classList.remove('pos','neg'); val.classList.add('neutral');
+        if (sub && start != null) {
+          sub.textContent = `Start 01.06.26: ${fmtNum(start)} · Out: ${fmtNum(withdrawn || 0)}`;
+        }
+      }
+      if (/unrealized pnl/i.test(label)) {
+        // filled by animate / direct below
+      }
+      if (/net pnl/i.test(label)) {
+        const net = balance + (withdrawn || 0) - start;
+        val.textContent = fmtMoney(net, { sign: true });
+        setSignClass(val, net, 'pos', 'neg');
+        if (sub) {
+          const pct = start ? (net / start) * 100 : 0;
+          sub.textContent = `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}% · bal+out − start`;
+        }
+      }
+    });
+  }
+
+  function setUnrealized(scopeSel, upnl) {
+    document.querySelectorAll(scopeSel + ' .metric').forEach(m => {
+      const label = (m.querySelector('.metric-label') || {}).textContent || '';
+      if (!/unrealized pnl/i.test(label)) return;
+      const val = m.querySelector('.metric-value');
+      const sub = m.querySelector('.metric-sub');
+      if (val) {
+        val.textContent = fmtMoney(upnl, { sign: true });
+        setSignClass(val, upnl, 'pos', 'neg');
+        val._usd = upnl;
+      }
+      if (sub) {
+        sub._toBe = upnl;
+        sub.textContent = upnl < 0 ? ('To BE: +' + moneyPlain(-upnl) + ' needed') : 'Above break-even';
+      }
+    });
+  }
+
+  async function syncBinanceAccount() {
+    if (!BINANCE_PROXY_URL) return;
+    try {
+      const res = await fetch(BINANCE_PROXY_URL.replace(/\/$/, '') + '/api/account?bot=all', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Proxy HTTP ' + res.status);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+
+      const alpha = data.alpha || {};
+      const beta = data.beta || {};
+
+      if (!alpha.error && alpha.balance != null) {
+        setMetricBalance('.content-a', alpha.balance, START_CAPITAL.alpha, START_CAPITAL.withdrawn.alpha);
+        setUnrealized('.content-a', alpha.unrealizedPnl || 0);
+        updatePosTable('.content-a', alpha.positions || []);
+      }
+      if (!beta.error && beta.balance != null) {
+        setMetricBalance('.content-b', beta.balance, START_CAPITAL.beta, START_CAPITAL.withdrawn.beta);
+        setUnrealized('.content-b', beta.unrealizedPnl || 0);
+        updatePosTable('.content-b', beta.positions || []);
+      }
+
+      // Combined
+      if (alpha.balance != null && beta.balance != null) {
+        const totalBal = (alpha.balance || 0) + (beta.balance || 0);
+        const totalUpnl = (alpha.unrealizedPnl || 0) + (beta.unrealizedPnl || 0);
+        const startAll = START_CAPITAL.alpha + START_CAPITAL.beta;
+        const outAll = START_CAPITAL.withdrawn.alpha + START_CAPITAL.withdrawn.beta;
+        setMetricBalance('.content-all', totalBal, startAll, outAll);
+        setUnrealized('.content-all', totalUpnl);
+      }
+
+      // Refresh fx registration for new cells
+      document.querySelectorAll('.pos-table td:last-child').forEach(cell => {
+        if (cell._fx) return;
+        const v = parseNum(cell.textContent);
+        cell._usd = v;
+        fxReg(cell, rCell, v);
+      });
+
+      console.info('Binance account synced', data.alpha && data.alpha.updatedAt, data.beta && data.beta.updatedAt);
+    } catch (e) {
+      console.warn('Account sync failed:', e.message || e);
+    }
+  }
+
+  // Optional: set proxy URL from Settings or console:
+  // localStorage.setItem('atx-binance-proxy', 'https://xxx.workers.dev'); location.reload();
+  if (BINANCE_PROXY_URL) {
+    syncBinanceAccount();
+    setInterval(syncBinanceAccount, 15000);
+  }
+
 
   // Initial render
   renderAllCharts(30);
