@@ -98,13 +98,13 @@
   @keyframes pairs-run { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   /* main row */
-  .header-main { display: flex; align-items: center; gap: 16px; padding: 10px 22px; width: 100%; }
-  .brand-block { display: flex; align-items: center; gap: 16px; flex: 0 0 auto; }
-  .logo-icon { width: 104px; height: 104px; object-fit: contain; display: block; background: transparent; border-radius: 0;
+  .header-main { display: flex; align-items: center; gap: 10px; padding: 6px 12px; width: 100%; flex-wrap: nowrap; }
+  .brand-block { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; min-width: 0; }
+  .logo-icon { width: 42px; height: 42px; object-fit: contain; display: block; background: transparent; border-radius: 0;
     filter: drop-shadow(0 0 10px rgba(201,168,76,.25)); animation: lion-glow 4.5s ease-in-out infinite; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
   .logo-icon:hover { transform: scale(1.06) rotate(-1.5deg); }
   /* Lion: the chin (beard) is a separate jaw layer; every few seconds the lion opens its mouth (click = roar now) */
-  .logo-icon { --jaw: 74px; cursor: pointer; overflow: visible; }
+  .logo-icon { --jaw: 30px; cursor: pointer; overflow: visible; }
   .logo-icon .lion-head, .logo-icon .jaw { will-change: transform; }
   .logo-icon .mouth-in, .logo-icon .tongue, .logo-icon .fangs { opacity: 0; }
   .logo-icon .fangs-up { transform-box: fill-box; transform-origin: 50% 0; }
@@ -143,26 +143,27 @@
   @media (prefers-reduced-motion: reduce) { .logo-icon .lion-head, .logo-icon .jaw, .logo-icon .mouth-in, .logo-icon .tongue, .logo-icon .fangs { animation: none !important; } }
 
   @keyframes lion-glow { 0%, 100% { filter: drop-shadow(0 0 8px rgba(201,168,76,.18)); } 50% { filter: drop-shadow(0 0 18px rgba(201,168,76,.45)); } }
-  .brand-text { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
-  .logo-text { font-family: 'Cormorant Garamond', 'Times New Roman', serif; font-size: 30px; font-weight: 700; letter-spacing: .6px; line-height: 1.05; white-space: nowrap;
+  .brand-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .logo-text { font-family: 'Cormorant Garamond', 'Times New Roman', serif; font-size: 14px; font-weight: 700; letter-spacing: .3px; line-height: 1.1; white-space: nowrap;
     background: linear-gradient(105deg, transparent 38%, rgba(255,250,225,.95) 50%, transparent 62%) no-repeat, linear-gradient(180deg, #f0e0b0 0%, #c9a84c 45%, #8a6d2b 100%);
     background-size: 260% 100%, 100% 100%; background-position: 100% 0, 0 0;
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: wordmark-shine 6s ease-in-out 1.4s infinite; }
   @keyframes wordmark-shine { 0% { background-position: 100% 0, 0 0; } 45%, 100% { background-position: 0% 0, 0 0; } }
-  .brand-tag { display: none !important; font-size: 9px; letter-spacing: 2.4px; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+  .brand-tag { display: block; font-size: 9px; letter-spacing: 0.8px; text-transform: none; color: var(--text-muted); white-space: nowrap; line-height: 1.2; }
   .brand-tag::before { content: ""; display: inline-block; width: 18px; height: 1px; margin-right: 8px; vertical-align: middle; background: linear-gradient(90deg, #c9a84c, transparent); }
 
-  .brand-chart {
-    flex: 1 1 auto;
-    min-width: 180px;
-    max-width: 420px;
-    width: 100%;
+  .brand-chart { display: none !important; /* removed */
+    
+    flex: 0 0 auto;
+    width: 128px;
+    min-width: 128px;
+    max-width: 128px;
     margin: 0;
-    padding: 8px 12px 7px;
+    padding: 4px 6px 3px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 5px;
     background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.008));
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 6px 24px rgba(0,0,0,.35);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 3px 12px rgba(0,0,0,.28);
     transition: border-color .3s ease, box-shadow .3s ease;
   }
   .brand-chart:hover { border-color: var(--green-border); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 6px 24px rgba(0,0,0,.35), 0 0 26px rgba(0,230,118,.12); }
@@ -231,7 +232,7 @@
     background: linear-gradient(90deg, var(--green), var(--cyan)); box-shadow: 0 0 10px var(--green), 0 0 2px var(--green); }
   .tab-ind.ready { transition: transform .45s cubic-bezier(.65,0,.25,1), width .45s cubic-bezier(.65,0,.25,1); }
 
-  .header-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; white-space: nowrap; font-size: 12px; }
+  .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; white-space: nowrap; font-size: 11px; margin-left: auto; }
   .ex-chip { display: flex; align-items: center; gap: 7px; padding: 5px 11px; font-size: 11px; color: var(--text); border: 1px solid var(--amber-border); border-radius: 6px; background: var(--amber-bg); }
   .ex-ico { color: var(--amber); font-size: 9px; }
 
@@ -787,8 +788,8 @@
     .forecast-grid { grid-template-columns: 1fr; }
     .bottom-charts { grid-template-columns: 1fr; }
     .strategy-panel { border-right: none; border-bottom: 1px solid var(--border); }
-    .header-main { flex-wrap: wrap; gap: 14px 16px; padding: 12px 14px; }
-    .brand-chart { margin: 0; max-width: none; width: 100%; }
+    .header-main { flex-wrap: nowrap; gap: 8px; padding: 8px 10px; }
+    .brand-chart { width: 100px; min-width: 100px; max-width: 100px; margin: 0; }
     .header-right { width: 100%; justify-content: flex-start; flex-wrap: wrap; gap: 10px; }
     .tabs-row { padding: 0 6px; }
     .terminal { padding: 10px; }
@@ -797,12 +798,12 @@
   @media (max-width: 600px) {
     .header-right { gap: 8px; font-size: 11px; }
     .metrics { grid-template-columns: 1fr; }
-    .header-main { gap: 12px; padding: 10px 14px; }
-    .logo-icon { width: 56px; height: 56px; }
+    .header-main { gap: 8px; padding: 8px 10px; flex-wrap: nowrap; }
+    .logo-icon { width: 36px; height: 36px; }
     .brand-block { gap: 9px; flex: 1 1 auto; min-width: 0; }
-    .logo-text { font-size: 19px; }
-    .brand-tag, .chart-cap, .chart-legend-mini { display: none; }
-    .brand-chart { width: 100%; max-width: none; min-width: 0; padding: 6px 8px 5px; margin: 0; }
+    .logo-text { font-size: 12px; }
+    .chart-cap, .chart-legend-mini { display: none; }
+    .brand-chart { width: 96px; min-width: 96px; max-width: 96px; padding: 3px 5px 2px; margin: 0; }
     .ex-chip { padding: 4px 8px; font-size: 10px; }
     .ex-ico { display: none; }
     .status { font-size: 11px; }
@@ -922,37 +923,10 @@
         </svg>
         <div class="brand-text">
           <div class="logo-text">AlgoTradeX.ai</div>
-          
+          <div class="brand-tag">Algorithmic trading of the future</div>
         </div>
       </div>
-      <div class="brand-chart hdr-in" style="--d:.12s">
-        <div class="chart-cap"><span><i></i>Scalping</span><span>1m</span></div>
-        <svg class="brand-candles" viewBox="0 0 134 100" role="img" aria-label="Scalping chart: candlesticks with SuperTrend, volatility band and volume">
-          <defs><linearGradient id="scanGrad" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#00e676" stop-opacity="0"/><stop offset=".7" stop-color="#00e676" stop-opacity=".55"/><stop offset="1" stop-color="#b9ffd9" stop-opacity=".95"/></linearGradient></defs>
-          <g class="cd-grid"><line x1="0" y1="20" x2="134" y2="20"/><line x1="0" y1="40" x2="134" y2="40"/><line x1="0" y1="60" x2="134" y2="60"/><line x1="0" y1="87" x2="134" y2="87"/></g>
-          <path class="band" d="M8.0,29.2 C9.8,29.3 15.2,30.4 18.8,29.6 C22.4,28.8 26.0,24.6 29.6,24.4 C33.2,24.2 36.8,26.0 40.4,28.2 C44.0,30.4 47.6,33.6 51.2,37.5 C54.8,41.4 58.4,48.8 62.0,51.8 C65.6,54.8 69.2,56.4 72.8,55.6 C76.4,54.8 80.0,49.5 83.6,46.9 C87.2,44.3 90.8,43.0 94.4,40.1 C98.0,37.2 101.6,33.3 105.2,29.8 C108.8,26.3 112.4,22.7 116.0,19.2 C119.6,15.7 125.0,10.4 126.8,8.6 L126.8,35.4 C125.0,36.5 119.6,39.4 116.0,42.1 C112.4,44.8 108.8,48.6 105.2,51.6 C101.6,54.6 98.0,57.2 94.4,59.9 C90.8,62.6 87.2,64.8 83.6,67.8 C80.0,70.8 76.4,76.1 72.8,77.7 C69.2,79.3 65.6,79.8 62.0,77.5 C58.4,75.2 54.8,68.3 51.2,63.8 C47.6,59.3 44.0,54.1 40.4,50.5 C36.8,46.9 33.2,43.0 29.6,42.3 C26.0,41.6 22.4,45.6 18.8,46.4 C15.2,47.1 9.8,46.7 8.0,46.8 Z"/>
-          <path class="band-edge" d="M8.0,29.2 C9.8,29.3 15.2,30.4 18.8,29.6 C22.4,28.8 26.0,24.6 29.6,24.4 C33.2,24.2 36.8,26.0 40.4,28.2 C44.0,30.4 47.6,33.6 51.2,37.5 C54.8,41.4 58.4,48.8 62.0,51.8 C65.6,54.8 69.2,56.4 72.8,55.6 C76.4,54.8 80.0,49.5 83.6,46.9 C87.2,44.3 90.8,43.0 94.4,40.1 C98.0,37.2 101.6,33.3 105.2,29.8 C108.8,26.3 112.4,22.7 116.0,19.2 C119.6,15.7 125.0,10.4 126.8,8.6"/><path class="band-edge" d="M8.0,46.8 C9.8,46.7 15.2,47.1 18.8,46.4 C22.4,45.6 26.0,41.6 29.6,42.3 C33.2,43.0 36.8,46.9 40.4,50.5 C44.0,54.1 47.6,59.3 51.2,63.8 C54.8,68.3 58.4,75.2 62.0,77.5 C65.6,79.8 69.2,79.3 72.8,77.7 C76.4,76.1 80.0,70.8 83.6,67.8 C87.2,64.8 90.8,62.6 94.4,59.9 C98.0,57.2 101.6,54.6 105.2,51.6 C108.8,48.6 112.4,44.8 116.0,42.1 C119.6,39.4 125.0,36.5 126.8,35.4"/>
-          <g class="vols"><rect class="vb" style="--i:0" x="4.5" y="94.8" width="7" height="5.2" rx="1"/><rect class="vb" style="--i:1" x="15.3" y="94.0" width="7" height="6.0" rx="1"/><rect class="vb" style="--i:2" x="26.1" y="95.6" width="7" height="4.4" rx="1"/><rect class="vb" style="--i:3" x="36.9" y="94.0" width="7" height="6.0" rx="1"/><rect class="vb" style="--i:4" x="47.7" y="90.0" width="7" height="10.0" rx="1"/><rect class="vb" style="--i:5" x="58.5" y="90.8" width="7" height="9.2" rx="1"/><rect class="vb" style="--i:6" x="69.3" y="93.2" width="7" height="6.8" rx="1"/><rect class="vb" style="--i:7" x="80.1" y="94.0" width="7" height="6.0" rx="1"/><rect class="vb" style="--i:8" x="90.9" y="93.2" width="7" height="6.8" rx="1"/><rect class="vb" style="--i:9" x="101.7" y="95.6" width="7" height="4.4" rx="1"/><rect class="vb" style="--i:10" x="112.5" y="92.4" width="7" height="7.6" rx="1"/><rect class="vb" style="--i:11" x="123.3" y="90.8" width="7" height="9.2" rx="1"/></g>
-          <line class="cd-price" x1="0" y1="14" x2="134" y2="14"/>
-        <g class="cd up" style="--i:0"><line x1="8.0" y1="38" x2="8.0" y2="52"/><rect x="4.5" y="42" width="7" height="6" rx="1"/></g>
-        <g class="cd up" style="--i:1"><line x1="18.8" y1="30" x2="18.8" y2="46"/><rect x="15.3" y="34" width="7" height="8" rx="1"/></g>
-        <g class="cd dn" style="--i:2"><line x1="29.6" y1="30" x2="29.6" y2="42"/><rect x="26.1" y="34" width="7" height="4" rx="1"/></g>
-        <g class="cd up" style="--i:3"><line x1="40.4" y1="24" x2="40.4" y2="42"/><rect x="36.9" y="28" width="7" height="10" rx="1"/></g>
-        <g class="cd dn" style="--i:4"><line x1="51.2" y1="24" x2="51.2" y2="56"/><rect x="47.7" y="28" width="7" height="24" rx="1"/></g>
-        <g class="cd dn" style="--i:5"><line x1="62.0" y1="50" x2="62.0" y2="76"/><rect x="58.5" y="52" width="7" height="20" rx="1"/></g>
-        <g class="cd up" style="--i:6"><line x1="72.8" y1="66" x2="72.8" y2="82"/><rect x="69.3" y="70" width="7" height="4" rx="1"/></g>
-        <g class="cd up" style="--i:7"><line x1="83.6" y1="54" x2="83.6" y2="73"/><rect x="80.1" y="58" width="7" height="12" rx="1"/></g>
-        <g class="cd up" style="--i:8"><line x1="94.4" y1="40" x2="94.4" y2="62"/><rect x="90.9" y="44" width="7" height="14" rx="1"/></g>
-        <g class="cd dn" style="--i:9"><line x1="105.2" y1="40" x2="105.2" y2="52"/><rect x="101.7" y="44" width="7" height="4" rx="1"/></g>
-        <g class="cd up" style="--i:10"><line x1="116.0" y1="26" x2="116.0" y2="52"/><rect x="112.5" y="30" width="7" height="18" rx="1"/></g>
-        <g class="cd up last" style="--i:11"><line x1="126.8" y1="8" x2="126.8" y2="34"/><rect x="123.3" y="14" width="7" height="16" rx="1"/></g>
-          <g class="sts"><polyline class="st up" pathLength="1" points="8.0,59.0 18.8,52.7 29.6,49.8 40.4,48.2"/><polyline class="st dn" pathLength="1" points="51.2,19.2 62.0,40.5 72.8,53.6 83.6,53.6"/><polyline class="st up" pathLength="1" points="94.4,71.6 105.2,63.7 116.0,59.5 126.8,43.3"/></g>
-          <g class="sigs"><path class="sg dn" d="M48.0,13 h6.4 l-3.2,5.2 z"/><path class="sg up" d="M91.2,73 h6.4 l-3.2,-5.2 z"/></g>
-          <rect class="scan" x="-6" y="0" width="6" height="100" fill="url(#scanGrad)"/>
-        </svg>
-        <div class="chart-legend-mini"><span class="lg-st" title="SuperTrend">SuperTrend</span><span class="lg-atr" title="Volatility (ATR band)">ATR</span><span class="lg-vol" title="Volume">Vol</span></div>
-      </div>
-    <div class="header-right hdr-in" style="--d:.24s">
+      <div class="header-right hdr-in" style="--d:.24s">
       <div class="ex-chip"><span class="ex-ico">◆</span>Binance Futures</div>
       <div class="contact-wrap" id="contact-wrap">
         <button type="button" class="contact-btn" id="contact-toggle" aria-haspopup="menu" aria-expanded="false">Contact Us <span class="contact-caret">▾</span></button>
