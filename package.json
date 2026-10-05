@@ -1,0 +1,9 @@
+{
+  "name": "algotradex-binance-api",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Binance Futures proxy for AlgoTradeX dashboard (Vercel)",
+  "engines": {
+    "node": ">=18"
+  }
+}
