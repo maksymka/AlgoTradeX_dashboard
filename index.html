@@ -2495,7 +2495,7 @@
   // ===== Live account data from YOUR Binance (via private proxy) =====
   // Set the Worker URL after deploy. Leave empty to keep manual numbers.
   // Example: 'https://algotradex-binance.YOUR_SUBDOMAIN.workers.dev'
-  const BINANCE_PROXY_URL = localStorage.getItem('atx-binance-proxy') || '';
+  const BINANCE_PROXY_URL = localStorage.getItem('atx-binance-proxy') || 'https://backend-binance.vercel.app';
 
   const START_CAPITAL = { alpha: 1187, beta: 700, withdrawn: { alpha: 0, beta: 81 } };
 
