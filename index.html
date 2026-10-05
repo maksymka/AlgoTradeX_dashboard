@@ -2314,8 +2314,10 @@
       chart.data.datasets[0].backgroundColor = values.map(v => v < 0 ? 'rgba(255,23,68,0.75)' : 'rgba(0,230,118,0.8)');
       chart.update('none');
     };
-    redraw(charts.aPnl, [pos.alpha[1].cur, pos.alpha[2].cur]);                       // THE L, THE S
-    redraw(charts.bPnl, [0, 1, 3, 4, 5, 6].map(i => pos.beta[i].cur));               // HOME L/S, DASH L/S, STRK L/S
+    redraw(charts.aPnl, pos.alpha.map(p => p.cur));
+    redraw(charts.bPnl, pos.beta.map(p => p.cur));
+    //redraw(charts.aPnl, [pos.alpha[1].cur, pos.alpha[2].cur]);                       // THE L, THE S
+    //redraw(charts.bPnl, [0, 1, 3, 4, 5, 6].map(i => pos.beta[i].cur));               // HOME L/S, DASH L/S, STRK L/S
     redraw(charts.allPnl, [totals.alpha, totals.beta]);                              // Alpha, Beta
   }
   setInterval(animatePnl, 1800);
