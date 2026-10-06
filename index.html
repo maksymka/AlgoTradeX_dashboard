@@ -62,13 +62,14 @@
   }
 
   .header {
-    overflow: hidden;
+    overflow: visible;
   }
 
   /* ===== Header v2 ===== */
-  .header { position: relative; display: block; border: 1px solid var(--border); background: var(--bg-panel); padding: 0; }
+  .header { --lion: 150px; --lion-shift: 0px; position: relative; display: block; border: 1px solid var(--border); background: var(--bg-panel); padding: 0; overflow: visible; z-index: 30; }
   .header > .pairs-strip, .header > .tabs-row, .header > .header-main { position: relative; z-index: 1; }
-  .header > .header-main { z-index: 3; }              /* dropdowns must paint above the tabs row */
+  .header > .header-main { z-index: 25; }             /* dropdowns above tabs */
+  .header > .tabs-row { z-index: 1; }
   .header-topline { position: absolute; top: -1px; left: -1px; right: -1px; height: 2px; z-index: 2; opacity: .9;
     background: linear-gradient(90deg, transparent 0%, var(--green) 25%, var(--cyan) 55%, transparent 100%); background-size: 220% 100%; animation: topline-run 7s linear infinite; }
   @keyframes topline-run { from { background-position: 120% 0; } to { background-position: -120% 0; } }
@@ -103,13 +104,43 @@
   @keyframes pairs-run { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   /* main row */
-  .header-main { display: flex; align-items: center; gap: 10px; padding: 6px 12px; width: 100%; flex-wrap: nowrap; overflow: hidden; }
-  .brand-block { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; min-width: 0; }
-  .logo-icon { width: 42px; height: 42px; object-fit: contain; display: block; background: transparent; border-radius: 0;
+  .header-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 14px 6px 168px; /* logo lives inside this row, no overlap */
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow: visible;
+    position: relative;
+    z-index: 40;
+    min-height: calc(var(--lion) + 8px); /* row is lion-tall; text + buttons sit on the lion's centre line */
+  }
+  .brand-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 0 0 auto;
+    min-width: 0;
+    position: relative;
+  }
+  .brand-block .logo-icon {
+    position: absolute;
+    left: -156px;
+    top: 50%;
+    transform: translateY(calc(-50% + var(--lion-shift)));
+    width: var(--lion);
+    height: var(--lion);
+    pointer-events: auto;
+  }
+  .brand-block .logo-icon:hover {
+    transform: translateY(calc(-50% + var(--lion-shift))) scale(1.04) rotate(-1.5deg);
+  }
+  .logo-icon { width: 190px; height: 190px; object-fit: contain; display: block; background: transparent; border-radius: 0; flex-shrink: 0;
     filter: drop-shadow(0 0 10px rgba(201,168,76,.25)); animation: lion-glow 4.5s ease-in-out infinite; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
-  .logo-icon:hover { transform: scale(1.06) rotate(-1.5deg); }
+  .logo-icon:hover { /* hover handled via .brand-block .logo-icon:hover */ }
   /* Lion: the chin (beard) is a separate jaw layer; every few seconds the lion opens its mouth (click = roar now) */
-  .logo-icon { --jaw: 30px; cursor: pointer; overflow: visible; }
+  .logo-icon { --jaw: 136px; cursor: pointer; overflow: visible; }
   .logo-icon .lion-head, .logo-icon .jaw { will-change: transform; }
   .logo-icon .mouth-in, .logo-icon .tongue, .logo-icon .fangs { opacity: 0; }
   .logo-icon .fangs-up { transform-box: fill-box; transform-origin: 50% 0; }
@@ -149,7 +180,7 @@
 
   @keyframes lion-glow { 0%, 100% { filter: drop-shadow(0 0 8px rgba(201,168,76,.18)); } 50% { filter: drop-shadow(0 0 18px rgba(201,168,76,.45)); } }
   .brand-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; max-width: min(280px, 55vw); overflow: visible; }
-  .logo-text { font-family: 'Cormorant Garamond', 'Times New Roman', serif; font-size: 14px; font-weight: 700; letter-spacing: .3px; line-height: 1.1; white-space: nowrap;
+  .logo-text { font-family: 'Cormorant Garamond', 'Times New Roman', serif; font-size: 22px; font-weight: 700; letter-spacing: .3px; line-height: 1.1; white-space: nowrap;
     background: linear-gradient(105deg, transparent 38%, rgba(255,250,225,.95) 50%, transparent 62%) no-repeat, linear-gradient(180deg, #f0e0b0 0%, #c9a84c 45%, #8a6d2b 100%);
     background-size: 260% 100%, 100% 100%; background-position: 100% 0, 0 0;
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: wordmark-shine 6s ease-in-out 1.4s infinite; }
@@ -216,7 +247,13 @@
   @keyframes sg-pop { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
   @media (prefers-reduced-motion: reduce) { .brand-candles *, .brand-candles .cd.last { animation: none !important; } }
 
-  .tabs-row { border-top: 1px solid var(--border); background: linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.1)); padding: 0 14px; }
+  .tabs-row { position: relative; border-top: none; background: linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.1)); padding: 0 14px; }
+  .tabs-row::before { display: none; }
+  .header > .pairs-strip { border-bottom: none; }
+  /* header lines hug the brand text: top line at 'AlgoTradeX.ai', bottom line at 'SINCE 2026'; they start right of the lion */
+  .header-main::before, .header-main::after { content: ""; position: absolute; left: 172px; right: 0; height: 1px; background: var(--border); pointer-events: none; }
+  .header-main::before { top: calc(50% - 25px); }
+  .header-main::after { top: calc(50% + 25px); }
   .tabs { position: relative; display: flex; gap: 2px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; max-width: 100%; min-width: 0; }
   .tabs::-webkit-scrollbar { display: none; }
   .tabs.fade-r { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); }
@@ -242,7 +279,9 @@
     background: linear-gradient(90deg, var(--green), var(--cyan)); box-shadow: 0 0 10px var(--green), 0 0 2px var(--green); }
   .tab-ind.ready { transition: transform .45s cubic-bezier(.65,0,.25,1), width .45s cubic-bezier(.65,0,.25,1); }
 
-  .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; white-space: nowrap; font-size: 11px; margin-left: auto; }
+  .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; white-space: nowrap; font-size: 11px; margin-left: auto; position: relative; z-index: 50; overflow: visible; }
+  .contact-wrap { position: relative; z-index: 55; }
+  .period-wrap { position: relative; z-index: 55; }
   .ex-chip { display: flex; align-items: center; gap: 7px; padding: 5px 11px; font-size: 11px; color: var(--text); border: 1px solid var(--amber-border); border-radius: 6px; background: var(--amber-bg); }
   .ex-ico { color: var(--amber); font-size: 9px; }
 
@@ -270,41 +309,47 @@
     50% { opacity: 0.5; }
   }
 
+  .period-wrap {
+    position: relative;
+    flex-shrink: 0;
+    z-index: 40;
+  }
   .period {
     color: var(--text-dim);
     cursor: pointer;
     padding: 4px 10px;
     border: 1px solid var(--border);
     border-radius: 3px;
-    position: relative;
     user-select: none;
+    white-space: nowrap;
   }
-
   .period:hover { border-color: var(--border-bright); color: var(--text); }
-
   .period-menu {
     position: absolute;
-    top: 100%;
-    right: 16px;
-    margin-top: 4px;
+    top: calc(100% + 6px);
+    right: 0;
     background: var(--bg-card);
     border: 1px solid var(--border-bright);
-    border-radius: 4px;
-    z-index: 50;
-    min-width: 80px;
+    border-radius: 6px;
+    z-index: 90;
+    min-width: 88px;
     overflow: hidden;
+    box-shadow: 0 10px 28px rgba(0,0,0,.55);
   }
-
+  .period-menu[hidden] { display: none !important; }
   .period-opt {
     padding: 8px 14px;
     cursor: pointer;
     color: var(--text-dim);
     font-size: 12px;
   }
-
   .period-opt:hover {
     background: var(--bg-hover);
     color: var(--green);
+  }
+  .period-opt.active {
+    color: var(--green);
+    background: rgba(0,230,118,.08);
   }
 
 
@@ -313,7 +358,7 @@
   .contact-btn { cursor:pointer; font-family:inherit; }
   .contact-caret { font-size:9px; margin-left:2px; opacity:.8; }
   .contact-wrap { position:relative; }
-  .contact-menu { display:none; position:absolute; top:calc(100% + 6px); right:0; min-width:270px; background:var(--bg-card); border:1px solid var(--border-bright); border-radius:6px; box-shadow:0 10px 30px rgba(0,0,0,.55); z-index:60; overflow:hidden; }
+  .contact-menu { display:none; position:absolute; top:calc(100% + 6px); right:0; min-width:270px; background:var(--bg-card); border:1px solid var(--border-bright); border-radius:6px; box-shadow:0 10px 30px rgba(0,0,0,.55); z-index:90; overflow:hidden; }
   .contact-menu.open { display:block; }
   .contact-item { position:relative; display:flex; align-items:center; gap:10px; padding:10px 14px; color:var(--text); text-decoration:none; font-size:12px; cursor:pointer; user-select:none; }
   .contact-item + .contact-item { border-top:1px solid var(--border); }
@@ -798,11 +843,16 @@
     .forecast-grid { grid-template-columns: 1fr; }
     .bottom-charts { grid-template-columns: 1fr; }
     .strategy-panel { border-right: none; border-bottom: 1px solid var(--border); }
-    .header-main { flex-wrap: wrap; gap: 8px 10px; padding: 8px 10px; align-items: flex-start; }
+    .header-main { flex-wrap: wrap; gap: 8px 10px; padding: 6px 10px 6px 100px; align-items: center; min-height: 0; }
+    .tabs-row { padding: 0 6px; border-top: 1px solid var(--border); }
+    .tabs-row::before { display: none; }
+    .header > .pairs-strip { border-bottom: 1px solid var(--border); }
+    .header-main::before, .header-main::after { display: none; }
+    .brand-block .logo-icon { left: -88px; width: 80px; height: 80px; --lion-shift: 0px; }
     .brand-chart { width: 100px; min-width: 100px; max-width: 100px; margin: 0; }
     .header-right { width: 100%; justify-content: flex-start; flex-wrap: wrap; gap: 8px; margin-left: 0; }
-    .brand-block { width: 100%; }
-    .brand-text { max-width: calc(100% - 50px); }
+    .brand-block { width: auto; min-height: 84px; }
+    .brand-text { max-width: calc(100vw - 140px); }
     .brand-tag, .brand-since { white-space: normal; max-width: 100%; }
     .logo-text { white-space: nowrap; }
     .tabs-row { padding: 0 6px; }
@@ -812,10 +862,10 @@
   @media (max-width: 600px) {
     .header-right { gap: 8px; font-size: 11px; }
     .metrics { grid-template-columns: 1fr; }
-    .header-main { gap: 8px 10px; padding: 8px 10px; flex-wrap: wrap; align-items: flex-start; }
-    .logo-icon { width: 36px; height: 36px; }
+    .header-main { gap: 8px 10px; padding: 8px 10px 8px 96px; flex-wrap: wrap; align-items: center; }
+    .brand-block .logo-icon { left: -88px; width: 84px; height: 84px; }
     .brand-block { gap: 9px; flex: 1 1 auto; min-width: 0; }
-    .logo-text { font-size: 12px; }
+    .logo-text { font-size: 16px; }
     .chart-cap, .chart-legend-mini { display: none; }
     .brand-chart { width: 96px; min-width: 96px; max-width: 96px; padding: 3px 5px 2px; margin: 0; }
     .ex-chip { padding: 4px 8px; font-size: 10px; }
@@ -956,12 +1006,14 @@
         </div>
       </div>
       <div class="status"><span class="status-dot"></span> Online</div>
-      <div class="period" id="period-toggle">7D ▾</div>
-      <div class="period-menu" id="period-menu" style="display:none">
-        <div class="period-opt" data-days="1">1D</div>
-        <div class="period-opt" data-days="7">7D</div>
-        <div class="period-opt" data-days="30">30D</div>
-        <div class="period-opt" data-days="180">180D</div>
+      <div class="period-wrap">
+        <div class="period" id="period-toggle" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false">7D ▾</div>
+        <div class="period-menu" id="period-menu" role="listbox" hidden>
+          <div class="period-opt" data-days="1">1D</div>
+          <div class="period-opt active" data-days="7">7D</div>
+          <div class="period-opt" data-days="30">30D</div>
+          <div class="period-opt" data-days="180">180D</div>
+        </div>
       </div>
     </div>
     </div>
@@ -1031,6 +1083,20 @@
           <div class="chart-title">PnL by Position</div>
         </div>
         <div class="chart-wrap"><canvas id="chart-a-pnl"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row" style="grid-template-columns:1fr">
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">PnL vs Total Balance</div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Total balance</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> PnL (+)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> PnL (−)</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-a-tbpnl"></canvas></div>
       </div>
     </div>
 
@@ -1240,6 +1306,20 @@
           <div class="chart-title">PnL by Position</div>
         </div>
         <div class="chart-wrap"><canvas id="chart-b-pnl"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row" style="grid-template-columns:1fr">
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">PnL vs Total Balance</div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Total balance</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> PnL (+)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> PnL (−)</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-b-tbpnl"></canvas></div>
       </div>
     </div>
 
@@ -1464,6 +1544,20 @@
           <div class="chart-title">PnL Comparison</div>
         </div>
         <div class="chart-wrap"><canvas id="chart-all-pnl"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row" style="grid-template-columns:1fr">
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">PnL vs Total Balance</div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Total balance</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> PnL (+)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> PnL (−)</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-all-tbpnl"></canvas></div>
       </div>
     </div>
 
@@ -1923,7 +2017,7 @@
     return { hist, forecast, all: hist.concat(forecast) };
   }
 
-  let currentDays = 30;
+  let currentDays = 7; // matches the 7D label shown in the dropdown
   let charts = {};
 
   function destroyCharts() {
@@ -2062,6 +2156,34 @@
     });
   }
 
+  function makePnlBalanceChart(canvasId, labels, bal, start, nowIdx, out) {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return null;
+    const pnl = bal.map((v, i) => Math.round((v - start + (out ? out[i] : 0)) * 100) / 100);
+    const fc = (c) => c.p0DataIndex >= nowIdx ? [5, 4] : undefined;
+    return new Chart(ctx, {
+      type: 'line',
+      data: { labels, datasets: [
+        { type: 'bar', label: 'PnL', data: pnl, yAxisID: 'y2', order: 2, borderWidth: 0, barPercentage: 0.9, categoryPercentage: 1,
+          backgroundColor: (c) => { const v = c.raw, f = c.dataIndex > nowIdx; return v < 0 ? (f ? 'rgba(255,23,68,0.3)' : 'rgba(255,23,68,0.75)') : (f ? 'rgba(0,230,118,0.3)' : 'rgba(0,230,118,0.75)'); } },
+        { label: 'Total balance', data: bal, yAxisID: 'y', tension: 0.3, borderWidth: 1.8, borderColor: A, pointRadius: 0, pointHoverRadius: 4, order: 1,
+          segment: { borderDash: fc } }
+      ] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => {
+          if (c.dataset.label === 'PnL') { const p = c.parsed.y; return ' PnL ' + (p > 0 ? '+' : '') + fmtDisp(p) + '  (' + (p / start * 100).toFixed(2) + '%)'; }
+          return ' Total balance ' + fmtDisp(c.parsed.y); } } } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#555', maxRotation: 0, autoSkip: true, maxTicksLimit: currentDays <= 30 ? 8 : 12 } },
+          y: { position: 'left', grid: { color: grid, drawBorder: false }, ticks: { color: A } },
+          y2: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#888' } }
+        }
+      }
+    });
+  }
+
   function barChart(id, labels, data, colors) {
     const el = document.getElementById(id);
     if (!el) return null;
@@ -2112,7 +2234,7 @@
     currentDays = days;
     destroyCharts();
 
-    const { labels, nowIdx, forecastDays } = buildDates(days);
+    const { labels, dates, nowIdx, forecastDays } = buildDates(days);
 
     // Real balances from screenshots (daysAgo from 06.10.2026):
     // 03.10 ≈ Alpha 1207 / Beta 783 (approx from earlier shots)
@@ -2136,6 +2258,12 @@
     charts.aEq = makeLineChart('chart-a-equity', labels, aAll, nowIdx, G);
     charts.bEq = makeLineChart('chart-b-equity', labels, bAll, nowIdx, G);
     charts.allEq = makeCombinedChart('chart-all-equity', labels, aAll, bAll, nowIdx);
+    // PnL vs Total Balance (start: Alpha 1187 + Beta 700; combined adds 81 withdrawn, spread linearly from 01.06.26)
+    const T0 = new Date(2026, 5, 1), spanD = daysBetween(T0, TODAY);
+    const outArr = dates.map(d => S(81) * Math.min(Math.max(daysBetween(T0, d) / spanD, 0), 1));
+    charts.aTb = makePnlBalanceChart('chart-a-tbpnl', labels, aAll, S(1187), nowIdx);
+    charts.bTb = makePnlBalanceChart('chart-b-tbpnl', labels, bAll, S(700), nowIdx);
+    charts.allTb = makePnlBalanceChart('chart-all-tbpnl', labels, aAll.map((v, i) => v + bAll[i]), S(1887), nowIdx, outArr);
 
     // Static bar / doughnut charts
     charts.aPnl = barChart('chart-a-pnl',
@@ -2183,24 +2311,36 @@
       dailyLabels.map(() => 'rgba(255,23,68,0.65)'));
   }
 
-  // Period toggle
+  // Period toggle — switches ALL equity / daily charts
   const periodBtn = document.getElementById('period-toggle');
   const periodMenu = document.getElementById('period-menu');
-
+  function closePeriodMenu() {
+    if (!periodMenu) return;
+    periodMenu.hidden = true;
+    if (periodBtn) periodBtn.setAttribute('aria-expanded', 'false');
+  }
+  function openPeriodMenu() {
+    periodMenu.hidden = false;
+    periodBtn.setAttribute('aria-expanded', 'true');
+  }
   periodBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    periodMenu.style.display = periodMenu.style.display === 'none' ? 'block' : 'none';
+    if (periodMenu.hidden) openPeriodMenu();
+    else closePeriodMenu();
   });
-  document.addEventListener('click', () => { periodMenu.style.display = 'none'; });
+  document.addEventListener('click', () => closePeriodMenu());
+  periodMenu.addEventListener('click', (e) => e.stopPropagation());
 
   document.querySelectorAll('.period-opt').forEach(opt => {
     opt.addEventListener('click', (e) => {
       e.stopPropagation();
       const days = parseInt(opt.dataset.days, 10);
+      if (!days || !isFinite(days)) return;
       periodBtn.textContent = days + 'D ▾';
-      periodMenu.style.display = 'none';
+      document.querySelectorAll('.period-opt').forEach(o => o.classList.toggle('active', o === opt));
+      closePeriodMenu();
       renderAllCharts(days);
-      setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 60);
     });
   });
 
@@ -2213,7 +2353,7 @@
   }
   contactToggle.addEventListener('click', (e) => {
     e.stopPropagation();
-    periodMenu.style.display = 'none';
+    closePeriodMenu();
     const open = contactMenu.classList.toggle('open');
     contactToggle.setAttribute('aria-expanded', String(open));
   });
