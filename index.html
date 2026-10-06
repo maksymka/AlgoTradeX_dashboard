@@ -148,13 +148,13 @@
   @media (prefers-reduced-motion: reduce) { .logo-icon .lion-head, .logo-icon .jaw, .logo-icon .mouth-in, .logo-icon .tongue, .logo-icon .fangs { animation: none !important; } }
 
   @keyframes lion-glow { 0%, 100% { filter: drop-shadow(0 0 8px rgba(201,168,76,.18)); } 50% { filter: drop-shadow(0 0 18px rgba(201,168,76,.45)); } }
-  .brand-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; max-width: 200px; overflow: hidden; }
+  .brand-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; max-width: min(280px, 55vw); overflow: visible; }
   .logo-text { font-family: 'Cormorant Garamond', 'Times New Roman', serif; font-size: 14px; font-weight: 700; letter-spacing: .3px; line-height: 1.1; white-space: nowrap;
     background: linear-gradient(105deg, transparent 38%, rgba(255,250,225,.95) 50%, transparent 62%) no-repeat, linear-gradient(180deg, #f0e0b0 0%, #c9a84c 45%, #8a6d2b 100%);
     background-size: 260% 100%, 100% 100%; background-position: 100% 0, 0 0;
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: wordmark-shine 6s ease-in-out 1.4s infinite; }
   @keyframes wordmark-shine { 0% { background-position: 100% 0, 0 0; } 45%, 100% { background-position: 0% 0, 0 0; } }
-  .brand-tag { display: block; font-size: 9px; letter-spacing: 0.8px; text-transform: none; color: var(--text-muted); white-space: nowrap; line-height: 1.2; }
+  .brand-tag { display: block; font-size: 9px; letter-spacing: 0.6px; text-transform: none; color: var(--text-muted); white-space: nowrap; line-height: 1.2; overflow: visible; }
   .brand-since { font-size: 6px; letter-spacing: 1px; text-transform: uppercase; color: #c9a84c; opacity: 0.65; white-space: nowrap; line-height: 1.1; }
   .brand-tag::before { content: ""; display: inline-block; width: 18px; height: 1px; margin-right: 8px; vertical-align: middle; background: linear-gradient(90deg, #c9a84c, transparent); }
 
@@ -230,6 +230,10 @@
   .tab[data-tab="g"]::before { content: "γ"; }
   .tab[data-tab="d"]::before { content: "δ"; }
   .tab[data-tab="e"]::before { content: "ε"; }
+  .tab[data-tab="z"]::before { content: "ζ"; }
+  .tab[data-tab="h"]::before { content: "η"; }
+  .tab[data-tab="th"]::before { content: "θ"; }
+  .tab[data-tab="i"]::before { content: "ι"; }
   .tab:hover { color: var(--white); background: linear-gradient(180deg, transparent, rgba(255,255,255,.045)); }
   .tab:hover::before { opacity: .9; }
   .tab.active { color: var(--green); background: linear-gradient(180deg, transparent, rgba(0,230,118,.09)); text-shadow: 0 0 12px rgba(0,230,118,.35); }
@@ -952,8 +956,10 @@
         </div>
       </div>
       <div class="status"><span class="status-dot"></span> Online</div>
-      <div class="period" id="period-toggle">30D ▾</div>
+      <div class="period" id="period-toggle">7D ▾</div>
       <div class="period-menu" id="period-menu" style="display:none">
+        <div class="period-opt" data-days="1">1D</div>
+        <div class="period-opt" data-days="7">7D</div>
         <div class="period-opt" data-days="30">30D</div>
         <div class="period-opt" data-days="180">180D</div>
       </div>
@@ -967,6 +973,10 @@
         <div class="tab" data-tab="g" data-soon="Strategy Gamma" id="tab-gamma">Strategy Gamma</div>
         <div class="tab" data-tab="d" data-soon="Strategy Delta" id="tab-delta">Strategy Delta</div>
         <div class="tab" data-tab="e" data-soon="Strategy Epsilon" id="tab-epsilon">Strategy Epsilon</div>
+        <div class="tab" data-tab="z" data-soon="Strategy Zeta" id="tab-zeta">Strategy Zeta</div>
+        <div class="tab" data-tab="h" data-soon="Strategy Eta" id="tab-eta">Strategy Eta</div>
+        <div class="tab" data-tab="th" data-soon="Strategy Theta" id="tab-theta">Strategy Theta</div>
+        <div class="tab" data-tab="i" data-soon="Strategy Iota" id="tab-iota">Strategy Iota</div>
         <span class="tab-ind" id="tab-ind"></span>
       </div>
     </div>
@@ -1008,7 +1018,7 @@
     <div class="charts-row">
       <div class="chart-box">
         <div class="chart-header">
-          <div class="chart-title">Equity Curve</div>
+          <div class="chart-title">Deposit Growth</div>
           <div class="chart-legend">
             <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Equity</div>
             <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Forecast</div>
@@ -1217,7 +1227,7 @@
     <div class="charts-row">
       <div class="chart-box">
         <div class="chart-header">
-          <div class="chart-title">Equity Curve</div>
+          <div class="chart-title">Deposit Growth</div>
           <div class="chart-legend">
             <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Equity</div>
             <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Forecast</div>
@@ -1440,7 +1450,7 @@
     <div class="charts-row">
       <div class="chart-box">
         <div class="chart-header">
-          <div class="chart-title">Combined Equity</div>
+          <div class="chart-title">Combined Deposit Growth</div>
           <div class="chart-legend">
             <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Strategy Alpha</div>
             <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div> Strategy Beta</div>
@@ -1834,7 +1844,7 @@
   const grid = '#1a1a1a';
 
   // ===== Date helpers =====
-  const TODAY = new Date(2026, 9, 4); // Oct 4, 2026
+  const TODAY = new Date(2026, 9, 6); // Oct 6, 2026
   const END_FORECAST = new Date(2026, 11, 31); // Dec 31, 2026
 
   function fmtDate(d) {
@@ -1877,33 +1887,38 @@
     return { labels, dates, nowIdx: daysBack, forecastDays };
   }
 
-  // Synthetic equity path (smooth-ish) ending at current, then mild recovery forecast
-  function buildEquitySeries(startBal, currentBal, daysBack, forecastDays, volatility) {
+  // Equity path with real anchors from screenshots (05.10 & 06.10.2026)
+  // anchors: { daysAgo: balance } relative to "today" (last hist point)
+  function buildEquitySeries(startBal, currentBal, daysBack, forecastDays, volatility, anchors) {
     const hist = [];
     const n = daysBack + 1;
-    // First point = exact start balance, last point = exact current balance
     for (let i = 0; i < n; i++) {
       const t = i / Math.max(n - 1, 1);
-      // smooth curve from startBal -> currentBal
-      const eased = t * t * (3 - 2 * t); // smoothstep
+      const eased = t * t * (3 - 2 * t);
       let base = startBal + (currentBal - startBal) * eased;
-      // add mild path variation (not on endpoints)
       if (i > 0 && i < n - 1) {
         const noise = Math.sin(i * 0.55) * volatility * (1 - Math.abs(t - 0.5) * 1.2)
                     + Math.cos(i * 0.27) * volatility * 0.35;
         base += noise;
       }
-      hist.push(Math.round(base));
+      hist.push(Math.round(base * 100) / 100);
     }
     hist[0] = startBal;
     hist[n - 1] = currentBal;
-    // forecast to year-end: mild recovery
+    // Pin real balances from screenshots (daysAgo from today)
+    if (anchors) {
+      Object.keys(anchors).forEach(k => {
+        const daysAgo = parseInt(k, 10);
+        const idx = n - 1 - daysAgo;
+        if (idx >= 0 && idx < n) hist[idx] = anchors[k];
+      });
+    }
     const forecast = [];
     const recoverTo = currentBal + Math.max(40, Math.abs(startBal) * 0.06);
     for (let i = 1; i <= forecastDays; i++) {
       const t = i / Math.max(forecastDays, 1);
       const val = currentBal + (recoverTo - currentBal) * Math.sqrt(t);
-      forecast.push(Math.round(val));
+      forecast.push(Math.round(val * 100) / 100);
     }
     return { hist, forecast, all: hist.concat(forecast) };
   }
@@ -1919,25 +1934,47 @@
   function makeLineChart(canvasId, labels, data, nowIdx, color) {
     const ctx = document.getElementById(canvasId);
     if (!ctx) return null;
+    const col = color || G;
+    const histData = data.map((v, i) => (i <= nowIdx ? v : null));
+    const fcData = data.map((v, i) => (i >= nowIdx ? v : null));
     return new Chart(ctx, {
       type: 'line',
       data: {
         labels,
-        datasets: [{
-          data,
-          borderColor: color || G,
-          backgroundColor: 'rgba(0,230,118,0.05)',
-          fill: true,
-          tension: 0.25,
-          pointRadius: 0,
-          pointHoverRadius: 4,
-          pointBackgroundColor: color || G,
-          borderWidth: 2,
-          segment: {
-            borderColor: ctx => ctx.p0DataIndex >= nowIdx ? A : (color || G),
-            borderDash: ctx => ctx.p0DataIndex >= nowIdx ? [5, 4] : undefined
+        datasets: [
+          {
+            label: 'Deposit',
+            data: histData,
+            borderColor: col,
+            backgroundColor: (c) => {
+              const ch = c.chart;
+              const {ctx: cx, chartArea} = ch;
+              if (!chartArea) return 'rgba(0,230,118,0.08)';
+              const g = cx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+              g.addColorStop(0, 'rgba(0,230,118,0.28)');
+              g.addColorStop(1, 'rgba(0,230,118,0.01)');
+              return g;
+            },
+            fill: true,
+            tension: 0.35,
+            pointRadius: (c) => c.dataIndex === nowIdx ? 4 : 0,
+            pointHoverRadius: 5,
+            pointBackgroundColor: col,
+            borderWidth: 2.5,
+            spanGaps: false
+          },
+          {
+            label: 'Forecast',
+            data: fcData,
+            borderColor: A,
+            borderDash: [5, 4],
+            fill: false,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 1.5,
+            spanGaps: false
           }
-        }]
+        ]
       },
       options: {
         responsive: true,
@@ -1946,31 +1983,18 @@
           legend: { display: false },
           tooltip: {
             callbacks: {
-              title: items => items[0] ? labels[items[0].dataIndex] : '',
-              label: c => ' ' + fmtDisp(c.parsed.y)
+              label: (c) => ' ' + fmtDisp(c.parsed.y)
             }
           }
         },
         scales: {
           x: {
             grid: { color: grid, drawBorder: false },
-            ticks: {
-              color: '#555',
-              maxRotation: 0,
-              autoSkip: true,
-              maxTicksLimit: currentDays <= 30 ? 8 : 12,
-              callback: function(val, idx) {
-                // show fewer labels
-                return this.getLabelForValue(val);
-              }
-            }
+            ticks: { color: '#555', maxRotation: 0, autoSkip: true, maxTicksLimit: currentDays <= 30 ? 8 : 12 }
           },
           y: {
             grid: { color: grid, drawBorder: false },
-            ticks: {
-              color: '#555',
-              callback: v => v.toLocaleString()
-            }
+            ticks: { color: '#555', callback: v => v.toLocaleString() }
           }
         },
         interaction: { intersect: false, mode: 'index' }
@@ -2090,10 +2114,23 @@
 
     const { labels, nowIdx, forecastDays } = buildDates(days);
 
-    // Alpha: start 1187, current ~1207 (equity after uPnL roughly balance)
-    // Use balance as equity proxy
-    const alpha = buildEquitySeries(1187, 1217, days, forecastDays, 28);
-    const beta = buildEquitySeries(700, 786, days, forecastDays, 40);
+    // Real balances from screenshots (daysAgo from 06.10.2026):
+    // 03.10 ≈ Alpha 1207 / Beta 783 (approx from earlier shots)
+    // 04.10 Alpha 1208.19 / Beta 783.01
+    // 05.10 Alpha 1215.79 / Beta 784.64
+    // 06.10 Alpha 1217.01 / Beta 785.64
+    const alpha = buildEquitySeries(1187, 1217.01, days, forecastDays, 28, {
+      0: 1217.01,  // 06.10
+      1: 1215.79,  // 05.10
+      2: 1208.19,  // 04.10
+      3: 1207.00   // 03.10
+    });
+    const beta = buildEquitySeries(700, 785.64, days, forecastDays, 40, {
+      0: 785.64,   // 06.10
+      1: 784.64,   // 05.10
+      2: 783.01,   // 04.10
+      3: 782.50    // 03.10
+    });
 
     const aAll = alpha.all.map(S), bAll = beta.all.map(S);   // USDT -> display currency
     charts.aEq = makeLineChart('chart-a-equity', labels, aAll, nowIdx, G);
@@ -2132,9 +2169,9 @@
 
     // Daily PnL last 7 of the selected window
     const dailyLabels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
-    // Daily uPnL snapshot: ... 04.10 → 05.10 → 06.10 (today)
-    const dailyA = [-12, -18, -9, -22, -15, -134.86, -138.52];
-    const dailyB = [-20, -28, -14, -32, -22, -249.14, -251.29];
+    // Daily uPnL (last 7 ending 06.10): 30.09 01.10 02.10 03.10 04.10 05.10 06.10
+    const dailyA = [-12, -18, -25, -136.0, -135.96, -134.86, -138.52];
+    const dailyB = [-20, -28, -40, -259.0, -263.68, -249.14, -251.29];
     charts.aDaily = barChart('chart-a-daily', dailyLabels,
       dailyA.map(S).slice(-dailyLabels.length),
       dailyLabels.map(() => 'rgba(255,23,68,0.6)'));
@@ -2649,7 +2686,7 @@
 
 
   // Initial render
-  renderAllCharts(30);
+  renderAllCharts(7);
   updateFxUi();
   try { const saved = localStorage.getItem('atx-currency'); if (saved && FX_META[saved] && saved !== 'USD') setCurrency(saved); } catch (e) {}
 
