@@ -829,8 +829,10 @@
   @media (max-width:760px) { .bn-btn { font-size:9px; } }
 
   /* Visibility */
-  .content-a, .content-b, .content-all { display: none; }
-  .content-a.active, .content-b.active, .content-all.active { display: block; }
+  .content-a, .content-b, .content-g, .content-all { display: none; }
+  .content-a.active, .content-b.active, .content-g.active, .content-all.active { display: block; }
+  .content-all .strategies { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 900px) { .content-all .strategies { grid-template-columns: 1fr; } }
 
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -1022,7 +1024,7 @@
         <div class="tab active" data-tab="all">All Strategies</div>
         <div class="tab" data-tab="a">Strategy Alpha</div>
         <div class="tab" data-tab="b">Strategy Beta</div>
-        <div class="tab" data-tab="g" data-soon="Strategy Gamma" id="tab-gamma">Strategy Gamma</div>
+        <div class="tab" data-tab="g" id="tab-gamma">Strategy Gamma</div>
         <div class="tab" data-tab="d" data-soon="Strategy Delta" id="tab-delta">Strategy Delta</div>
         <div class="tab" data-tab="e" data-soon="Strategy Epsilon" id="tab-epsilon">Strategy Epsilon</div>
         <div class="tab" data-tab="z" data-soon="Strategy Zeta" id="tab-zeta">Strategy Zeta</div>
@@ -1039,23 +1041,23 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">1,219.66 USDT</div>
+        <div class="metric-value neutral">1,222.76 USDT</div>
         <div class="metric-sub">Start 01.06.26: 1,187.00 · Out: 0</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−122.88 USDT</div>
-        <div class="metric-sub">To BE: +122.88 needed</div>
+        <div class="metric-value neg">−97.37 USDT</div>
+        <div class="metric-sub">To BE: +97.37 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+32.66 USDT</div>
-        <div class="metric-sub">+2.75% · bal+out − start</div>
+        <div class="metric-value pos">+35.76 USDT</div>
+        <div class="metric-sub">+3.01% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
         <div class="metric-value amber">HIGH</div>
-        <div class="metric-sub">Liq risk up to 6.5% · dual THE</div>
+        <div class="metric-sub">Liq risk up to 4.0% · THE short</div>
         <div class="metric-risk">
           <div class="metric-risk-track">
             <div class="rs s" style="width:25%"></div>
@@ -1109,7 +1111,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−122.88 USDT</div>
+            <div class="value neg">−97.37 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1127,11 +1129,11 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">Positions</div>
-            <div class="value neutral">2 open</div>
+            <div class="value neutral">5 open</div>
           </div>
           <div class="stat-item">
             <div class="label">Used margin</div>
-            <div class="value neutral">54.28</div>
+            <div class="value neutral">51.32</div>
           </div>
         </div>
 
@@ -1142,18 +1144,39 @@
             </thead>
             <tbody>
               <tr>
+                <td>HOME</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.005542</td>
+                <td>0.005564</td>
+                <td class="pnl-neg">−0.02</td>
+              </tr>
+              <tr>
+                <td>ARK</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.2234</td>
+                <td>0.2236</td>
+                <td class="pnl-neg">−0.00</td>
+              </tr>
+              <tr>
+                <td>PHA</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.06168</td>
+                <td>0.06150</td>
+                <td class="pnl-pos">+0.02</td>
+              </tr>
+              <tr>
                 <td>THE</td>
                 <td><span class="side-L">LONG</span></td>
                 <td>0.08628</td>
-                <td>0.07121</td>
-                <td class="pnl-neg">−26.50</td>
+                <td>0.06498</td>
+                <td class="pnl-neg">−37.45</td>
               </tr>
               <tr>
                 <td>THE</td>
                 <td><span class="side-S">SHORT</span></td>
-                <td>0.05478</td>
-                <td>0.07121</td>
-                <td class="pnl-neg">−96.38</td>
+                <td>0.05477</td>
+                <td>0.06498</td>
+                <td class="pnl-neg">−59.88</td>
               </tr>
 </tbody>
           </table>
@@ -1168,7 +1191,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−211.82 USDT</div>
+            <div class="value neg">−268.26 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1232,7 +1255,7 @@
           <div class="risk-seg safe" style="width:25%"></div>
           <div class="risk-seg warn" style="width:40%"></div>
           <div class="risk-seg danger" style="width:35%"></div>
-          <div class="risk-marker" style="left:80%" data-label="NOW −122.88"></div>
+          <div class="risk-marker" style="left:80%" data-label="NOW −97.37"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−40 safe</span>
@@ -1248,23 +1271,23 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">787.18 USDT</div>
+        <div class="metric-value neutral">790.50 USDT</div>
         <div class="metric-sub">Start 01.06.26: 700.00 · Out: 81.00</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−211.82 USDT</div>
-        <div class="metric-sub">To BE: +211.82 needed</div>
+        <div class="metric-value neg">−268.26 USDT</div>
+        <div class="metric-sub">To BE: +268.26 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+168.18 USDT</div>
-        <div class="metric-sub">+24.03% · bal+out − start</div>
+        <div class="metric-value pos">+171.50 USDT</div>
+        <div class="metric-sub">+24.50% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
         <div class="metric-value neg">VERY HIGH</div>
-        <div class="metric-sub">Liq risk up to 15.4% · STRK SHORT</div>
+        <div class="metric-sub">Liq risk up to 24.9% · STRK SHORT</div>
         <div class="metric-risk">
           <div class="metric-risk-track">
             <div class="rs s" style="width:20%"></div>
@@ -1318,7 +1341,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−122.88 USDT</div>
+            <div class="value neg">−97.37 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1346,7 +1369,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−211.82 USDT</div>
+            <div class="value neg">−268.26 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1364,11 +1387,11 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">Positions</div>
-            <div class="value neutral">6 open</div>
+            <div class="value neutral">7 open</div>
           </div>
           <div class="stat-item">
             <div class="label">Used margin</div>
-            <div class="value neutral">152.78</div>
+            <div class="value neutral">162.86</div>
           </div>
         </div>
 
@@ -1382,43 +1405,50 @@
                 <td>HOME</td>
                 <td><span class="side-L">LONG</span></td>
                 <td>0.01100</td>
-                <td>0.005597</td>
-                <td class="pnl-neg">−88.08</td>
+                <td>0.005548</td>
+                <td class="pnl-neg">−88.89</td>
               </tr>
               <tr>
                 <td>HOME</td>
                 <td><span class="side-S">SHORT</span></td>
                 <td>0.00678</td>
-                <td>0.005597</td>
-                <td class="pnl-pos">+63.95</td>
+                <td>0.005548</td>
+                <td class="pnl-pos">+66.65</td>
               </tr>
               <tr>
                 <td>DASH</td>
                 <td><span class="side-L">LONG</span></td>
                 <td>67.7845</td>
-                <td>54.03</td>
-                <td class="pnl-neg">−27.55</td>
+                <td>50.52</td>
+                <td class="pnl-neg">−34.52</td>
               </tr>
               <tr>
                 <td>DASH</td>
                 <td><span class="side-S">SHORT</span></td>
                 <td>54.1865</td>
-                <td>54.03</td>
-                <td class="pnl-pos">+1.01</td>
+                <td>50.52</td>
+                <td class="pnl-pos">+24.46</td>
+              </tr>
+              <tr>
+                <td>MON</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.02354</td>
+                <td>0.02375</td>
+                <td class="pnl-neg">−0.13</td>
               </tr>
               <tr>
                 <td>STRK</td>
                 <td><span class="side-L">LONG</span></td>
-                <td>0.05616</td>
-                <td>0.04999</td>
-                <td class="pnl-neg">−18.88</td>
+                <td>0.05929</td>
+                <td>0.05902</td>
+                <td class="pnl-neg">−0.81</td>
               </tr>
               <tr>
                 <td>STRK</td>
                 <td><span class="side-S">SHORT</span></td>
                 <td>0.03606</td>
-                <td>0.04999</td>
-                <td class="pnl-neg">−142.31</td>
+                <td>0.05902</td>
+                <td class="pnl-neg">−234.42</td>
               </tr>
 </tbody>
           </table>
@@ -1469,7 +1499,7 @@
           <div class="risk-seg safe" style="width:20%"></div>
           <div class="risk-seg warn" style="width:40%"></div>
           <div class="risk-seg danger" style="width:40%"></div>
-          <div class="risk-marker" style="left:92%" data-label="NOW −211.82"></div>
+          <div class="risk-marker" style="left:92%" data-label="NOW −268.26"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−30 safe</span>
@@ -1480,23 +1510,119 @@
     </div>
   </div>
 
+  <!-- ==================== STRATEGY GAMMA ==================== -->
+  <div class="content-g">
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Current Balance</div>
+        <div class="metric-value neutral">500.31 USDT</div>
+        <div class="metric-sub">Start 08.10.26: 500.31 · Out: 0</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Unrealized PnL</div>
+        <div class="metric-value neutral">0.00 USDT</div>
+        <div class="metric-sub">No open positions</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Net PnL (now)</div>
+        <div class="metric-value neutral">0.00 USDT</div>
+        <div class="metric-sub">0.00% · bal+out − start</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Risk Level</div>
+        <div class="metric-value neutral">IDLE</div>
+        <div class="metric-sub">Bybit Futures · Robot #451 · no exposure</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">Deposit Growth</div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Equity</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Forecast</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-g-equity"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">PnL vs Total Balance</div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Total balance</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> PnL</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-g-tbpnl"></canvas></div>
+      </div>
+    </div>
+
+    <div class="strategies" style="grid-template-columns:1fr">
+      <div class="strategy-panel">
+        <div class="strategy-name">
+          Strategy Gamma · Bybit Futures
+          <span class="badge">Robot #451</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">PnL</div>
+            <div class="value neutral">0.00 USDT</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Win rate</div>
+            <div class="value neutral">—</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Drawdown</div>
+            <div class="value neutral">0%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Risk</div>
+            <div class="value neutral">Idle</div>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">Positions</div>
+            <div class="value neutral">0 open</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Used margin</div>
+            <div class="value neutral">0.00</div>
+          </div>
+        </div>
+        <div class="pos-table">
+          <table>
+            <thead>
+              <tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="5" style="color:var(--text-muted);text-align:center">No open positions</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== ALL STRATEGIES ==================== -->
   <div class="content-all active">
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Total Balance</div>
-        <div class="metric-value neutral">2,006.84 USDT</div>
-        <div class="metric-sub">Start 01.06.26: 1,887.00 · Out: 81.00</div>
+        <div class="metric-value neutral">2,513.57 USDT</div>
+        <div class="metric-sub">Start 01.06.26: 2,387.31 · Out: 81.00</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−334.70 USDT</div>
-        <div class="metric-sub">To BE: +334.70 needed</div>
+        <div class="metric-value neg">−365.63 USDT</div>
+        <div class="metric-sub">To BE: +365.63 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+200.84 USDT</div>
-        <div class="metric-sub">+10.64% · bal+out − start</div>
+        <div class="metric-value pos">+207.26 USDT</div>
+        <div class="metric-sub">+8.68% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -1556,7 +1682,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−122.88 USDT</div>
+            <div class="value neg">−97.37 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1591,7 +1717,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−211.82 USDT</div>
+            <div class="value neg">−268.26 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1614,6 +1740,40 @@
           <div class="stat-item">
             <div class="label">Hedge eff.</div>
             <div class="value amber">Partial</div>
+          </div>
+        </div>
+      </div>
+      <div class="strategy-panel">
+        <div class="strategy-name">
+          Strategy Gamma · Bybit
+          <span class="badge">Robot #451</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">PnL</div>
+            <div class="value neutral">0.00 USDT</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Win rate</div>
+            <div class="value neutral">—</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Drawdown</div>
+            <div class="value neutral">0%</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Risk</div>
+            <div class="value neutral">Idle</div>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="label">Net bias</div>
+            <div class="value neutral">Flat</div>
+          </div>
+          <div class="stat-item">
+            <div class="label">Positions</div>
+            <div class="value neutral">0 open</div>
           </div>
         </div>
       </div>
@@ -1662,7 +1822,7 @@
           <div class="risk-seg safe" style="width:18%"></div>
           <div class="risk-seg warn" style="width:42%"></div>
           <div class="risk-seg danger" style="width:40%"></div>
-          <div class="risk-marker" style="left:96%" data-label="NOW −334.70"></div>
+          <div class="risk-marker" style="left:96%" data-label="NOW −365.63"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−40 safe</span>
@@ -1803,8 +1963,8 @@
       tab.classList.add('active');
       moveTabIndicator();
       tab.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
-      document.querySelectorAll('.content-a, .content-b, .content-all').forEach(c => c.classList.remove('active'));
-      const map = { a: 'content-a', b: 'content-b', all: 'content-all' };
+      document.querySelectorAll('.content-a, .content-b, .content-g, .content-all').forEach(c => c.classList.remove('active'));
+      const map = { a: 'content-a', b: 'content-b', g: 'content-g', all: 'content-all' };
       document.querySelector('.' + map[tab.dataset.tab]).classList.add('active');
       setTimeout(() => window.dispatchEvent(new Event('resize')), 40);
     });
@@ -1924,7 +2084,7 @@
   const grid = '#1a1a1a';
 
   // ===== Date helpers =====
-  const TODAY = new Date(2026, 9, 7); // Oct 7, 2026
+  const TODAY = new Date(2026, 9, 8); // Oct 8, 2026
   const END_FORECAST = new Date(2026, 11, 31); // Dec 31, 2026
 
   function fmtDate(d) {
@@ -2082,7 +2242,17 @@
     });
   }
 
-  function makeCombinedChart(canvasId, labels, dataA, dataB, nowIdx) {
+  function makeCombinedChart(canvasId, labels, dataA, dataB, nowIdx, dataG) {
+    const ch = makeCombinedChart0(canvasId, labels, dataA, dataB, nowIdx);
+    if (ch && dataG) {
+      ch.data.datasets.push({ label: 'Strategy Gamma', data: dataG, borderColor: '#b388ff', backgroundColor: 'transparent', tension: 0.25,
+        pointRadius: (c) => (c.dataIndex === nowIdx ? 4 : 0), borderWidth: 2,
+        segment: { borderDash: (c) => (c.p0DataIndex >= nowIdx ? [5, 4] : undefined) } });
+      ch.update('none');
+    }
+    return ch;
+  }
+  function makeCombinedChart0(canvasId, labels, dataA, dataB, nowIdx) {
     const ctx = document.getElementById(canvasId);
     if (!ctx) return null;
     return new Chart(ctx, {
@@ -2142,10 +2312,10 @@
     });
   }
 
-  function makePnlBalanceChart(canvasId, labels, bal, start, nowIdx, out) {
+  function makePnlBalanceChart(canvasId, labels, bal, start, nowIdx, out, startArr) {
     const ctx = document.getElementById(canvasId);
     if (!ctx) return null;
-    const pnl = bal.map((v, i) => Math.round((v - start + (out ? out[i] : 0)) * 100) / 100);
+    const pnl = bal.map((v, i) => (v == null ? null : Math.round((v - (startArr ? startArr[i] : start) + (out ? out[i] : 0)) * 100) / 100));
     const fc = (c) => c.p0DataIndex >= nowIdx ? [5, 4] : undefined;
     return new Chart(ctx, {
       type: 'line',
@@ -2164,7 +2334,7 @@
         scales: {
           x: { grid: { display: false }, ticks: { color: '#555', maxRotation: 0, autoSkip: true, maxTicksLimit: currentDays <= 30 ? 8 : 12 } },
           y: { position: 'left', grid: { color: grid, drawBorder: false }, ticks: { color: A } },
-          y2: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#888' } }
+          y2: { position: 'right', suggestedMin: -1, suggestedMax: 1, grid: { drawOnChartArea: false }, ticks: { color: '#888' } }
         }
       }
     });
@@ -2228,67 +2398,64 @@
     // 05.10 Alpha 1215.79 / Beta 784.64
     // 06.10 Alpha 1217.01 / Beta 785.64
     // 07.10 Alpha 1219.66 / Beta 787.18  (today)
-    const alpha = buildEquitySeries(1187, 1219.66, days, forecastDays, 28, {
-      0: 1219.66,  // 07.10
-      1: 1217.01,  // 06.10
-      2: 1215.79,  // 05.10
-      3: 1208.19,  // 04.10
-      4: 1207.00   // 03.10
+    // 08.10 Alpha 1222.76 / Beta 790.50 / Gamma 500.31 (new, Bybit)
+    const alpha = buildEquitySeries(1187, 1222.76, days, forecastDays, 28, {
+      0: 1222.76,  // 08.10
+      1: 1219.66,  // 07.10
+      2: 1217.01,  // 06.10
+      3: 1215.79,  // 05.10
+      4: 1208.19   // 04.10
     });
-    const beta = buildEquitySeries(700, 787.18, days, forecastDays, 40, {
-      0: 787.18,   // 07.10
-      1: 785.64,   // 06.10
-      2: 784.64,   // 05.10
-      3: 783.01,   // 04.10
-      4: 782.50    // 03.10
+    const beta = buildEquitySeries(700, 790.50, days, forecastDays, 40, {
+      0: 790.50,   // 08.10
+      1: 787.18,   // 07.10
+      2: 785.64,   // 06.10
+      3: 784.64,   // 05.10
+      4: 783.01    // 04.10
     });
+    // Gamma started today: no history before 08.10, flat forecast (no open positions)
+    const gamma = { all: Array.from({ length: days + 1 + forecastDays }, (_, i) => (i < days ? null : 500.31)) };
 
-    const aAll = alpha.all.map(S), bAll = beta.all.map(S);   // USDT -> display currency
+    const aAll = alpha.all.map(S), bAll = beta.all.map(S), gAll = gamma.all.map(v => (v == null ? null : S(v)));   // USDT -> display currency
     charts.aEq = makeLineChart('chart-a-equity', labels, aAll, nowIdx, G);
     charts.bEq = makeLineChart('chart-b-equity', labels, bAll, nowIdx, G);
-    charts.allEq = makeCombinedChart('chart-all-equity', labels, aAll, bAll, nowIdx);
+    charts.gEq = makeLineChart('chart-g-equity', labels, gAll, nowIdx, G);
+    charts.allEq = makeCombinedChart('chart-all-equity', labels, aAll, bAll, nowIdx, gAll);
     // PnL vs Total Balance (start: Alpha 1187 + Beta 700; combined adds 81 withdrawn, spread linearly from 01.06.26)
     const T0 = new Date(2026, 5, 1), spanD = daysBetween(T0, TODAY);
     const outArr = dates.map(d => S(81) * Math.min(Math.max(daysBetween(T0, d) / spanD, 0), 1));
     charts.aTb = makePnlBalanceChart('chart-a-tbpnl', labels, aAll, S(1187), nowIdx);
     charts.bTb = makePnlBalanceChart('chart-b-tbpnl', labels, bAll, S(700), nowIdx);
-    charts.allTb = makePnlBalanceChart('chart-all-tbpnl', labels, aAll.map((v, i) => v + bAll[i]), S(1887), nowIdx, outArr);
+    charts.gTb = makePnlBalanceChart('chart-g-tbpnl', labels, gAll, S(500.31), nowIdx);
+    // combined: Gamma joins on 08.10, so the start base steps from 1887 to 2387.31 on that day
+    const baseArr = labels.map((_, i) => S(i >= nowIdx ? 2387.31 : 1887));
+    charts.allTb = makePnlBalanceChart('chart-all-tbpnl', labels, aAll.map((v, i) => v + bAll[i] + (gAll[i] || 0)), S(2387.31), nowIdx, outArr, baseArr);
 
     // Static bar / doughnut charts
-    charts.aPnl = barChart('chart-a-pnl',
-      ['THE L','THE S'],
-      [-26.50, -96.38].map(S),
-      ['rgba(255,23,68,0.75)', 'rgba(255,23,68,0.75)']
-    );
-    charts.bPnl = barChart('chart-b-pnl',
-      ['HOME L','HOME S','DASH L','DASH S','STRK L','STRK S'],
-      [-88.08, 63.95, -27.55, 1.01, -18.88, -142.31].map(S),
-      [
-        'rgba(255,23,68,0.75)', 'rgba(0,230,118,0.8)',
-        'rgba(255,23,68,0.75)', 'rgba(0,230,118,0.7)',
-        'rgba(255,23,68,0.7)', 'rgba(255,23,68,0.85)'
-      ]
-    );
+    const pcol = v => (v < 0 ? 'rgba(255,23,68,0.75)' : 'rgba(0,230,118,0.8)');
+    const aVals = [-0.02, -0.00, 0.02, -37.45, -59.88], bVals = [-88.89, 66.65, -34.52, 24.46, -0.13, -0.81, -234.42];
+    charts.aPnl = barChart('chart-a-pnl', ['HOME S','ARK S','PHA S','THE L','THE S'], aVals.map(S), aVals.map(pcol));
+    charts.bPnl = barChart('chart-b-pnl', ['HOME L','HOME S','DASH L','DASH S','MON S','STRK L','STRK S'], bVals.map(S), bVals.map(pcol));
     charts.aWin = doughnutChart('chart-a-winloss', ['Wins','Losses'], [42,58],
       ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']);
     charts.bWin = doughnutChart('chart-b-winloss', ['Wins','Losses'], [48,52],
       ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.aMarg = doughnutChart('chart-a-margin', ['Used','Free'], [54.28, 1165.38].map(S),
+    charts.aMarg = doughnutChart('chart-a-margin', ['Used','Free'], [51.32, 1171.44].map(S),
       ['rgba(255,196,0,0.8)', 'rgba(0,230,118,0.35)']);
-    charts.bExp = doughnutChart('chart-b-exposure', ['HOME','DASH','STRK'], [39.52, 46.93, 66.35].map(S),
-      ['rgba(0,229,255,0.8)', 'rgba(255,196,0,0.8)', 'rgba(68,138,255,0.8)']);
-    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta'], [1219.66, 787.18].map(S),
-      ['rgba(0,230,118,0.8)', 'rgba(0,229,255,0.8)']);
+    charts.bExp = doughnutChart('chart-b-exposure', ['HOME','DASH','STRK','MON'], [39.17, 43.87, 78.32, 1.40].map(S),
+      ['rgba(0,229,255,0.8)', 'rgba(255,196,0,0.8)', 'rgba(68,138,255,0.8)', 'rgba(179,136,255,0.8)']);
+    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma'], [1222.76, 790.50, 500.31].map(S),
+      ['rgba(0,230,118,0.8)', 'rgba(0,229,255,0.8)', 'rgba(179,136,255,0.8)']);
     charts.allRisk = doughnutChart('chart-all-risk', ['High','Very High'], [1,1],
       ['rgba(255,196,0,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta'], [-122.88, -211.82].map(S),
-      ['rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)']);
+    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma'], [-97.37, -268.26, 0].map(S),
+      ['rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)', 'rgba(0,230,118,0.8)']);
 
     // Daily PnL last 7 of the selected window
     const dailyLabels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
-    // Daily uPnL (last 7 ending 07.10): 01.10 02.10 03.10 04.10 05.10 06.10 07.10
-    const dailyA = [-18, -25, -136.0, -135.96, -134.86, -138.52, -122.88];
-    const dailyB = [-28, -40, -259.0, -263.68, -249.14, -251.29, -211.82];
+    // Daily uPnL (last 7 ending 08.10): 02.10 03.10 04.10 05.10 06.10 07.10 08.10
+    const dailyA = [-25, -136.0, -135.96, -134.86, -138.52, -122.88, -97.37];
+    const dailyB = [-40, -259.0, -263.68, -249.14, -251.29, -211.82, -268.26];
     charts.aDaily = barChart('chart-a-daily', dailyLabels,
       dailyA.map(S).slice(-dailyLabels.length),
       dailyLabels.map(() => 'rgba(255,23,68,0.6)'));
@@ -2390,7 +2557,7 @@
   // Every element that shows money registers a render function; applyCurrency() re-runs them all.
   const fxItems = [];
   function fxReg(el, fn, usd) { if (!el) return; el._fx = fn; if (usd !== undefined) el._usd = usd; fxItems.push(el); fn(el); }
-  const rVal   = el => { el.textContent = fmtMoney(el._usd, { sign: el._sign }); };             // "1,219.66 USDT"
+  const rVal   = el => { el.textContent = fmtMoney(el._usd, { sign: el._sign }); };             // "1,222.76 USDT"
   const rPlain = el => { el.textContent = moneyPlain(el._usd); };                                // margin
   const rCell  = el => { const v = S(el._usd), r = Math.round(Math.abs(v) * 100) / 100; el.textContent = (v < 0 && r !== 0 ? '−' : '+') + fmtNum(r); };
   const rToBe  = el => { el.textContent = el._toBe < 0 ? 'To BE: +' + moneyPlain(-el._toBe) + ' needed' : 'Above break-even'; };
@@ -2445,6 +2612,7 @@
   document.querySelectorAll('.metric').forEach(metric => {
     const label = metric.querySelector('.metric-label');
     if (!label || !/unrealized pnl/i.test(label.textContent)) return;
+    if (metric.closest('.content-g')) return;   // Gamma has no open positions: static
     const scope = metric.closest('.content-a') ? 'alpha' : metric.closest('.content-b') ? 'beta' : 'all';
     const sub = metric.querySelector('.metric-sub');
     if (sub) { sub._toBe = metric.querySelector('.metric-value')._usd; fxReg(sub, rToBe); }
@@ -2455,6 +2623,7 @@
     const label = item.querySelector('.label');
     if (!label || label.textContent.trim() !== 'PnL') return;
     const name = item.closest('.strategy-panel')?.querySelector('.strategy-name')?.textContent || '';
+    if (/gamma/i.test(name)) return;
     statTargets.push({ scope: /beta/i.test(name) ? 'beta' : 'alpha', value: item.querySelector('.value') });
   });
 
@@ -2500,9 +2669,9 @@
       chart.data.datasets[0].backgroundColor = values.map(v => v < 0 ? 'rgba(255,23,68,0.75)' : 'rgba(0,230,118,0.8)');
       chart.update('none');
     };
-    redraw(charts.aPnl, [0, 1].map(i => pos.alpha[i].cur));                       // THE L, THE S
-    redraw(charts.bPnl, [0, 1, 2, 3, 4, 5].map(i => pos.beta[i].cur));               // HOME L/S, DASH L/S, STRK L/S
-    redraw(charts.allPnl, [totals.alpha, totals.beta]);                              // Alpha, Beta
+    redraw(charts.aPnl, [0, 1, 2, 3, 4].map(i => pos.alpha[i].cur));                       // THE L, THE S
+    redraw(charts.bPnl, [0, 1, 2, 3, 4, 5, 6].map(i => pos.beta[i].cur));               // HOME L/S, DASH L/S, STRK L/S
+    redraw(charts.allPnl, [totals.alpha, totals.beta, 0]);                              // Alpha, Beta
   }
   setInterval(animatePnl, 1800);
 
@@ -2683,7 +2852,7 @@
   // Example: 'https://algotradex-binance.YOUR_SUBDOMAIN.workers.dev'
   const BINANCE_PROXY_URL = localStorage.getItem('atx-binance-proxy') || '';
 
-  const START_CAPITAL = { alpha: 1187, beta: 700, withdrawn: { alpha: 0, beta: 81 } };
+  const START_CAPITAL = { alpha: 1187, beta: 700, gamma: 500.31, withdrawn: { alpha: 0, beta: 81 } };
 
   function fmtSide(side) {
     return side === 'LONG'
