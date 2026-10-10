@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>try{if(localStorage.getItem('atx-theme')==='cli')document.documentElement.setAttribute('data-theme','cli')}catch(e){}</script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
 
   :root {
     --bg: #0a0a0a;
@@ -988,6 +988,88 @@
   }
   .modal-close:hover { background: rgba(0,230,118,0.1); }
 
+
+  /* ===================== UI refresh: bigger, clearer, card layout ===================== */
+  body { font-size: 14px; }
+  .terminal { max-width: 1480px; padding: 18px 22px 96px; }
+  .header { --lion: 132px; border-radius: 16px; border-color: var(--border-bright); }
+  .pairs-strip { height: 38px; font-size: 12.5px; border-radius: 16px 16px 0 0; }
+  .header-main::before, .header-main::after { display: none; }
+  .header-main { min-height: calc(var(--lion) + 14px); padding-left: calc(var(--lion) + 36px); }
+  .brand-block .logo-icon { left: calc(-1 * var(--lion) - 14px); }
+  .logo-text { font-size: 38px; }
+  .brand-tag { font-size: 12.5px; letter-spacing: .6px; color: var(--text-dim); }
+  .brand-tag::before { width: 24px; }
+  .brand-since { font-size: 10.5px; opacity: .85; margin-top: 4px; }
+  .header-right { gap: 12px; font-size: 14px; }
+  .ex-chip, .contact-btn, .theme-btn, .period { height: 42px; padding: 0 16px; font-size: 14px; border-radius: 10px; display: inline-flex; align-items: center; gap: 9px; }
+  .ex-chip .ex-ico { font-size: 17px; }
+  .period { color: var(--text); border-color: var(--border-bright); }
+  .status { font-size: 14px; gap: 9px; color: var(--text); }
+  .status-dot { width: 12px; height: 12px; }
+  .theme-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .period-opt { font-size: 13.5px; padding: 9px 16px; }
+
+  .top-nav { display: flex; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--border); }
+  .top-nav .bn-btn { flex: none; flex-direction: row; gap: 10px; padding: 10px 20px; font-size: 15px; border: none; border-bottom: 2px solid transparent; border-radius: 10px; background: none; color: var(--text-dim); }
+  .top-nav .bn-btn { text-transform: none; letter-spacing: 0; font-family: Inter, system-ui, -apple-system, sans-serif; font-weight: 500; }
+  .top-nav .bn-btn svg { width: 22px; height: 22px; }
+  .top-nav .bn-btn:hover { background: var(--bg-hover); color: var(--text); }
+  .top-nav .bn-btn.active { color: var(--green); background: var(--green-bg); border-bottom-color: var(--green); }
+
+  .tabs-row { padding: 12px 14px 14px; border-top: 1px solid var(--border); }
+  .tabs { gap: 10px; }
+  .tab { padding: 12px 20px; font-family: Inter, system-ui, -apple-system, sans-serif; font-size: 15px; font-weight: 500; letter-spacing: 0; display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-card); }
+  .tab::before { font-size: 22px; margin-right: 10px; opacity: .9; vertical-align: 0; line-height: 1; }
+  .tab[data-tab="all"]::before { content: "▦"; font-size: 17px; }
+  .tab:hover { background: var(--bg-hover); border-color: var(--border-bright); color: var(--white); }
+  .tab.active { color: var(--green); border-color: var(--green); background: var(--green-bg); box-shadow: 0 0 0 1px var(--green-border), 0 0 18px rgba(0,230,118,.16); }
+  .tab-ind { display: none; }
+  .tab[data-soon], .tab[data-soon]:hover { border: 1px dashed var(--border-bright); }
+
+  .metrics { gap: 14px; border: none; background: transparent; margin-top: 14px; }
+  .metric { border: 1px solid var(--border); border-radius: 14px; background: var(--bg-panel); padding: 20px 24px; }
+  .metric-label { font-size: 13px; letter-spacing: 1.2px; color: var(--text-dim); margin-bottom: 10px; }
+  .metric-value { font-size: 36px; letter-spacing: -.5px; line-height: 1.15; }
+  .metric-sub { font-size: 13.5px; color: var(--text-dim); margin-top: 8px; }
+
+  .charts-row, .strategies, .bottom-charts { gap: 14px; border: none; margin-top: 14px; }
+  .chart-box, .strategy-panel { border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
+  .chart-title { font-size: 14px; letter-spacing: 1px; color: var(--text); font-weight: 600; }
+  .chart-legend { font-size: 12.5px; gap: 18px; color: var(--text-dim); }
+  .legend-item { gap: 8px; }
+  .legend-dot { width: 16px !important; height: 4px !important; border-radius: 2px !important; }
+  .chart-wrap { height: 380px; }
+  .strategy-name { font-size: 16px; }
+  .stat-item { border-radius: 10px; padding: 12px 14px; }
+  .stat-item .label { font-size: 12px; color: var(--text-dim); }
+  .stat-item .value { font-size: 18px; }
+  .pos-table th, .pos-table td { font-size: 13.5px; padding: 10px 12px; }
+  .footer { border-radius: 14px; margin-top: 14px; }
+
+  .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .charts-row { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+  .strategies { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .content-all .strategies { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .bottom-charts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .chart-box, .strategy-panel, .metric { min-width: 0; }
+  @media (max-width: 900px) { .top-nav { display: none; } }
+  @media (max-width: 900px) { .content-all .strategies, .strategies { grid-template-columns: minmax(0, 1fr); } .charts-row, .bottom-charts { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 1000px) { .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .metrics { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 760px) {
+    .terminal { padding: 10px 10px 90px; }
+    .header { --lion: 84px; }
+    .logo-text { font-size: 26px; }
+    .brand-tag { font-size: 10.5px; }
+    .header-right { gap: 8px; font-size: 12px; }
+    .ex-chip, .contact-btn, .theme-btn, .period { height: 36px; padding: 0 11px; font-size: 12.5px; }
+    .tab { padding: 10px 14px; font-size: 13px; }
+    .metric { padding: 14px 16px; }
+    .metric-value { font-size: 24px; }
+    .chart-wrap { height: 300px; }
+    .chart-box, .strategy-panel { padding: 14px; }
+  }
 </style>
 </head>
 <body>
@@ -1059,7 +1141,7 @@
         </div>
       </div>
       <div class="status"><span class="status-dot"></span> Online</div>
-      <button class="theme-btn" id="theme-toggle" type="button" aria-pressed="false" title="Switch site style">▣ CLI</button>
+      <button class="theme-btn" id="theme-toggle" type="button" aria-pressed="false" title="Switch site style">CLI</button>
       <div class="period-wrap">
         <div class="period" id="period-toggle" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false">7D ▾</div>
         <div class="period-menu" id="period-menu" role="listbox" hidden>
@@ -1070,6 +1152,11 @@
         </div>
       </div>
     </div>
+    </div>
+    <div class="top-nav hdr-in" style="--d:.3s" aria-label="Main">
+      <button type="button" class="bn-btn tn active" data-nav="strategy" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Strategy</button>
+      <button type="button" class="bn-btn tn" data-nav="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Settings</button>
+      <button type="button" class="bn-btn tn" data-nav="support"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-9 9H4l2.2-3.3A9 9 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/></svg>Support</button>
     </div>
     <div class="tabs-row hdr-in" style="--d:.36s">
       <div class="tabs">
@@ -2158,7 +2245,7 @@
   Chart.defaults.color = '#666';
   Chart.defaults.borderColor = '#1a1a1a';
   Chart.defaults.font.family = "'JetBrains Mono', monospace";
-  Chart.defaults.font.size = 11;
+  Chart.defaults.font.size = 12.5;
 
   // ---- site style (dark / cli) ----
   let grid = '#1a1a1a';
@@ -2166,9 +2253,9 @@
   try { theme = localStorage.getItem('atx-theme') === 'cli' ? 'cli' : 'dark'; } catch (e) {}
   function chartTheme() {
     const cli = theme === 'cli';
-    Chart.defaults.color = cli ? '#3d4458' : '#666';
-    Chart.defaults.borderColor = cli ? 'rgba(0,0,0,.18)' : '#1a1a1a';
-    grid = cli ? 'rgba(0,0,0,.14)' : '#1a1a1a';
+    Chart.defaults.color = cli ? '#3d4458' : '#9ca3af';
+    Chart.defaults.borderColor = cli ? 'rgba(0,0,0,.18)' : '#232830';
+    grid = cli ? 'rgba(0,0,0,.14)' : '#232830';
   }
   const CLI_HEX = { '#00e676': '#0b8f3d', '#ff1744': '#c8102e', '#ffc400': '#b8750a', '#00e5ff': '#00778b', '#448aff': '#2a5fd6', '#b388ff': '#6a3fd0',
     '#0f0f0f': '#d7d8da', '#0a0a0a': '#cfd0d2', '#141414': '#d3d4d6', '#1a1a1a': 'rgba(0,0,0,.14)', '#222': 'rgba(0,0,0,.2)', '#555': '#3d4458', '#666': '#3d4458', '#888': '#3d4458' };
@@ -2185,7 +2272,10 @@
     return cliColor(v);
   }
   Chart.register({ id: 'cliTheme', beforeUpdate(chart) {
-    if (theme !== 'cli') return;
+    if (theme !== 'cli') {   // dark: brighten the dim greys so labels stay readable
+      Object.values(chart.options.scales || {}).forEach(sc => { if (sc.ticks && ['#555', '#666', '#888'].includes(sc.ticks.color)) sc.ticks.color = '#9ca3af'; });
+      return;
+    }
     chart.data.datasets.forEach(ds => {
       ['backgroundColor', 'borderColor', 'pointBackgroundColor', 'pointBorderColor'].forEach(k => { if (ds[k] != null) ds[k] = cliMap(ds[k]); });
       if (ds.segment && typeof ds.segment.borderColor === 'function') ds.segment.borderColor = cliMap(ds.segment.borderColor);
@@ -2804,7 +2894,7 @@
   const themeBtn = document.getElementById('theme-toggle');
   function paintThemeBtn() {
     if (!themeBtn) return;
-    themeBtn.textContent = theme === 'cli' ? '◐ DARK' : '▣ CLI';
+    themeBtn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 10l3 2-3 2M12 15h5"/></svg>' + (theme === 'cli' ? 'DARK' : 'CLI');
     themeBtn.setAttribute('aria-pressed', theme === 'cli' ? 'true' : 'false');
   }
   function setTheme(t) {
