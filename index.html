@@ -72,7 +72,6 @@
   html[data-theme="cli"] .risk-marker::after { background: #10131c; }
   html[data-theme="cli"] .pos-table td { border-bottom-color: rgba(0,0,0,.14); }
   html[data-theme="cli"] .pos-table tr:hover td { background: rgba(0,0,0,.05); }
-  html[data-theme="cli"] .bottom-nav { background: rgba(207,208,210,.97); }
   html[data-theme="cli"] .modal-box, html[data-theme="cli"] .sheet, html[data-theme="cli"] .period-menu, html[data-theme="cli"] .contact-menu { background: var(--bg-card); border: 1px solid var(--border); }
   html[data-theme="cli"] .modal-overlay, html[data-theme="cli"] .sheet-backdrop { background: rgba(40,44,56,.5); }
   html[data-theme="cli"] .contact-item:hover, html[data-theme="cli"] .contact-item:focus-visible { color: var(--white); }
@@ -853,7 +852,7 @@
   .footer span { color: var(--text-dim); }
 
   /* Bottom navigation + sheets */
-  body { padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)); }
+  body { padding-bottom: env(safe-area-inset-bottom, 0px); }
   .bottom-nav { position:fixed; left:0; right:0; bottom:0; z-index:70; background:rgba(12,12,12,.97); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); border-top:1px solid var(--border-bright); padding-bottom:env(safe-area-inset-bottom, 0px); }
   .bn-inner { display:flex; max-width:1360px; margin:0 auto; }
   .bn-btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:9px 6px 8px; background:none; border:none; border-top:2px solid transparent; margin-top:-1px; color:var(--text-muted); font-family:inherit; font-size:10px; letter-spacing:.8px; text-transform:uppercase; cursor:pointer; transition:color .15s ease, background .15s ease; }
@@ -862,8 +861,8 @@
   .bn-btn.active { color:var(--green); border-top-color:var(--green); }
   .sheet-backdrop { position:fixed; inset:0; z-index:65; background:rgba(0,0,0,.55); opacity:0; visibility:hidden; transition:opacity .2s ease, visibility 0s linear .2s; }
   .sheet-backdrop.open { opacity:1; visibility:visible; transition:opacity .2s ease; }
-  .sheet { position:fixed; left:50%; bottom:calc(62px + env(safe-area-inset-bottom, 0px)); z-index:68; width:min(520px, calc(100% - 24px)); padding:16px; background:var(--bg-card); border:1px solid var(--border-bright); border-radius:10px; box-shadow:0 14px 40px rgba(0,0,0,.6); opacity:0; visibility:hidden; transform:translate(-50%, 20px); transition:opacity .2s ease, transform .2s ease, visibility 0s linear .2s; }
-  .sheet.open { opacity:1; visibility:visible; transform:translate(-50%, 0); transition:opacity .2s ease, transform .2s ease; }
+  .sheet { position:fixed; left:0; top:0; z-index:68; width:min(520px, calc(100% - 24px)); padding:16px; background:var(--bg-card); border:1px solid var(--border-bright); border-radius:10px; box-shadow:0 14px 40px rgba(0,0,0,.6); opacity:0; visibility:hidden; transform:translateY(-10px); transition:opacity .2s ease, transform .2s ease, visibility 0s linear .2s; }
+  .sheet.open { opacity:1; visibility:visible; transform:translateY(0); transition:opacity .2s ease, transform .2s ease; }
   .sheet-title { font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--white); }
   .sheet-sub { margin:4px 0 12px; font-size:11px; color:var(--text-muted); }
   .sheet-note { margin-top:12px; font-size:10px; line-height:1.5; color:var(--text-muted); }
@@ -991,7 +990,7 @@
 
   /* ===================== UI refresh: bigger, clearer, card layout ===================== */
   body { font-size: 14px; }
-  .terminal { max-width: 1480px; padding: 18px 22px 96px; }
+  .terminal { max-width: 1480px; padding: 18px 22px 28px; }
   .header { --lion: 132px; border-radius: 16px; border-color: var(--border-bright); }
   .pairs-strip { height: 38px; font-size: 12.5px; border-radius: 16px 16px 0 0; }
   .header-main::before, .header-main::after { display: none; }
@@ -1010,6 +1009,7 @@
   .theme-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .period-opt { font-size: 13.5px; padding: 9px 16px; }
 
+  body:has(.sheet-backdrop.open) .header { z-index: 66; }   /* keep the top menu clickable while a panel is open */
   .top-nav { display: flex; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--border); }
   .top-nav .bn-btn { flex: none; flex-direction: row; gap: 10px; padding: 10px 20px; font-size: 15px; border: none; border-bottom: 2px solid transparent; border-radius: 10px; background: none; color: var(--text-dim); }
   .top-nav .bn-btn { text-transform: none; letter-spacing: 0; font-family: Inter, system-ui, -apple-system, sans-serif; font-weight: 500; }
@@ -1053,18 +1053,20 @@
   .content-all .strategies { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .bottom-charts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .chart-box, .strategy-panel, .metric { min-width: 0; }
-  @media (max-width: 900px) { .top-nav { display: none; } }
   @media (max-width: 900px) { .content-all .strategies, .strategies { grid-template-columns: minmax(0, 1fr); } .charts-row, .bottom-charts { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 1000px) { .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .metrics { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 760px) {
-    .terminal { padding: 10px 10px 90px; }
+    .terminal { padding: 10px 10px 24px; }
     .header { --lion: 84px; }
     .logo-text { font-size: 26px; }
     .brand-tag { font-size: 10.5px; }
     .header-right { gap: 8px; font-size: 12px; }
     .ex-chip, .contact-btn, .theme-btn, .period { height: 36px; padding: 0 11px; font-size: 12.5px; }
     .tab { padding: 10px 14px; font-size: 13px; }
+    .top-nav { gap: 6px; padding: 8px 10px; }
+    .top-nav .bn-btn { flex: 1; justify-content: center; padding: 9px 8px; font-size: 13px; gap: 7px; }
+    .top-nav .bn-btn svg { width: 18px; height: 18px; }
     .metric { padding: 14px 16px; }
     .metric-value { font-size: 24px; }
     .chart-wrap { height: 300px; }
@@ -2039,19 +2041,7 @@
   </div>
 </div>
 
-<nav class="bottom-nav" aria-label="Main">
-  <div class="bn-inner">
-    <button type="button" class="bn-btn active" data-nav="strategy" aria-current="page">
-      <svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Strategy
-    </button>
-    <button type="button" class="bn-btn" data-nav="settings">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings
-    </button>
-    <button type="button" class="bn-btn" data-nav="support">
-      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-9 9H4l2.2-3.3A9 9 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/></svg>Support
-    </button>
-  </div>
-</nav>
+
 
 <!-- "Data will be added later" modal (Gamma / Delta / Epsilon) -->
 <div class="modal-overlay" id="soon-modal">
@@ -2939,11 +2929,26 @@
     });
   }
   function closeSheets() {
+    sheetOwner = null; clearTimeout(sheetTimer);
     Object.values(sheets).forEach(el => { if (el) el.classList.remove('open'); });
     if (sheetBackdrop) sheetBackdrop.classList.remove('open');
     setNavActive('strategy');
   }
+  let sheetOwner = null;
+  let sheetTimer = null;
+  const SHEET_IDLE_MS = 3000;                   // no action for 3 s -> the panel closes itself
+  function armSheetTimer() { clearTimeout(sheetTimer); if (sheetOwner) sheetTimer = setTimeout(() => closeSheets(), SHEET_IDLE_MS); }
+  function placeSheet() {                       // dropdown: sits right under the button that opened it
+    const el = sheets[sheetOwner], btn = navBtns.find(b => b.dataset.nav === sheetOwner);
+    if (!el || !btn) return;
+    const r = btn.getBoundingClientRect(), w = el.offsetWidth, m = 12;
+    el.style.top = Math.round(r.bottom + 8) + 'px';
+    el.style.left = Math.round(Math.max(m, Math.min(r.left, window.innerWidth - w - m))) + 'px';
+  }
+  window.addEventListener('scroll', () => { if (sheetOwner) placeSheet(); }, { passive: true });
+  window.addEventListener('resize', () => { if (sheetOwner) placeSheet(); });
   function openSheet(name) {
+    sheetOwner = name; placeSheet(); armSheetTimer();
     Object.entries(sheets).forEach(([k, el]) => { if (el) el.classList.toggle('open', k === name); });
     if (sheetBackdrop) sheetBackdrop.classList.add('open');
     setNavActive(name);
@@ -2960,6 +2965,13 @@
     if (sheet.classList.contains('open')) closeSheets();
     else openSheet(name);
   }));
+  // activity inside a panel keeps it open: hovering pauses the countdown, touch / key / scroll restart it
+  Object.values(sheets).forEach(el => {
+    if (!el) return;
+    el.addEventListener('pointerenter', () => clearTimeout(sheetTimer));
+    el.addEventListener('pointerleave', armSheetTimer);
+    ['pointerdown', 'touchstart', 'keydown', 'focusin', 'wheel', 'scroll'].forEach(ev => el.addEventListener(ev, armSheetTimer, { passive: true }));
+  });
   if (sheetBackdrop) sheetBackdrop.addEventListener('click', closeSheets);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheets(); });
   document.querySelectorAll('.cur-opt').forEach(btn => btn.addEventListener('click', () => {
