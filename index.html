@@ -1062,13 +1062,15 @@
     .header { --lion: 84px; }
     .logo-text { font-size: 26px; }
     .brand-tag { font-size: 10.5px; }
-    .header-right { display: grid; grid-template-columns: auto auto auto; align-items: center; justify-content: start; gap: 8px; width: 100%; font-size: 12px; overflow: visible; }
-    .header-right .ex-chip { grid-column: 1 / span 2; }
-    .header-right .status { grid-column: 3; }
-    .header-right .contact-wrap { grid-column: 1; }
-    .header-right .theme-btn { grid-column: 2; }
-    .header-right .period-wrap { grid-column: 3; }
-    .ex-chip, .contact-btn, .theme-btn, .period { height: 36px; padding: 0 11px; font-size: 12.5px; }
+    .header-right { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: 10px; width: 100%; max-width: 420px; font-size: 12px; overflow: visible; }
+    .header-right .ex-chip { grid-column: 1 / -1; }
+    .header-right .contact-wrap { grid-column: 1; grid-row: 2; min-width: 0; }
+    .header-right .status { grid-column: 2; grid-row: 2; justify-content: center; padding: 0 12px; border: 1px solid rgba(0,230,118,.25); border-radius: 10px; background: rgba(0,230,118,.06); }
+    .header-right .theme-btn { grid-column: 1; grid-row: 3; }
+    .header-right .period-wrap { grid-column: 2; grid-row: 3; min-width: 0; }
+    .ex-chip, .contact-btn, .theme-btn, .period, .status { width: 100%; min-width: 0; height: 42px; padding: 0 13px; font-size: 12.5px; justify-content: center; }
+    .ex-chip { justify-content: center; text-align: center; }
+    .period-wrap .period { justify-content: center; }
     .tab { padding: 10px 14px; font-size: 13px; }
     .top-nav { gap: 6px; padding: 8px 10px; }
     .top-nav .bn-btn { flex: 1; justify-content: center; padding: 9px 8px; font-size: 13px; gap: 7px; }
