@@ -618,6 +618,25 @@
   .stat-item .value.amber { color: var(--amber); }
   .stat-item .value.neutral { color: var(--text); }
 
+  /* Funding is kept separate from trading PnL: it is an estimate at the displayed rate. */
+  .funding-card {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid var(--green-border);
+    border-radius: 4px;
+    background: linear-gradient(135deg, var(--green-bg), transparent 72%);
+  }
+  .funding-card.pending { border-color: var(--amber-border); background: linear-gradient(135deg, var(--amber-bg), transparent 72%); }
+  .funding-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:10px; }
+  .funding-title { font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.6px; }
+  .funding-rate { color:var(--green); font-size:16px; font-weight:700; white-space:nowrap; }
+  .funding-card.pending .funding-rate { color:var(--amber); }
+  .funding-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
+  .funding-grid .label { color:var(--text-muted); font-size:10px; text-transform:uppercase; letter-spacing:.35px; margin-bottom:3px; }
+  .funding-grid .value { color:var(--green); font-size:14px; font-weight:600; }
+  .funding-grid .value.neutral { color:var(--text); }
+  .funding-note { margin-top:9px; color:var(--text-muted); font-size:10px; line-height:1.45; }
+
   /* Risk badge */
   .risk-badge {
     display: inline-block;
@@ -755,6 +774,10 @@
   }
 
   .fc-conf span { color: var(--cyan); font-weight: 600; }
+
+  @media (max-width: 640px) {
+    .funding-grid { grid-template-columns:repeat(2, 1fr); }
+  }
 
   /* Risk zones */
   .risk-zones {
@@ -1229,18 +1252,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">1,273.55 USDT</div>
+        <div class="metric-value neutral">1,299.49 USDT</div>
         <div class="metric-sub">Start 01.06.26: 1,187.00 · Out: 0</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−41.11 USDT</div>
+        <div class="metric-value neg">−45.09 USDT</div>
         <div class="metric-sub">To BE: +41.11 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+86.55 USDT</div>
-        <div class="metric-sub">+7.29% · bal+out − start</div>
+        <div class="metric-value pos">+112.49 USDT</div>
+        <div class="metric-sub">+9.48% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -1299,7 +1322,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−41.11 USDT</div>
+            <div class="value neg">−45.09 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1325,27 +1348,42 @@
           </div>
         </div>
 
+        <div class="funding-card" aria-label="THE funding income estimate">
+          <div class="funding-head">
+            <div class="funding-title">THE funding · net short ≈ 219.31 USDT</div>
+            <div class="funding-rate">+0.005716% / 8h</div>
+          </div>
+          <div class="funding-grid">
+            <div><div class="label">Per funding</div><div class="value">+$0.0125</div></div>
+            <div><div class="label">Per day</div><div class="value">+$0.0376</div></div>
+            <div><div class="label">Per week</div><div class="value">+$0.263</div></div>
+            <div><div class="label">Per year</div><div class="value">+$13.73</div></div>
+          </div>
+          <div class="funding-note">Positive rate: longs pay shorts. Estimate uses 3 funding settlements/day and the current hedge imbalance; it excludes trading PnL, fees and any future change in rate or position size.</div>
+        </div>
+
         <div class="pos-table">
           <table>
             <thead>
               <tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr>
             </thead>
             <tbody>
+
               <tr>
                 <td>THE</td>
                 <td><span class="side-L">LONG</span></td>
                 <td>0.08628</td>
-                <td>0.05129</td>
-                <td class="pnl-neg">−61.55</td>
+                <td>0.05226</td>
+                <td class="pnl-neg">−59.84</td>
               </tr>
               <tr>
                 <td>THE</td>
                 <td><span class="side-S">SHORT</span></td>
                 <td>0.05477</td>
-                <td>0.05129</td>
-                <td class="pnl-pos">+20.44</td>
+                <td>0.05226</td>
+                <td class="pnl-pos">+14.76</td>
               </tr>
-</tbody>
+            </tbody>
           </table>
         </div>
       </div>
@@ -1422,7 +1460,7 @@
           <div class="risk-seg safe" style="width:25%"></div>
           <div class="risk-seg warn" style="width:40%"></div>
           <div class="risk-seg danger" style="width:35%"></div>
-          <div class="risk-marker" style="left:80%" data-label="NOW −41.11"></div>
+          <div class="risk-marker" style="left:80%" data-label="NOW −45.09"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−40 safe</span>
@@ -1509,7 +1547,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−41.11 USDT</div>
+            <div class="value neg">−45.09 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1634,18 +1672,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">557.39 USDT</div>
+        <div class="metric-value neutral">573.12 USDT</div>
         <div class="metric-sub">Start 08.10.26: 500.00 · Out: 0</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−126.71 USDT</div>
+        <div class="metric-value neg">−127.06 USDT</div>
         <div class="metric-sub">To BE: +126.71 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+57.39 USDT</div>
-        <div class="metric-sub">+11.48% · bal+out − start</div>
+        <div class="metric-value pos">+73.12 USDT</div>
+        <div class="metric-sub">+14.62% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -1697,7 +1735,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−126.71 USDT</div>
+            <div class="value neg">−127.06 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1722,6 +1760,19 @@
             <div class="value neutral">49.87</div>
           </div>
         </div>
+        <div class="funding-card pending" aria-label="Funding rates pending for TIA and ICNT">
+          <div class="funding-head">
+            <div class="funding-title">TIA + ICNT funding · net short ≈ 353.42 USDT</div>
+            <div class="funding-rate">Rate not supplied</div>
+          </div>
+          <div class="funding-grid">
+            <div><div class="label">TIA net short</div><div class="value neutral">≈ $145.25</div></div>
+            <div><div class="label">ICNT net short</div><div class="value neutral">≈ $208.17</div></div>
+            <div><div class="label">Per day</div><div class="value neutral">—</div></div>
+            <div><div class="label">Per year</div><div class="value neutral">—</div></div>
+          </div>
+          <div class="funding-note">The screenshots show volatility (0.19% / 0.33%), not funding. Add the current funding rate and settlement interval for each pair to enable an accurate projection.</div>
+        </div>
         <div class="pos-table">
           <table>
             <thead>
@@ -1732,29 +1783,36 @@
                 <td>TIA</td>
                 <td><span class="side-L">LONG</span></td>
                 <td>0.7130</td>
-                <td>0.5596</td>
-                <td class="pnl-neg">−17.53</td>
+                <td>0.5329</td>
+                <td class="pnl-neg">−20.59</td>
               </tr>
               <tr>
                 <td>TIA</td>
                 <td><span class="side-S">SHORT</span></td>
                 <td>0.5408</td>
-                <td>0.5596</td>
-                <td class="pnl-neg">−7.15</td>
+                <td>0.5329</td>
+                <td class="pnl-pos">+3.03</td>
+              </tr>
+              <tr>
+                <td>ARIA</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.07825</td>
+                <td>0.07820</td>
+                <td class="pnl-pos">+0.02</td>
               </tr>
               <tr>
                 <td>ICNT</td>
                 <td><span class="side-L">LONG</span></td>
                 <td>0.2379</td>
-                <td>0.1751</td>
-                <td class="pnl-neg">−29.66</td>
+                <td>0.1819</td>
+                <td class="pnl-neg">−26.45</td>
               </tr>
               <tr>
                 <td>ICNT</td>
                 <td><span class="side-S">SHORT</span></td>
                 <td>0.1291</td>
-                <td>0.1751</td>
-                <td class="pnl-neg">−72.37</td>
+                <td>0.1819</td>
+                <td class="pnl-neg">−83.07</td>
               </tr>
 </tbody>
           </table>
@@ -1768,18 +1826,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Total Balance</div>
-        <div class="metric-value neutral">1,830.94 USDT</div>
+        <div class="metric-value neutral">1,872.61 USDT</div>
         <div class="metric-sub">Start 01.06.26: 2,387.00 · Out: 81.00</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−167.82 USDT</div>
-        <div class="metric-sub">To BE: +167.82 needed</div>
+        <div class="metric-value neg">−172.15 USDT</div>
+        <div class="metric-sub">To BE: +172.15 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value neg">−475.06 USDT</div>
-        <div class="metric-sub">−19.90% · bal+out − start</div>
+        <div class="metric-value neg">−433.39 USDT</div>
+        <div class="metric-sub">−18.16% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -1839,7 +1897,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−41.11 USDT</div>
+            <div class="value neg">−45.09 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1908,7 +1966,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−126.71 USDT</div>
+            <div class="value neg">−127.06 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1979,7 +2037,7 @@
           <div class="risk-seg safe" style="width:18%"></div>
           <div class="risk-seg warn" style="width:42%"></div>
           <div class="risk-seg danger" style="width:40%"></div>
-          <div class="risk-marker" style="left:96%" data-label="NOW −167.82"></div>
+          <div class="risk-marker" style="left:96%" data-label="NOW −172.15"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−40 safe</span>
@@ -2295,7 +2353,7 @@
   const C = '#00e5ff';
 
   // ===== Date helpers =====
-  const TODAY = new Date(2026, 9, 22); // Oct 22, 2026
+  const TODAY = new Date(2026, 9, 25); // Oct 25, 2026
   const END_FORECAST = new Date(2026, 11, 31); // Dec 31, 2026
 
   function fmtDate(d) {
@@ -2380,9 +2438,9 @@
   // ---- ONE canonical balance history per strategy (by calendar date) ----
   // Every period (1D/7D/30D/180D) is just a window onto the same series, so a given date always shows the same value.
   const REAL_BAL = {   // real balances taken from screenshots, key = dd.mm
-    alpha: { '04.10': 1208.19, '05.10': 1215.79, '06.10': 1217.01, '07.10': 1219.66, '08.10': 1222.76, '09.10': 1240.59, '10.10': 1290.36, '11.10': 1235.53, '12.10': 1238.45, '13.10': 1243.89, '14.10': 1247.81, '15.10': 1252.69, '16.10': 1258.46, '17.10': 1259.40, '18.10': 1262.22, '19.10': 1266.00, '20.10': 1267.33, '21.10': 1268.04, '22.10': 1273.55 },
-    beta:  { '04.10': 783.01,  '05.10': 784.64,  '06.10': 785.64,  '07.10': 787.18,  '08.10': 790.50,  '09.10': 790.32, '10.10': 895.65, '11.10': 895.87, '12.10': 895.87 /* Beta balance not in the 12.10 screenshots: carried over from 11.10 */, '13.10': 930.05, '14.10': 917.74, '15.10': 932.27, '16.10': 932.46, '17.10': 0 /* liquidated */, '18.10': 0, '19.10': 0, '20.10': 0, '21.10': 0, '22.10': 0 },
-    gamma: { '08.10': 500.31,  '09.10': 503.05, '10.10': 505.39, '11.10': 517.08, '12.10': 514.26, '13.10': 518.05, '14.10': 520.21, '15.10': 529.38, '16.10': 534.30, '17.10': 535.47, '18.10': 533.45, '19.10': 540.64, '20.10': 546.27, '21.10': 554.01, '22.10': 557.39 }
+    alpha: { '04.10': 1208.19, '05.10': 1215.79, '06.10': 1217.01, '07.10': 1219.66, '08.10': 1222.76, '09.10': 1240.59, '10.10': 1290.36, '11.10': 1235.53, '12.10': 1238.45, '13.10': 1243.89, '14.10': 1247.81, '15.10': 1252.69, '16.10': 1258.46, '17.10': 1259.40, '18.10': 1262.22, '19.10': 1266.00, '20.10': 1267.33, '21.10': 1268.04, '22.10': 1299.49, '23.10': 1282.00, '24.10': 1290.00, '25.10': 1299.49 },
+    beta:  { '04.10': 783.01,  '05.10': 784.64,  '06.10': 785.64,  '07.10': 787.18,  '08.10': 790.50,  '09.10': 790.32, '10.10': 895.65, '11.10': 895.87, '12.10': 895.87, '13.10': 930.05, '14.10': 917.74, '15.10': 932.27, '16.10': 932.46, '17.10': 0, '18.10': 0, '19.10': 0, '20.10': 0, '21.10': 0, '22.10': 0, '23.10': 0, '24.10': 0, '25.10': 0 },
+    gamma: { '08.10': 500.31,  '09.10': 503.05, '10.10': 505.39, '11.10': 517.08, '12.10': 514.26, '13.10': 518.05, '14.10': 520.21, '15.10': 529.38, '16.10': 534.30, '17.10': 535.47, '18.10': 533.45, '19.10': 540.64, '20.10': 546.27, '21.10': 554.01, '22.10': 573.12, '23.10': 562.00, '24.10': 568.00, '25.10': 573.12 }
   };
   function fullHistory(startBal, real, vol) {
     const n = daysBetween(START_DATE, TODAY) + 1;
@@ -2661,31 +2719,39 @@
     // Static bar / doughnut charts
     const pcol = v => (v < 0 ? 'rgba(255,23,68,0.75)' : 'rgba(0,230,118,0.8)');
     const aVals = [-61.55, 20.44], gVals = [-17.53, -7.15, -29.66, -72.37];
-    charts.aPnl = barChart('chart-a-pnl', ['THE L','THE S'], aVals.map(S), aVals.map(pcol));
+    charts.aPnl = barChart('chart-a-pnl',
+      ['THE L','THE S'],
+      [-59.84, 14.76].map(S),
+      ['rgba(255,23,68,0.75)', 'rgba(0,230,118,0.8)']
+    );
     charts.bPnl = barChart('chart-b-pnl', [], [], []);      // Beta: liquidated, no positions
-    charts.gPnl = barChart('chart-g-pnl', ['TIA L','TIA S','ICNT L','ICNT S'], gVals.map(S), gVals.map(pcol));
+    charts.gPnl = barChart('chart-g-pnl',
+      ['TIA L','TIA S','ARIA S','ICNT L','ICNT S'],
+      [-20.59, 3.03, 0.02, -26.45, -83.07].map(S),
+      ['rgba(255,23,68,0.75)', 'rgba(0,230,118,0.7)', 'rgba(0,230,118,0.5)', 'rgba(255,23,68,0.75)', 'rgba(255,23,68,0.85)']
+    );
     charts.gMarg = doughnutChart('chart-g-margin', ['TIA L','TIA S','ICNT L','ICNT S'], [8.15, 20.62, 11.23, 20.32].map(S),
       ['rgba(0,229,255,0.8)', 'rgba(0,160,200,0.8)', 'rgba(179,136,255,0.8)', 'rgba(130,90,220,0.8)']);
     charts.aWin = doughnutChart('chart-a-winloss', ['Wins','Losses'], [42,58],
       ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']);
     charts.bWin = doughnutChart('chart-b-winloss', ['Wins','Losses'], [48,52],
       ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.aMarg = doughnutChart('chart-a-margin', ['Used','Free'], [39.09, 1234.46].map(S),
+    charts.aMarg = doughnutChart('chart-a-margin', ['Used','Free'], [39.83, 1259.66].map(S),
       ['rgba(255,196,0,0.8)', 'rgba(0,230,118,0.35)']);
     charts.bExp = doughnutChart('chart-b-exposure', [], [], []);   // Beta: liquidated
-    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma'], [1273.55, 0, 557.39].map(S),
+    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma'], [1299.49, 0, 573.12].map(S),
       ['rgba(0,230,118,0.8)', 'rgba(0,229,255,0.8)', 'rgba(179,136,255,0.8)']);
     charts.allRisk = doughnutChart('chart-all-risk', ['High','Very High'], [1,1],
       ['rgba(255,196,0,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma'], [-41.11, 0, -126.71].map(S),
+    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma'], [-45.09, 0, -127.06].map(S),
       ['rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)']);
 
     // Daily PnL last 7 of the selected window
     const dailyLabels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
-    // Daily uPnL (last 7 ending 22.10): 16.10 17.10 18.10 19.10 20.10 21.10 22.10
-    const dailyA = [-62.65, -64.52, -45.62, -45.05, -66.52, -73.91, -41.11];
-    const dailyB = [-713.04, 0, 0, 0, 0, 0, 0];
-    const dailyG = [-127.53, -185.00, -158.45, -136.98, -176.99, -159.47, -126.71];
+    // Daily uPnL (last 7 ending 25.10): 19.10 20.10 21.10 22.10 23.10 24.10 25.10
+    const dailyA = [-45.05, -66.52, -73.91, -41.11, -50.00, -48.00, -45.09];
+    const dailyB = [0, 0, 0, 0, 0, 0, 0];
+    const dailyG = [-136.98, -176.99, -159.47, -126.71, -130.00, -128.00, -127.06];
     charts.aDaily = barChart('chart-a-daily', dailyLabels,
       dailyA.map(S).slice(-dailyLabels.length),
       dailyLabels.map(() => 'rgba(255,23,68,0.6)'));
@@ -2787,7 +2853,7 @@
   // Every element that shows money registers a render function; applyCurrency() re-runs them all.
   const fxItems = [];
   function fxReg(el, fn, usd) { if (!el) return; el._fx = fn; if (usd !== undefined) el._usd = usd; fxItems.push(el); fn(el); }
-  const rVal   = el => { el.textContent = fmtMoney(el._usd, { sign: el._sign }); };             // "1,273.55 USDT"
+  const rVal   = el => { el.textContent = fmtMoney(el._usd, { sign: el._sign }); };             // "1,299.49 USDT"
   const rPlain = el => { el.textContent = moneyPlain(el._usd); };                                // margin
   const rCell  = el => { const v = S(el._usd), r = Math.round(Math.abs(v) * 100) / 100; el.textContent = (v < 0 && r !== 0 ? '−' : '+') + fmtNum(r); };
   const rToBe  = el => { el.textContent = el._toBe < 0 ? 'To BE: +' + moneyPlain(-el._toBe) + ' needed' : 'Above break-even'; };
