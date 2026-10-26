@@ -516,26 +516,31 @@
   }
   .hdr-overview {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: nowrap;
     gap: 6px;
-    width: 148px;
-    flex: 0 0 auto;
+    width: auto;
+    max-width: 100%;
+    flex: 0 1 auto;
     align-self: flex-start;
   }
   .hdr-ov-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 8px 10px;
+    border-radius: 8px;
+    padding: 6px 8px;
+    min-width: 0;
+    flex: 1 1 0;
+    max-width: 112px;
   }
   .hdr-ov-card .ov-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
   }
-  .hdr-ov-card .ov-l { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; }
-  .hdr-ov-card .ov-pct { font-size: 10px; font-weight: 600; }
+  .hdr-ov-card .ov-l { font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .4px; }
+  .hdr-ov-card .ov-pct { font-size: 9px; font-weight: 600; }
   .hdr-ov-card .ov-pct.pos { color: var(--green); }
   .hdr-ov-card .ov-pct.neg { color: var(--red); }
   .hdr-ov-card .ov-pct.gold { color: var(--amber); }
@@ -543,20 +548,20 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    margin-top: 4px;
+    gap: 4px;
+    margin-top: 2px;
   }
-  .hdr-ov-card .ov-v { font-size: 16px; font-weight: 700; color: var(--white); line-height: 1.1; }
+  .hdr-ov-card .ov-v { font-size: 13px; font-weight: 700; color: var(--white); line-height: 1.15; }
   .hdr-ov-card .ov-v.neg { color: var(--red); }
   .hdr-ov-card .ov-v.gold { color: var(--amber); }
   .hdr-ov-card .ov-spark {
-    width: 56px;
-    height: 22px;
+    width: 36px;
+    height: 16px;
     flex-shrink: 0;
   }
   .hdr-ov-card .ov-spark path {
     fill: none;
-    stroke-width: 1.8;
+    stroke-width: 1.6;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
@@ -564,10 +569,11 @@
   .hdr-ov-card .ov-spark.down path { stroke: var(--red); }
   .hdr-ov-card .ov-bar {
     flex: 1;
-    height: 6px;
+    height: 4px;
     border-radius: 99px;
     background: rgba(255,255,255,0.08);
     overflow: hidden;
+    min-width: 28px;
   }
   .hdr-ov-card .ov-bar i {
     display: block;
@@ -621,17 +627,24 @@
     .header-left {
       width: 100%;
       flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
+      align-items: stretch;
+      gap: 8px;
     }
     .hdr-overview {
       display: flex;
-      flex-direction: column;
-      width: min(160px, 46vw);
-      gap: 8px;
+      flex-direction: row;
+      width: 100%;
+      max-width: 100%;
+      gap: 6px;
       order: 2;
-      align-self: flex-start;
+      align-self: stretch;
     }
+    .hdr-ov-card {
+      max-width: none;
+      padding: 5px 7px;
+    }
+    .hdr-ov-card .ov-v { font-size: 12px; }
+    .hdr-ov-card .ov-spark { width: 28px; height: 14px; }
     .brand-block { order: 1; }
     .header-right {
       width: 100%;
@@ -1528,7 +1541,7 @@
         <div class="hdr-ov-card">
           <div class="ov-top"><span class="ov-l">Equity</span><span class="ov-pct pos">+2.9%</span></div>
           <div class="ov-row">
-            <div class="ov-v">1,874</div>
+            <div class="ov-v">1,879</div>
             <svg class="ov-spark up" viewBox="0 0 64 24" preserveAspectRatio="none" aria-hidden="true">
               <path d="M0,18 8,16 16,17 24,14 32,15 40,11 48,12 56,8 64,6"/>
             </svg>
@@ -1537,7 +1550,7 @@
         <div class="hdr-ov-card">
           <div class="ov-top"><span class="ov-l">P&amp;L</span><span class="ov-pct neg">−18.1%</span></div>
           <div class="ov-row">
-            <div class="ov-v neg">−432</div>
+            <div class="ov-v neg">−427</div>
             <svg class="ov-spark down" viewBox="0 0 64 24" preserveAspectRatio="none" aria-hidden="true">
               <path d="M0,8 8,10 16,9 24,12 32,11 40,15 48,14 56,18 64,17"/>
             </svg>
@@ -1656,18 +1669,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">1,299.71 USDT</div>
+        <div class="metric-value neutral">1,301.90 USDT</div>
         <div class="metric-sub">Start 01.06.26: 1,187.00 · Out: 0</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−40.50 USDT</div>
+        <div class="metric-value neg">−43.36 USDT</div>
         <div class="metric-sub">To BE: +41.11 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+112.71 USDT</div>
-        <div class="metric-sub">+9.50% · bal+out − start</div>
+        <div class="metric-value pos">+114.90 USDT</div>
+        <div class="metric-sub">+9.68% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -1726,7 +1739,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−40.50 USDT</div>
+            <div class="value neg">−43.36 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1752,10 +1765,10 @@
           </div>
         </div>
 
-                        <div class="funding-card" aria-label="THE hedge funding estimate">
+                                <div class="funding-card" aria-label="THE hedge funding estimate">
           <div class="funding-head">
-            <div class="funding-title">THE hedge · funding only · 4h settlement</div>
-            <div class="funding-rate">+0.0050% / 4h</div>
+            <div class="funding-title">THE hedge · funding only · 4h · rate from screen</div>
+            <div class="funding-rate">+0.0110% / 4h</div>
           </div>
           <div class="fund-table-wrap"><table class="fund-table">
             <thead>
@@ -1772,32 +1785,32 @@
               <tr>
                 <td>LONG <span class="fund-pair">THE</span></td>
                 <td class="num">$151.8</td>
-                <td class="num neg">−$0.05</td>
-                <td class="num neg">−$0.32</td>
-                <td class="num neg">−$1.37</td>
-                <td class="num neg">−$16.62</td>
+                <td class="num neg">−$0.10</td>
+                <td class="num neg">−$0.70</td>
+                <td class="num neg">−$3.00</td>
+                <td class="num neg">−$36.56</td>
               </tr>
               <tr>
                 <td>SHORT <span class="fund-pair">THE</span></td>
                 <td class="num">$321.2</td>
-                <td class="num pos">+$0.10</td>
-                <td class="num pos">+$0.67</td>
-                <td class="num pos">+$2.89</td>
-                <td class="num pos">+$35.17</td>
+                <td class="num pos">+$0.21</td>
+                <td class="num pos">+$1.48</td>
+                <td class="num pos">+$6.36</td>
+                <td class="num pos">+$77.37</td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td>Net hedge</td>
                 <td class="num">$169.4 short</td>
-                <td class="num pos">+$0.05</td>
-                <td class="num pos">+$0.36</td>
-                <td class="num pos">+$1.52</td>
-                <td class="num pos">+$18.55</td>
+                <td class="num pos">+$0.11</td>
+                <td class="num pos">+$0.78</td>
+                <td class="num pos">+$3.35</td>
+                <td class="num pos">+$40.81</td>
               </tr>
             </tfoot>
           </table></div>
-          <div class="funding-note">Profit <b>from funding only</b> (no price PnL). THEUSDT settles every <b>4h</b> (6×/day). Positive rate → longs pay shorts. Estimate at current rate &amp; size.</div>
+          <div class="funding-note">Funding-only at <b>+0.0110% / 4h</b> (screenshot 26.10 18:05). 6 settlements/day. Positive rate → longs pay shorts. Excludes trading PnL &amp; fees.</div>
         </div>
         <div class="pos-table">
           <table>
@@ -1809,29 +1822,15 @@
                 <td>THE</td>
                 <td><span class="side-L">LONG</span></td>
                 <td>0.08628</td>
-                <td>0.05113</td>
-                <td class="pnl-neg">−61.83</td>
+                <td>0.05183</td>
+                <td class="pnl-neg">−60.59</td>
               </tr>
               <tr>
                 <td>THE</td>
                 <td><span class="side-S">SHORT</span></td>
-                <td>0.05477</td>
-                <td>0.05113</td>
-                <td class="pnl-pos">+21.38</td>
-              </tr>
-              <tr>
-                <td>HUMA</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.02369</td>
-                <td>0.02374</td>
-                <td class="pnl-neg">−0.01</td>
-              </tr>
-              <tr>
-                <td>PHA</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.04947</td>
-                <td>0.04980</td>
-                <td class="pnl-neg">−0.04</td>
+                <td>0.05478</td>
+                <td>0.05183</td>
+                <td class="pnl-pos">+17.23</td>
               </tr>
 </tbody>
           </table>
@@ -1910,7 +1909,7 @@
           <div class="risk-seg safe" style="width:25%"></div>
           <div class="risk-seg warn" style="width:40%"></div>
           <div class="risk-seg danger" style="width:35%"></div>
-          <div class="risk-marker" style="left:80%" data-label="NOW −40.50"></div>
+          <div class="risk-marker" style="left:80%" data-label="NOW −43.36"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−40 safe</span>
@@ -1997,7 +1996,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−40.50 USDT</div>
+            <div class="value neg">−43.36 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -2122,18 +2121,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">574.59 USDT</div>
+        <div class="metric-value neutral">576.63 USDT</div>
         <div class="metric-sub">Start 08.10.26: 500.00 · Out: 0</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−118.40 USDT</div>
+        <div class="metric-value neg">−124.56 USDT</div>
         <div class="metric-sub">To BE: +126.71 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+74.59 USDT</div>
-        <div class="metric-sub">+14.92% · bal+out − start</div>
+        <div class="metric-value pos">+76.63 USDT</div>
+        <div class="metric-sub">+15.33% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -2185,7 +2184,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−118.40 USDT</div>
+            <div class="value neg">−124.56 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -2210,9 +2209,9 @@
             <div class="value neutral">49.87</div>
           </div>
         </div>
-                        <div class="funding-card" aria-label="TIA ICNT hedge funding estimate">
+                                <div class="funding-card" aria-label="Gamma hedges funding estimate">
           <div class="funding-head">
-            <div class="funding-title">TIA + ICNT hedges · funding only · 4h</div>
+            <div class="funding-title">TIA · ICNT · INIT funding only · ~4h</div>
             <div class="funding-rate">mixed</div>
           </div>
           <div class="fund-table-wrap"><table class="fund-table">
@@ -2231,11 +2230,11 @@
               <tr>
                 <td>TIA L+S</td>
                 <td class="num">$124.7 short</td>
-                <td class="num neg">−0.0031%</td>
-                <td class="num neg">−$0.02</td>
-                <td class="num neg">−$0.16</td>
-                <td class="num neg">−$0.69</td>
-                <td class="num neg">−$8.36</td>
+                <td class="num neg">−0.0097%</td>
+                <td class="num neg">−$0.07</td>
+                <td class="num neg">−$0.51</td>
+                <td class="num neg">−$2.18</td>
+                <td class="num neg">−$26.5</td>
               </tr>
               <tr>
                 <td>ICNT L+S</td>
@@ -2246,20 +2245,29 @@
                 <td class="num pos">+$0.82</td>
                 <td class="num pos">+$9.96</td>
               </tr>
+              <tr>
+                <td>INIT L+S</td>
+                <td class="num">$138.7 short</td>
+                <td class="num neg">−0.0623%</td>
+                <td class="num neg">−$0.52</td>
+                <td class="num neg">−$3.63</td>
+                <td class="num neg">−$15.6</td>
+                <td class="num neg">−$189</td>
+              </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td>Combined</td>
                 <td class="num">—</td>
                 <td class="num">—</td>
-                <td class="num pos">+$0.004</td>
-                <td class="num pos">+$0.03</td>
-                <td class="num pos">+$0.13</td>
-                <td class="num pos">+$1.60</td>
+                <td class="num neg">−$0.56</td>
+                <td class="num neg">−$3.95</td>
+                <td class="num neg">−$16.9</td>
+                <td class="num neg">−$206</td>
               </tr>
             </tfoot>
           </table></div>
-          <div class="funding-note">Funding-only carry for dual legs. Negative TIA rate → net short <b>pays</b>; positive ICNT → net short <b>receives</b>. Net ≈ flat. Settlements ~4h on Binance.</div>
+          <div class="funding-note">Rates from screens 26.10 ~18:05. <b>INIT −0.0623%</b> dominates cost (net short pays). TIA also pays; ICNT receives slightly. Funding-only — not trading PnL. Interval ~4h (6×/day).</div>
         </div>
         <div class="pos-table">
           <table>
@@ -2268,46 +2276,53 @@
             </thead>
             <tbody>
               <tr>
+                <td>ARIA</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.07629</td>
+                <td>0.07600</td>
+                <td class="pnl-pos">+0.06</td>
+              </tr>
+              <tr>
                 <td>TIA</td>
                 <td><span class="side-L">LONG</span></td>
                 <td>0.7130</td>
-                <td>0.5225</td>
-                <td class="pnl-neg">−21.78</td>
+                <td>0.5344</td>
+                <td class="pnl-neg">−20.40</td>
               </tr>
               <tr>
                 <td>TIA</td>
                 <td><span class="side-S">SHORT</span></td>
                 <td>0.5408</td>
-                <td>0.5225</td>
-                <td class="pnl-pos">+6.99</td>
+                <td>0.5344</td>
+                <td class="pnl-pos">+2.42</td>
+              </tr>
+              <tr>
+                <td>INIT</td>
+                <td><span class="side-L">LONG</span></td>
+                <td>0.15740</td>
+                <td>0.14993</td>
+                <td class="pnl-neg">−3.08</td>
+              </tr>
+              <tr>
+                <td>INIT</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.14775</td>
+                <td>0.14993</td>
+                <td class="pnl-neg">−3.02</td>
               </tr>
               <tr>
                 <td>ICNT</td>
                 <td><span class="side-L">LONG</span></td>
                 <td>0.2379</td>
-                <td>0.1743</td>
-                <td class="pnl-neg">−30.04</td>
+                <td>0.1736</td>
+                <td class="pnl-neg">−30.37</td>
               </tr>
               <tr>
                 <td>ICNT</td>
                 <td><span class="side-S">SHORT</span></td>
                 <td>0.1291</td>
-                <td>0.1743</td>
-                <td class="pnl-neg">−71.11</td>
-              </tr>
-              <tr>
-                <td>HUMA</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.02350</td>
-                <td>0.02364</td>
-                <td class="pnl-neg">−0.04</td>
-              </tr>
-              <tr>
-                <td>INIT</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.14544</td>
-                <td>0.14852</td>
-                <td class="pnl-neg">−2.43</td>
+                <td>0.1736</td>
+                <td class="pnl-neg">−70.01</td>
               </tr>
 </tbody>
           </table>
@@ -2321,18 +2336,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Total Balance</div>
-        <div class="metric-value neutral">1,874.30 USDT</div>
+        <div class="metric-value neutral">1,878.53 USDT</div>
         <div class="metric-sub">Start 01.06.26: 2,387.00 · Out: 81.00</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−158.90 USDT</div>
-        <div class="metric-sub">To BE: +158.90 needed</div>
+        <div class="metric-value neg">−167.92 USDT</div>
+        <div class="metric-sub">To BE: +167.92 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value neg">−431.70 USDT</div>
-        <div class="metric-sub">−18.09% · bal+out − start</div>
+        <div class="metric-value neg">−427.47 USDT</div>
+        <div class="metric-sub">−17.91% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -2392,7 +2407,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−40.50 USDT</div>
+            <div class="value neg">−43.36 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -2461,7 +2476,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−118.40 USDT</div>
+            <div class="value neg">−124.56 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -2532,7 +2547,7 @@
           <div class="risk-seg safe" style="width:18%"></div>
           <div class="risk-seg warn" style="width:42%"></div>
           <div class="risk-seg danger" style="width:40%"></div>
-          <div class="risk-marker" style="left:96%" data-label="NOW −158.90"></div>
+          <div class="risk-marker" style="left:96%" data-label="NOW −167.92"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−40 safe</span>
@@ -2563,6 +2578,16 @@
     <button type="button" class="cur-opt" data-cur="GBP"><span class="cur-sym">£</span><span class="cur-name">Pound<small data-rate-for="GBP"></small></span></button>
   </div>
   <div class="sheet-note">All amounts are tracked in USDT and converted for display only (1 USDT ≈ 1 USD).</div>
+  <div class="sheet-title" style="margin-top:20px">Supabase · Early Access</div>
+  <div class="sheet-sub">Leads: email · Telegram · WhatsApp → table <code>leads</code></div>
+  <label class="lead-f" style="margin-top:10px"><span>Project URL</span>
+    <input type="url" id="sb-url" placeholder="https://xxxx.supabase.co" autocomplete="off" autocapitalize="none" spellcheck="false">
+  </label>
+  <label class="lead-f"><span>anon public key</span>
+    <input type="text" id="sb-anon" placeholder="eyJhbGciOi..." autocomplete="off" autocapitalize="none" spellcheck="false">
+  </label>
+  <div class="sheet-note" id="sb-status">Not connected. Paste URL + anon key from Supabase → Settings → API, then Save.</div>
+  <button type="button" class="lead-submit" id="sb-save" style="margin-top:10px">Save Supabase connection</button>
 </div>
 
 <div class="sheet" id="sheet-support" role="dialog" aria-label="Support">
@@ -2864,7 +2889,7 @@
   const C = '#00e5ff';
 
   // ===== Date helpers =====
-  const TODAY = new Date(2026, 9, 26); // Oct 26, 2026
+  const TODAY = new Date(2026, 9, 26); // Oct 26, 2026 evening
   const END_FORECAST = new Date(2026, 11, 31); // Dec 31, 2026
 
   function fmtDate(d) {
@@ -2949,9 +2974,9 @@
   // ---- ONE canonical balance history per strategy (by calendar date) ----
   // Every period (1D/7D/30D/180D) is just a window onto the same series, so a given date always shows the same value.
   const REAL_BAL = {   // real balances taken from screenshots, key = dd.mm
-    alpha: { '04.10': 1208.19, '05.10': 1215.79, '06.10': 1217.01, '07.10': 1219.66, '08.10': 1222.76, '09.10': 1240.59, '10.10': 1290.36, '11.10': 1235.53, '12.10': 1238.45, '13.10': 1243.89, '14.10': 1247.81, '15.10': 1252.69, '16.10': 1258.46, '17.10': 1259.40, '18.10': 1262.22, '19.10': 1266.00, '20.10': 1267.33, '21.10': 1268.04, '22.10': 1273.55, '23.10': 1282.00, '24.10': 1290.00, '25.10': 1299.71, '26.10': 1299.71 },
+    alpha: { '04.10': 1208.19, '05.10': 1215.79, '06.10': 1217.01, '07.10': 1219.66, '08.10': 1222.76, '09.10': 1240.59, '10.10': 1290.36, '11.10': 1235.53, '12.10': 1238.45, '13.10': 1243.89, '14.10': 1247.81, '15.10': 1252.69, '16.10': 1258.46, '17.10': 1259.40, '18.10': 1262.22, '19.10': 1266.00, '20.10': 1267.33, '21.10': 1268.04, '22.10': 1273.55, '23.10': 1282.00, '24.10': 1290.00, '25.10': 1299.49, '26.10': 1301.90 },
     beta:  { '04.10': 783.01,  '05.10': 784.64,  '06.10': 785.64,  '07.10': 787.18,  '08.10': 790.50,  '09.10': 790.32, '10.10': 895.65, '11.10': 895.87, '12.10': 895.87, '13.10': 930.05, '14.10': 917.74, '15.10': 932.27, '16.10': 932.46, '17.10': 0, '18.10': 0, '19.10': 0, '20.10': 0, '21.10': 0, '22.10': 0, '23.10': 0, '24.10': 0, '25.10': 0, '26.10': 0 },
-    gamma: { '08.10': 500.31,  '09.10': 503.05, '10.10': 505.39, '11.10': 517.08, '12.10': 514.26, '13.10': 518.05, '14.10': 520.21, '15.10': 529.38, '16.10': 534.30, '17.10': 535.47, '18.10': 533.45, '19.10': 540.64, '20.10': 546.27, '21.10': 554.01, '22.10': 574.59, '23.10': 562.00, '24.10': 568.00, '25.10': 574.59, '26.10': 574.59 }
+    gamma: { '08.10': 500.31,  '09.10': 503.05, '10.10': 505.39, '11.10': 517.08, '12.10': 514.26, '13.10': 518.05, '14.10': 520.21, '15.10': 529.38, '16.10': 534.30, '17.10': 535.47, '18.10': 533.45, '19.10': 540.64, '20.10': 546.27, '21.10': 554.01, '22.10': 557.39, '23.10': 562.00, '24.10': 568.00, '25.10': 573.12, '26.10': 576.63 }
   };
   function fullHistory(startBal, real, vol) {
     const n = daysBetween(START_DATE, TODAY) + 1;
@@ -3231,9 +3256,9 @@
     const pcol = v => (v < 0 ? 'rgba(255,23,68,0.75)' : 'rgba(0,230,118,0.8)');
     const aVals = [-61.55, 20.44], gVals = [-17.53, -7.15, -29.66, -72.37];
     charts.aPnl = barChart('chart-a-pnl',
-      ['THE L','THE S','HUMA S','PHA S'],
-      [-61.83, 21.38, -0.01, -0.04].map(S),
-      ['rgba(255,23,68,0.75)', 'rgba(0,230,118,0.8)', 'rgba(255,23,68,0.5)', 'rgba(255,23,68,0.5)']
+      ['THE L','THE S'],
+      [-60.59, 17.23].map(S),
+      ['rgba(255,23,68,0.75)', 'rgba(0,230,118,0.8)']
     );
     charts.bPnl = barChart('chart-b-pnl', [], [], []);      // Beta: liquidated, no positions
     charts.gPnl = barChart('chart-g-pnl',
@@ -3247,22 +3272,22 @@
       ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']);
     charts.bWin = doughnutChart('chart-b-winloss', ['Wins','Losses'], [48,52],
       ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.aMarg = doughnutChart('chart-a-margin', ['Used','Free'], [40.17, 1259.54].map(S),
+    charts.aMarg = doughnutChart('chart-a-margin', ['Used','Free'], [39.51, 1262.39].map(S),
       ['rgba(255,196,0,0.8)', 'rgba(0,230,118,0.35)']);
     charts.bExp = doughnutChart('chart-b-exposure', [], [], []);   // Beta: liquidated
-    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma'], [1299.71, 0, 574.59].map(S),
+    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma'], [1301.90, 0, 576.63].map(S),
       ['rgba(0,230,118,0.8)', 'rgba(0,229,255,0.8)', 'rgba(179,136,255,0.8)']);
     charts.allRisk = doughnutChart('chart-all-risk', ['High','Very High'], [1,1],
       ['rgba(255,196,0,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma'], [-40.50, 0, -118.40].map(S),
+    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma'], [-43.36, 0, -124.56].map(S),
       ['rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)']);
 
     // Daily PnL last 7 of the selected window
     const dailyLabels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
-    // Daily uPnL (last 7 ending 26.10)
-    const dailyA = [-66.52, -73.91, -41.11, -50.00, -48.00, -45.09, -40.50];
+    // Daily uPnL (last 7 ending 26.10 evening)
+    const dailyA = [-73.91, -41.11, -50.00, -48.00, -45.09, -40.50, -43.36];
     const dailyB = [0, 0, 0, 0, 0, 0, 0];
-    const dailyG = [-176.99, -159.47, -126.71, -130.00, -128.00, -127.06, -118.40];
+    const dailyG = [-159.47, -126.71, -130.00, -128.00, -127.06, -118.40, -124.56];
     charts.aDaily = barChart('chart-a-daily', dailyLabels,
       dailyA.map(S).slice(-dailyLabels.length),
       dailyLabels.map(() => 'rgba(255,23,68,0.6)'));
@@ -3364,7 +3389,7 @@
   // Every element that shows money registers a render function; applyCurrency() re-runs them all.
   const fxItems = [];
   function fxReg(el, fn, usd) { if (!el) return; el._fx = fn; if (usd !== undefined) el._usd = usd; fxItems.push(el); fn(el); }
-  const rVal   = el => { el.textContent = fmtMoney(el._usd, { sign: el._sign }); };             // "1,299.71 USDT"
+  const rVal   = el => { el.textContent = fmtMoney(el._usd, { sign: el._sign }); };             // "1,301.90 USDT"
   const rPlain = el => { el.textContent = moneyPlain(el._usd); };                                // margin
   const rCell  = el => { const v = S(el._usd), r = Math.round(Math.abs(v) * 100) / 100; el.textContent = (v < 0 && r !== 0 ? '−' : '+') + fmtNum(r); };
   const rToBe  = el => { el.textContent = el._toBe < 0 ? 'To BE: +' + moneyPlain(-el._toBe) + ' needed' : 'Above break-even'; };
@@ -3859,52 +3884,119 @@
   // ---------- Early-access lead form ----------
   // Supabase project (Project Settings -> API): URL and the *anon public* key. The key is meant to be public;
   // security comes from Row Level Security on the "leads" table (insert only, no read).
-  const SUPABASE_URL = '';
-  const SUPABASE_ANON_KEY = '';
+  // ===== Early Access → Supabase (email + telegram + whatsapp) =====
+  function getSbConfig() {
+    try {
+      return {
+        url: (localStorage.getItem('atx-supabase-url') || '').trim(),
+        key: (localStorage.getItem('atx-supabase-anon') || '').trim()
+      };
+    } catch (e) { return { url: '', key: '' }; }
+  }
+  function setSbStatus() {
+    const el = document.getElementById('sb-status');
+    if (!el) return;
+    const { url, key } = getSbConfig();
+    if (url && key) {
+      el.textContent = 'Connected · posts to ' + url.replace(/^https?:\/\//,'').split('/')[0] + ' /rest/v1/leads';
+      el.style.color = 'var(--green)';
+    } else {
+      el.textContent = 'Not connected. Paste URL + anon key from Supabase → Settings → API, then Save.';
+      el.style.color = '';
+    }
+  }
+  (function initSbSettings() {
+    const urlIn = document.getElementById('sb-url');
+    const keyIn = document.getElementById('sb-anon');
+    const save = document.getElementById('sb-save');
+    if (!urlIn || !keyIn || !save) return;
+    const cfg = getSbConfig();
+    urlIn.value = cfg.url;
+    keyIn.value = cfg.key;
+    setSbStatus();
+    save.addEventListener('click', () => {
+      const u = urlIn.value.trim().replace(/\/$/, '');
+      const k = keyIn.value.trim();
+      try {
+        if (u) localStorage.setItem('atx-supabase-url', u); else localStorage.removeItem('atx-supabase-url');
+        if (k) localStorage.setItem('atx-supabase-anon', k); else localStorage.removeItem('atx-supabase-anon');
+      } catch (e) {}
+      setSbStatus();
+      save.textContent = 'Saved ✓';
+      setTimeout(() => { save.textContent = 'Save Supabase connection'; }, 1600);
+    });
+  })();
   (function () {
     const modal = document.getElementById('lead-modal'), form = document.getElementById('lead-form');
     if (!modal || !form) return;
     const $ = id => document.getElementById(id);
     const email = $('lead-email'), tg = $('lead-tg'), wa = $('lead-wa'), ok = $('lead-ok'), err = $('lead-err'), btn = $('lead-submit');
     let doneTimer = null;
-    function showDone() { $('lead-form-wrap').hidden = true; $('lead-done').hidden = false; clearTimeout(doneTimer); doneTimer = setTimeout(close, 2000); }   // thank-you closes itself after 2 s
-    function open() { clearTimeout(doneTimer); $('lead-form-wrap').hidden = false; $('lead-done').hidden = true; modal.classList.remove('closing', 'slow'); modal.classList.add('open'); setTimeout(() => email.focus(), 50); }
+    function showDone() { $('lead-form-wrap').hidden = true; $('lead-done').hidden = false; clearTimeout(doneTimer); doneTimer = setTimeout(close, 2500); }
+    function open() { clearTimeout(doneTimer); $('lead-form-wrap').hidden = false; $('lead-done').hidden = true; err.textContent = ''; modal.classList.remove('closing', 'slow'); modal.classList.add('open'); setTimeout(() => email && email.focus(), 50); }
     function close() { clearTimeout(doneTimer); modal.classList.remove('open'); }
-    $('lead-open').addEventListener('click', open);
-    $('lead-x').addEventListener('click', close);
-    $('lead-done-close').addEventListener('click', close);
+    const openBtn = $('lead-open'); if (openBtn) openBtn.addEventListener('click', open);
+    const xBtn = $('lead-x'); if (xBtn) xBtn.addEventListener('click', close);
+    const doneClose = $('lead-done-close'); if (doneClose) doneClose.addEventListener('click', close);
     modal.addEventListener('click', e => { if (e.target === modal) close(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) close(); });
-    const fail = (msg, ...els) => { err.textContent = msg; [email, tg, wa].forEach(i => i.classList.remove('bad')); els.forEach(i => i.classList.add('bad')); if (els[0]) els[0].focus(); };
+    const fail = (msg, ...els) => { err.textContent = msg; [email, tg, wa].forEach(i => i && i.classList.remove('bad')); els.forEach(i => i && i.classList.add('bad')); if (els[0]) els[0].focus(); };
     form.addEventListener('submit', async e => {
       e.preventDefault();
-      const em = email.value.trim().toLowerCase();
-      const t = tg.value.trim().replace(/^(https?:\/\/)?(t\.me\/|telegram\.me\/)/i, '').replace(/^@/, '');
-      const w = wa.value.trim().replace(/[\s().-]/g, '');
-      if (!em && !t && !w) return fail('Please fill in at least one contact: email, Telegram or WhatsApp.', email);
-      if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) return fail('That email does not look right.', email);
-      if (t && !/^[A-Za-z0-9_]{5,32}$/.test(t)) return fail('Telegram username: 5–32 letters, digits or underscore.', tg);
-      if (w && !/^\+?\d{8,15}$/.test(w)) return fail('WhatsApp number: 8–15 digits, with country code (e.g. +380501234567).', wa);
-      if (!ok.checked) return fail('Please tick the consent box so we can message you.');
-      if ($('lead-hp').value) { showDone(); return; }   // bot: pretend success
+      const em = (email.value || '').trim().toLowerCase();
+      const t = (tg.value || '').trim().replace(/^(https?:\/\/)?(t\.me\/|telegram\.me\/)/i, '').replace(/^@/, '');
+      const w = (wa.value || '').trim().replace(/[\s().-]/g, '');
+      if (!em && !t && !w) return fail('Заповніть хоча б одне: Email, Telegram або WhatsApp.', email);
+      if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) return fail('Некоректний email.', email);
+      if (t && !/^[A-Za-z0-9_]{5,32}$/.test(t)) return fail('Telegram: 5–32 символи (літери, цифри, _).', tg);
+      if (w && !/^\+?\d{8,15}$/.test(w)) return fail('WhatsApp: 8–15 цифр з кодом країни, напр. +380501234567.', wa);
+      if (!ok.checked) return fail('Поставте галочку згоди на зв’язок.');
+      if ($('lead-hp') && $('lead-hp').value) { showDone(); return; }
       err.textContent = ''; btn.disabled = true;
-      const row = { email: em || null, telegram: t ? '@' + t : null, whatsapp: w ? (w[0] === '+' ? w : '+' + w) : null, consent: true, consent_text: 'registration link, early-access features and gifts', page: location.href };
+      // 3 fields → Supabase table leads
+      const row = {
+        email: em || null,
+        telegram: t ? '@' + t : null,
+        whatsapp: w ? (w[0] === '+' ? w : '+' + w) : null,
+        consent: true,
+        consent_text: 'registration link, early-access features and gifts',
+        page: location.href,
+        user_agent: (navigator.userAgent || '').slice(0, 180)
+      };
       try {
-        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) throw new Error('not-configured');
-        const res = await fetch(SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/leads', {
+        const { url, key } = getSbConfig();
+        if (!url || !key) throw new Error('not-configured');
+        const res = await fetch(url.replace(/\/$/, '') + '/rest/v1/leads', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY, Prefer: 'return=minimal' },
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': key,
+            'Authorization': 'Bearer ' + key,
+            'Prefer': 'return=minimal'
+          },
           body: JSON.stringify(row)
         });
-        if (!res.ok) throw new Error('http-' + res.status);
+        if (!res.ok) {
+          const body = await res.text().catch(() => '');
+          console.error('Supabase leads error', res.status, body);
+          throw new Error('http-' + res.status);
+        }
         form.reset(); showDone();
       } catch (x) {
         console.error('lead form:', x);
-        err.textContent = x.message === 'not-configured' ? 'The form is not connected yet.' : 'Could not send right now. Please try again in a moment.';
+        if (x.message === 'not-configured') {
+          err.textContent = 'Supabase не підключено. Settings → вставте Project URL і anon key → Save.';
+        } else if (String(x.message).startsWith('http-')) {
+          err.textContent = 'Помилка сервера (' + x.message + '). Перевірте таблицю leads і RLS policy.';
+        } else {
+          err.textContent = 'Не вдалося надіслати. Спробуйте ще раз.';
+        }
       }
       btn.disabled = false;
     });
   })();
+
+
 </script>
 
 
