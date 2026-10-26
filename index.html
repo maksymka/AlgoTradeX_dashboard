@@ -823,6 +823,27 @@
   .hdr-ov-card .ov-v.gold { color:var(--amber); }
   .hdr-ov-card .ov-s { font-size:10px; color:var(--text-muted); margin-top:2px; }
   .hdr-ov-card .ov-s.pos { color:var(--green); }
+
+  .hdr-ov-card .ov-spark {
+    display: block;
+    width: 100%;
+    height: 28px;
+    margin-top: 6px;
+  }
+  .hdr-ov-card .ov-spark path {
+    fill: none;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .hdr-ov-card .ov-spark.up path { stroke: var(--green); }
+  .hdr-ov-card .ov-spark.gold path { stroke: var(--amber); }
+  .hdr-ov-card .ov-spark.flat path { stroke: var(--cyan); }
+  .hdr-ov-card .ov-spark .area { stroke: none; opacity: 0.15; }
+  .hdr-ov-card .ov-spark.up .area { fill: var(--green); }
+  .hdr-ov-card .ov-spark.gold .area { fill: var(--amber); }
+  .hdr-ov-card .ov-spark.flat .area { fill: var(--cyan); }
+
   @media (max-width: 760px) {
     .hdr-overview { display: flex; order: -1; width: 100%; flex-direction: row; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
     .hdr-ov-card { flex: 1 1 0; min-width: 100px; }
@@ -1350,16 +1371,28 @@
           <div class="ov-l">Equity</div>
           <div class="ov-v">$1,874</div>
           <div class="ov-s pos">All strategies</div>
+          <svg class="ov-spark up" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true">
+            <path class="area" d="M0,22 8,20 16,21 24,18 32,19 40,15 48,16 56,12 64,13 72,10 80,11 88,8 100,6 V28 H0 Z"/>
+            <path d="M0,22 8,20 16,21 24,18 32,19 40,15 48,16 56,12 64,13 72,10 80,11 88,8 100,6"/>
+          </svg>
         </div>
         <div class="hdr-ov-card">
           <div class="ov-l">Funding / day</div>
           <div class="ov-v pos">+$0.05</div>
           <div class="ov-s">THE hedge</div>
+          <svg class="ov-spark flat" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true">
+            <path class="area" d="M0,16 10,15 20,16 30,14 40,15 50,13 60,14 70,12 80,13 90,11 100,12 V28 H0 Z"/>
+            <path d="M0,16 10,15 20,16 30,14 40,15 50,13 60,14 70,12 80,13 90,11 100,12"/>
+          </svg>
         </div>
         <div class="hdr-ov-card">
           <div class="ov-l">Net (A+G)</div>
           <div class="ov-v pos">+$187</div>
           <div class="ov-s">ex-Beta</div>
+          <svg class="ov-spark gold" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true">
+            <path class="area" d="M0,18 8,17 16,19 24,16 32,18 40,14 48,15 56,11 64,13 72,9 80,10 88,7 100,5 V28 H0 Z"/>
+            <path d="M0,18 8,17 16,19 24,16 32,18 40,14 48,15 56,11 64,13 72,9 80,10 88,7 100,5"/>
+          </svg>
         </div>
       </div>
       <div class="brand-block hdr-in" style="--d:0s">
