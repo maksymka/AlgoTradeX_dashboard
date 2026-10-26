@@ -489,11 +489,20 @@
 
   .header-main {
     display: grid !important;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 1fr;
     grid-template-areas:
-      "left right";
+      "left"
+      "right";
     align-items: start;
-    gap: 12px 20px;
+    gap: 12px;
+  }
+  @media (min-width: 1100px) {
+    .header-main {
+      grid-template-columns: 1fr auto;
+      grid-template-areas: "left right";
+      align-items: center;
+      gap: 16px 24px;
+    }
   }
   .header-left {
     grid-area: left;
@@ -508,28 +517,68 @@
   .header-left .brand-block { order: 1; flex: 0 1 auto; }
   .header-left .hdr-overview { order: 2; margin-left: 0; }
 
-  /* Force 3 stat cards under logo */
+
+  /* Overview cards: large & centered on desktop */
   .header-left {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 8px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+    max-width: 100%;
   }
-  .header-left .brand-block { order: 1; width: 100%; }
+  .header-left .brand-block {
+    order: 1;
+    align-self: flex-start;
+  }
   .header-left .hdr-overview {
     order: 2;
     display: flex !important;
-    flex-direction: column !important;
-    width: 128px !important;
-    max-width: 42vw !important;
-    gap: 5px !important;
-    margin-left: 0 !important;
-    align-self: flex-start !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 14px;
+    width: 100% !important;
+    max-width: 720px;
+    margin: 4px auto 0 !important;
+    align-self: center !important;
   }
   .header-left .hdr-ov-card {
-    width: 100% !important;
-    max-width: none !important;
-    flex: none !important;
+    flex: 1 1 0 !important;
+    max-width: 220px !important;
+    min-width: 140px;
+    width: auto !important;
+    padding: 14px 16px !important;
+    border-radius: 12px !important;
   }
+  .header-left .hdr-ov-card .ov-l { font-size: 11px !important; letter-spacing: .6px; }
+  .header-left .hdr-ov-card .ov-pct { font-size: 12px !important; }
+  .header-left .hdr-ov-card .ov-v { font-size: 26px !important; font-weight: 700; letter-spacing: -0.3px; }
+  .header-left .hdr-ov-card .ov-row { margin-top: 8px !important; gap: 10px; }
+  .header-left .hdr-ov-card .ov-spark { width: 72px !important; height: 28px !important; }
+  .header-left .hdr-ov-card .ov-bar { height: 6px !important; min-width: 48px; }
+
+  @media (max-width: 760px) {
+    .header-left .hdr-overview {
+      flex-direction: column !important;
+      width: 140px !important;
+      max-width: 48vw !important;
+      margin: 0 !important;
+      align-self: flex-start !important;
+      gap: 6px !important;
+      justify-content: flex-start;
+    }
+    .header-left .hdr-ov-card {
+      max-width: none !important;
+      min-width: 0;
+      width: 100% !important;
+      padding: 8px 10px !important;
+    }
+    .header-left .hdr-ov-card .ov-v { font-size: 15px !important; }
+    .header-left .hdr-ov-card .ov-spark { width: 40px !important; height: 18px !important; }
+  }
+
 
   .header-right {
     grid-area: right;
@@ -552,11 +601,11 @@
   .hdr-ov-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 4px 7px;
+    border-radius: 12px;
+    padding: 12px 14px;
     min-width: 0;
     flex: 1 1 0;
-    max-width: 98px;
+    max-width: 220px;
   }
   .hdr-ov-card .ov-top {
     display: flex;
