@@ -498,14 +498,15 @@
   .header-left {
     grid-area: left;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
     min-width: 0;
     position: relative;
   }
-  .header-left .brand-block { order: 1; }
-  .header-left .hdr-overview { order: 2; }
+  .header-left .brand-block { order: 1; flex: 0 1 auto; }
+  .header-left .hdr-overview { order: 2; margin-left: 4px; }
   .header-right {
     grid-area: right;
     margin-left: 0 !important;
@@ -518,7 +519,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    gap: 6px;
+    gap: 5px;
     width: auto;
     max-width: 100%;
     flex: 0 1 auto;
@@ -527,11 +528,11 @@
   .hdr-ov-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 8px;
+    border-radius: 7px;
+    padding: 4px 7px;
     min-width: 0;
     flex: 1 1 0;
-    max-width: 112px;
+    max-width: 98px;
   }
   .hdr-ov-card .ov-top {
     display: flex;
@@ -551,12 +552,12 @@
     gap: 4px;
     margin-top: 2px;
   }
-  .hdr-ov-card .ov-v { font-size: 13px; font-weight: 700; color: var(--white); line-height: 1.15; }
+  .hdr-ov-card .ov-v { font-size: 12px; font-weight: 700; color: var(--white); line-height: 1.1; }
   .hdr-ov-card .ov-v.neg { color: var(--red); }
   .hdr-ov-card .ov-v.gold { color: var(--amber); }
   .hdr-ov-card .ov-spark {
-    width: 36px;
-    height: 16px;
+    width: 30px;
+    height: 14px;
     flex-shrink: 0;
   }
   .hdr-ov-card .ov-spark path {
@@ -1286,8 +1287,8 @@
   @media (max-width:760px) { .bn-btn { font-size:9px; } }
 
   /* Visibility */
-  .content-a, .content-b, .content-g, .content-all { display: none; }
-  .content-a.active, .content-b.active, .content-g.active, .content-all.active { display: block; }
+  .content-a, .content-b, .content-g, .content-d, .content-all { display: none; }
+  .content-a.active, .content-b.active, .content-g.active, .content-d.active, .content-all.active { display: block; }
   .content-all .strategies { grid-template-columns: 1fr 1fr 1fr; }
   @media (max-width: 900px) { .content-all .strategies { grid-template-columns: 1fr; } }
 
@@ -1541,7 +1542,7 @@
         <div class="hdr-ov-card">
           <div class="ov-top"><span class="ov-l">Equity</span><span class="ov-pct pos">+2.9%</span></div>
           <div class="ov-row">
-            <div class="ov-v">1,879</div>
+            <div class="ov-v">1,881</div>
             <svg class="ov-spark up" viewBox="0 0 64 24" preserveAspectRatio="none" aria-hidden="true">
               <path d="M0,18 8,16 16,17 24,14 32,15 40,11 48,12 56,8 64,6"/>
             </svg>
@@ -1550,7 +1551,7 @@
         <div class="hdr-ov-card">
           <div class="ov-top"><span class="ov-l">P&amp;L</span><span class="ov-pct neg">−18.1%</span></div>
           <div class="ov-row">
-            <div class="ov-v neg">−427</div>
+            <div class="ov-v neg">−425</div>
             <svg class="ov-spark down" viewBox="0 0 64 24" preserveAspectRatio="none" aria-hidden="true">
               <path d="M0,8 8,10 16,9 24,12 32,11 40,15 48,14 56,18 64,17"/>
             </svg>
@@ -1653,7 +1654,7 @@
         <div class="tab" data-tab="a">Strategy Alpha</div>
         <div class="tab" data-tab="b">Strategy Beta</div>
         <div class="tab" data-tab="g" id="tab-gamma">Strategy Gamma</div>
-        <div class="tab" data-tab="d" data-soon="Strategy Delta" id="tab-delta">Strategy Delta</div>
+        <div class="tab" data-tab="d" id="tab-delta">Strategy Delta</div>
         <div class="tab" data-tab="e" data-soon="Strategy Epsilon" id="tab-epsilon">Strategy Epsilon</div>
         <div class="tab" data-tab="z" data-soon="Strategy Zeta" id="tab-zeta">Strategy Zeta</div>
         <div class="tab" data-tab="h" data-soon="Strategy Eta" id="tab-eta">Strategy Eta</div>
@@ -1669,18 +1670,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">1,301.90 USDT</div>
+        <div class="metric-value neutral">1,302.06 USDT</div>
         <div class="metric-sub">Start 01.06.26: 1,187.00 · Out: 0</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−43.36 USDT</div>
+        <div class="metric-value neg">−41.35 USDT</div>
         <div class="metric-sub">To BE: +41.11 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+114.90 USDT</div>
-        <div class="metric-sub">+9.68% · bal+out − start</div>
+        <div class="metric-value pos">+115.06 USDT</div>
+        <div class="metric-sub">+9.69% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -1739,7 +1740,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−43.36 USDT</div>
+            <div class="value neg">−41.35 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -1765,52 +1766,24 @@
           </div>
         </div>
 
-                                <div class="funding-card" aria-label="THE hedge funding estimate">
+                                        <div class="funding-card" aria-label="THE hedge funding estimate">
           <div class="funding-head">
-            <div class="funding-title">THE hedge · funding only · 4h · rate from screen</div>
-            <div class="funding-rate">+0.0110% / 4h</div>
+            <div class="funding-title">THE hedge · funding only · 4h</div>
+            <div class="funding-rate">+0.0050% / 4h</div>
           </div>
           <div class="fund-table-wrap"><table class="fund-table">
             <thead>
-              <tr>
-                <th>Leg</th>
-                <th class="num">Notional</th>
-                <th class="num">1 day</th>
-                <th class="num">1 week</th>
-                <th class="num">1 month</th>
-                <th class="num">1 year</th>
-              </tr>
+              <tr><th>Leg</th><th class="num">Notional</th><th class="num">1 day</th><th class="num">1 week</th><th class="num">1 month</th><th class="num">1 year</th></tr>
             </thead>
             <tbody>
-              <tr>
-                <td>LONG <span class="fund-pair">THE</span></td>
-                <td class="num">$151.8</td>
-                <td class="num neg">−$0.10</td>
-                <td class="num neg">−$0.70</td>
-                <td class="num neg">−$3.00</td>
-                <td class="num neg">−$36.56</td>
-              </tr>
-              <tr>
-                <td>SHORT <span class="fund-pair">THE</span></td>
-                <td class="num">$321.2</td>
-                <td class="num pos">+$0.21</td>
-                <td class="num pos">+$1.48</td>
-                <td class="num pos">+$6.36</td>
-                <td class="num pos">+$77.37</td>
-              </tr>
+              <tr><td>LONG <span class="fund-pair">THE</span></td><td class="num">$151.8</td><td class="num neg">−$0.05</td><td class="num neg">−$0.32</td><td class="num neg">−$1.37</td><td class="num neg">−$16.62</td></tr>
+              <tr><td>SHORT <span class="fund-pair">THE</span></td><td class="num">$321.2</td><td class="num pos">+$0.10</td><td class="num pos">+$0.67</td><td class="num pos">+$2.89</td><td class="num pos">+$35.17</td></tr>
             </tbody>
             <tfoot>
-              <tr>
-                <td>Net hedge</td>
-                <td class="num">$169.4 short</td>
-                <td class="num pos">+$0.11</td>
-                <td class="num pos">+$0.78</td>
-                <td class="num pos">+$3.35</td>
-                <td class="num pos">+$40.81</td>
-              </tr>
+              <tr><td>Net hedge</td><td class="num">$169.4 short</td><td class="num pos">+$0.05</td><td class="num pos">+$0.36</td><td class="num pos">+$1.52</td><td class="num pos">+$18.55</td></tr>
             </tfoot>
           </table></div>
-          <div class="funding-note">Funding-only at <b>+0.0110% / 4h</b> (screenshot 26.10 18:05). 6 settlements/day. Positive rate → longs pay shorts. Excludes trading PnL &amp; fees.</div>
+          <div class="funding-note">Rate from screen 26.10 ~21:12 · +0.005%/4h · funding-only (no price PnL).</div>
         </div>
         <div class="pos-table">
           <table>
@@ -1822,15 +1795,15 @@
                 <td>THE</td>
                 <td><span class="side-L">LONG</span></td>
                 <td>0.08628</td>
-                <td>0.05183</td>
-                <td class="pnl-neg">−60.59</td>
+                <td>0.05135</td>
+                <td class="pnl-neg">−61.44</td>
               </tr>
               <tr>
                 <td>THE</td>
                 <td><span class="side-S">SHORT</span></td>
-                <td>0.05478</td>
-                <td>0.05183</td>
-                <td class="pnl-pos">+17.23</td>
+                <td>0.05477</td>
+                <td>0.05135</td>
+                <td class="pnl-pos">+20.09</td>
               </tr>
 </tbody>
           </table>
@@ -1909,7 +1882,7 @@
           <div class="risk-seg safe" style="width:25%"></div>
           <div class="risk-seg warn" style="width:40%"></div>
           <div class="risk-seg danger" style="width:35%"></div>
-          <div class="risk-marker" style="left:80%" data-label="NOW −43.36"></div>
+          <div class="risk-marker" style="left:80%" data-label="NOW −41.35"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−40 safe</span>
@@ -1996,7 +1969,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−43.36 USDT</div>
+            <div class="value neg">−41.35 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -2121,18 +2094,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">576.63 USDT</div>
+        <div class="metric-value neutral">578.88 USDT</div>
         <div class="metric-sub">Start 08.10.26: 500.00 · Out: 0</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−124.56 USDT</div>
+        <div class="metric-value neg">−165.76 USDT</div>
         <div class="metric-sub">To BE: +126.71 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+76.63 USDT</div>
-        <div class="metric-sub">+15.33% · bal+out − start</div>
+        <div class="metric-value pos">+78.88 USDT</div>
+        <div class="metric-sub">+15.78% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -2184,7 +2157,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−124.56 USDT</div>
+            <div class="value neg">−165.76 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -2209,65 +2182,26 @@
             <div class="value neutral">49.87</div>
           </div>
         </div>
-                                <div class="funding-card" aria-label="Gamma hedges funding estimate">
+                                        <div class="funding-card" aria-label="Gamma hedges funding estimate">
           <div class="funding-head">
-            <div class="funding-title">TIA · ICNT · INIT funding only · ~4h</div>
-            <div class="funding-rate">mixed</div>
+            <div class="funding-title">ICNT · ARIA · INIT · TIA · funding only</div>
+            <div class="funding-rate">mixed · ICNT +0.005%</div>
           </div>
           <div class="fund-table-wrap"><table class="fund-table">
             <thead>
-              <tr>
-                <th>Hedge</th>
-                <th class="num">Net notional</th>
-                <th class="num">Rate / 4h</th>
-                <th class="num">1 day</th>
-                <th class="num">1 week</th>
-                <th class="num">1 month</th>
-                <th class="num">1 year</th>
-              </tr>
+              <tr><th>Hedge</th><th class="num">Net notional</th><th class="num">Rate</th><th class="num">1 day</th><th class="num">1 week</th><th class="num">1 year</th></tr>
             </thead>
             <tbody>
-              <tr>
-                <td>TIA L+S</td>
-                <td class="num">$124.7 short</td>
-                <td class="num neg">−0.0097%</td>
-                <td class="num neg">−$0.07</td>
-                <td class="num neg">−$0.51</td>
-                <td class="num neg">−$2.18</td>
-                <td class="num neg">−$26.5</td>
-              </tr>
-              <tr>
-                <td>ICNT L+S</td>
-                <td class="num">$90.9 short</td>
-                <td class="num pos">+0.0050%</td>
-                <td class="num pos">+$0.03</td>
-                <td class="num pos">+$0.19</td>
-                <td class="num pos">+$0.82</td>
-                <td class="num pos">+$9.96</td>
-              </tr>
-              <tr>
-                <td>INIT L+S</td>
-                <td class="num">$138.7 short</td>
-                <td class="num neg">−0.0623%</td>
-                <td class="num neg">−$0.52</td>
-                <td class="num neg">−$3.63</td>
-                <td class="num neg">−$15.6</td>
-                <td class="num neg">−$189</td>
-              </tr>
+              <tr><td>ICNT L+S</td><td class="num">$90.9 short</td><td class="num pos">+0.0050%</td><td class="num pos">+$0.03</td><td class="num pos">+$0.19</td><td class="num pos">+$9.96</td></tr>
+              <tr><td>ARIA L+S</td><td class="num">$66.6 short</td><td class="num">n/a</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+              <tr><td>INIT L+S</td><td class="num">$138.7 short</td><td class="num">n/a</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+              <tr><td>TIA L+S</td><td class="num">$124.7 short</td><td class="num">n/a</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
             </tbody>
             <tfoot>
-              <tr>
-                <td>Combined</td>
-                <td class="num">—</td>
-                <td class="num">—</td>
-                <td class="num neg">−$0.56</td>
-                <td class="num neg">−$3.95</td>
-                <td class="num neg">−$16.9</td>
-                <td class="num neg">−$206</td>
-              </tr>
+              <tr><td>ICNT carry</td><td class="num">—</td><td class="num">—</td><td class="num pos">+$0.03</td><td class="num pos">+$0.19</td><td class="num pos">+$9.96</td></tr>
             </tfoot>
           </table></div>
-          <div class="funding-note">Rates from screens 26.10 ~18:05. <b>INIT −0.0623%</b> dominates cost (net short pays). TIA also pays; ICNT receives slightly. Funding-only — not trading PnL. Interval ~4h (6×/day).</div>
+          <div class="funding-note">ICNT rate +0.005%/4h (screen 26.10). Other pairs rate not on this screenshot — update when available. Funding-only.</div>
         </div>
         <div class="pos-table">
           <table>
@@ -2276,53 +2210,60 @@
             </thead>
             <tbody>
               <tr>
-                <td>ARIA</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.07629</td>
-                <td>0.07600</td>
-                <td class="pnl-pos">+0.06</td>
-              </tr>
-              <tr>
-                <td>TIA</td>
-                <td><span class="side-L">LONG</span></td>
-                <td>0.7130</td>
-                <td>0.5344</td>
-                <td class="pnl-neg">−20.40</td>
-              </tr>
-              <tr>
-                <td>TIA</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.5408</td>
-                <td>0.5344</td>
-                <td class="pnl-pos">+2.42</td>
-              </tr>
-              <tr>
-                <td>INIT</td>
-                <td><span class="side-L">LONG</span></td>
-                <td>0.15740</td>
-                <td>0.14993</td>
-                <td class="pnl-neg">−3.08</td>
-              </tr>
-              <tr>
-                <td>INIT</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.14775</td>
-                <td>0.14993</td>
-                <td class="pnl-neg">−3.02</td>
-              </tr>
-              <tr>
                 <td>ICNT</td>
                 <td><span class="side-L">LONG</span></td>
                 <td>0.2379</td>
-                <td>0.1736</td>
-                <td class="pnl-neg">−30.37</td>
+                <td>0.1789</td>
+                <td class="pnl-neg">−27.87</td>
               </tr>
               <tr>
                 <td>ICNT</td>
                 <td><span class="side-S">SHORT</span></td>
                 <td>0.1291</td>
-                <td>0.1736</td>
-                <td class="pnl-neg">−70.01</td>
+                <td>0.1789</td>
+                <td class="pnl-neg">−78.35</td>
+              </tr>
+              <tr>
+                <td>ARIA</td>
+                <td><span class="side-L">LONG</span></td>
+                <td>0.08910</td>
+                <td>0.0910</td>
+                <td class="pnl-pos">+2.95</td>
+              </tr>
+              <tr>
+                <td>ARIA</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.07911</td>
+                <td>0.0910</td>
+                <td class="pnl-neg">−30.78</td>
+              </tr>
+              <tr>
+                <td>INIT</td>
+                <td><span class="side-L">LONG</span></td>
+                <td>0.15740</td>
+                <td>0.15557</td>
+                <td class="pnl-neg">−0.76</td>
+              </tr>
+              <tr>
+                <td>INIT</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.14775</td>
+                <td>0.15557</td>
+                <td class="pnl-neg">−10.78</td>
+              </tr>
+              <tr>
+                <td>TIA</td>
+                <td><span class="side-L">LONG</span></td>
+                <td>0.7130</td>
+                <td>0.5427</td>
+                <td class="pnl-neg">−19.47</td>
+              </tr>
+              <tr>
+                <td>TIA</td>
+                <td><span class="side-S">SHORT</span></td>
+                <td>0.5408</td>
+                <td>0.5427</td>
+                <td class="pnl-neg">−0.71</td>
               </tr>
 </tbody>
           </table>
@@ -2336,18 +2277,18 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Total Balance</div>
-        <div class="metric-value neutral">1,878.53 USDT</div>
+        <div class="metric-value neutral">1,880.94 USDT</div>
         <div class="metric-sub">Start 01.06.26: 2,387.00 · Out: 81.00</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−167.92 USDT</div>
-        <div class="metric-sub">To BE: +167.92 needed</div>
+        <div class="metric-value neg">−207.11 USDT</div>
+        <div class="metric-sub">To BE: +207.11 needed</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value neg">−427.47 USDT</div>
-        <div class="metric-sub">−17.91% · bal+out − start</div>
+        <div class="metric-value neg">−425.06 USDT</div>
+        <div class="metric-sub">−17.81% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -2407,7 +2348,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−43.36 USDT</div>
+            <div class="value neg">−41.35 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -2476,7 +2417,7 @@
         <div class="stat-grid">
           <div class="stat-item">
             <div class="label">PnL</div>
-            <div class="value neg">−124.56 USDT</div>
+            <div class="value neg">−165.76 USDT</div>
           </div>
           <div class="stat-item">
             <div class="label">Win rate</div>
@@ -2547,7 +2488,7 @@
           <div class="risk-seg safe" style="width:18%"></div>
           <div class="risk-seg warn" style="width:42%"></div>
           <div class="risk-seg danger" style="width:40%"></div>
-          <div class="risk-marker" style="left:96%" data-label="NOW −167.92"></div>
+          <div class="risk-marker" style="left:96%" data-label="NOW −207.11"></div>
         </div>
         <div class="risk-markers">
           <span style="color:var(--green)">−40 safe</span>
@@ -2605,6 +2546,41 @@
 </div>
 
 
+
+
+    <div class="content-d">
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-label">CURRENT BALANCE</div>
+          <div class="metric-value">500.00 USDT</div>
+          <div class="metric-sub">Start 26.10.26: 500.00 · Out: 0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">UNREALIZED PNL</div>
+          <div class="metric-value neutral">0.00 USDT</div>
+          <div class="metric-sub">Launch day · no open positions yet</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">NET PNL (NOW)</div>
+          <div class="metric-value neutral">0.00 USDT</div>
+          <div class="metric-sub">0.00% · bal+out − start</div>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-item"><div class="label">Start deposit</div><div class="value neutral">500.00</div></div>
+        <div class="stat-item"><div class="label">Launch</div><div class="value neutral">26.10.2026</div></div>
+        <div class="stat-item"><div class="label">Positions</div><div class="value neutral">0 open</div></div>
+        <div class="stat-item"><div class="label">Risk</div><div class="value"><span class="risk-badge">Low</span></div></div>
+      </div>
+      <div class="pos-table">
+        <table>
+          <thead><tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr></thead>
+          <tbody>
+            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px">No open positions · strategy launched with $500</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
 <!-- "Data will be added later" modal (Gamma / Delta / Epsilon) -->
 <div class="modal-overlay" id="lead-modal" role="dialog" aria-modal="true" aria-labelledby="lead-title">
@@ -2711,8 +2687,8 @@
       tab.classList.add('active');
       moveTabIndicator();
       tab.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
-      document.querySelectorAll('.content-a, .content-b, .content-g, .content-all').forEach(c => c.classList.remove('active'));
-      const map = { a: 'content-a', b: 'content-b', g: 'content-g', all: 'content-all' };
+      document.querySelectorAll('.content-a, .content-b, .content-g, .content-d, .content-all').forEach(c => c.classList.remove('active'));
+      const map = { a: 'content-a', b: 'content-b', g: 'content-g', d: 'content-d', all: 'content-all' };
       document.querySelector('.' + map[tab.dataset.tab]).classList.add('active');
       setTimeout(() => window.dispatchEvent(new Event('resize')), 40);
     });
@@ -2974,9 +2950,10 @@
   // ---- ONE canonical balance history per strategy (by calendar date) ----
   // Every period (1D/7D/30D/180D) is just a window onto the same series, so a given date always shows the same value.
   const REAL_BAL = {   // real balances taken from screenshots, key = dd.mm
-    alpha: { '04.10': 1208.19, '05.10': 1215.79, '06.10': 1217.01, '07.10': 1219.66, '08.10': 1222.76, '09.10': 1240.59, '10.10': 1290.36, '11.10': 1235.53, '12.10': 1238.45, '13.10': 1243.89, '14.10': 1247.81, '15.10': 1252.69, '16.10': 1258.46, '17.10': 1259.40, '18.10': 1262.22, '19.10': 1266.00, '20.10': 1267.33, '21.10': 1268.04, '22.10': 1273.55, '23.10': 1282.00, '24.10': 1290.00, '25.10': 1299.49, '26.10': 1301.90 },
+    alpha: { '04.10': 1208.19, '05.10': 1215.79, '06.10': 1217.01, '07.10': 1219.66, '08.10': 1222.76, '09.10': 1240.59, '10.10': 1290.36, '11.10': 1235.53, '12.10': 1238.45, '13.10': 1243.89, '14.10': 1247.81, '15.10': 1252.69, '16.10': 1258.46, '17.10': 1259.40, '18.10': 1262.22, '19.10': 1266.00, '20.10': 1267.33, '21.10': 1268.04, '22.10': 1273.55, '23.10': 1282.00, '24.10': 1290.00, '25.10': 1299.49, '26.10': 1302.06},
     beta:  { '04.10': 783.01,  '05.10': 784.64,  '06.10': 785.64,  '07.10': 787.18,  '08.10': 790.50,  '09.10': 790.32, '10.10': 895.65, '11.10': 895.87, '12.10': 895.87, '13.10': 930.05, '14.10': 917.74, '15.10': 932.27, '16.10': 932.46, '17.10': 0, '18.10': 0, '19.10': 0, '20.10': 0, '21.10': 0, '22.10': 0, '23.10': 0, '24.10': 0, '25.10': 0, '26.10': 0 },
-    gamma: { '08.10': 500.31,  '09.10': 503.05, '10.10': 505.39, '11.10': 517.08, '12.10': 514.26, '13.10': 518.05, '14.10': 520.21, '15.10': 529.38, '16.10': 534.30, '17.10': 535.47, '18.10': 533.45, '19.10': 540.64, '20.10': 546.27, '21.10': 554.01, '22.10': 557.39, '23.10': 562.00, '24.10': 568.00, '25.10': 573.12, '26.10': 576.63 }
+    delta: { '26.10': 500.00 },
+    gamma: { '08.10': 500.31,  '09.10': 503.05, '10.10': 505.39, '11.10': 517.08, '12.10': 514.26, '13.10': 518.05, '14.10': 520.21, '15.10': 529.38, '16.10': 534.30, '17.10': 535.47, '18.10': 533.45, '19.10': 540.64, '20.10': 546.27, '21.10': 554.01, '22.10': 557.39, '23.10': 562.00, '24.10': 568.00, '25.10': 573.12, '26.10': 578.88 }
   };
   function fullHistory(startBal, real, vol) {
     const n = daysBetween(START_DATE, TODAY) + 1;
@@ -3257,7 +3234,7 @@
     const aVals = [-61.55, 20.44], gVals = [-17.53, -7.15, -29.66, -72.37];
     charts.aPnl = barChart('chart-a-pnl',
       ['THE L','THE S'],
-      [-60.59, 17.23].map(S),
+      [-61.44, 20.09].map(S),
       ['rgba(255,23,68,0.75)', 'rgba(0,230,118,0.8)']
     );
     charts.bPnl = barChart('chart-b-pnl', [], [], []);      // Beta: liquidated, no positions
@@ -3275,19 +3252,19 @@
     charts.aMarg = doughnutChart('chart-a-margin', ['Used','Free'], [39.51, 1262.39].map(S),
       ['rgba(255,196,0,0.8)', 'rgba(0,230,118,0.35)']);
     charts.bExp = doughnutChart('chart-b-exposure', [], [], []);   // Beta: liquidated
-    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma'], [1301.90, 0, 576.63].map(S),
+    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma','Delta'], [1302.06, 0, 578.88, 500].map(S),
       ['rgba(0,230,118,0.8)', 'rgba(0,229,255,0.8)', 'rgba(179,136,255,0.8)']);
     charts.allRisk = doughnutChart('chart-all-risk', ['High','Very High'], [1,1],
       ['rgba(255,196,0,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma'], [-43.36, 0, -124.56].map(S),
+    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma','Delta'], [-41.35, 0, -165.76, 0].map(S),
       ['rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)']);
 
     // Daily PnL last 7 of the selected window
     const dailyLabels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
     // Daily uPnL (last 7 ending 26.10 evening)
-    const dailyA = [-73.91, -41.11, -50.00, -48.00, -45.09, -40.50, -43.36];
+    const dailyA = [-41.11, -50.00, -48.00, -45.09, -40.50, -43.36, -41.35];
     const dailyB = [0, 0, 0, 0, 0, 0, 0];
-    const dailyG = [-159.47, -126.71, -130.00, -128.00, -127.06, -118.40, -124.56];
+    const dailyG = [-126.71, -130.00, -128.00, -127.06, -118.40, -124.56, -165.76];
     charts.aDaily = barChart('chart-a-daily', dailyLabels,
       dailyA.map(S).slice(-dailyLabels.length),
       dailyLabels.map(() => 'rgba(255,23,68,0.6)'));
@@ -3389,7 +3366,7 @@
   // Every element that shows money registers a render function; applyCurrency() re-runs them all.
   const fxItems = [];
   function fxReg(el, fn, usd) { if (!el) return; el._fx = fn; if (usd !== undefined) el._usd = usd; fxItems.push(el); fn(el); }
-  const rVal   = el => { el.textContent = fmtMoney(el._usd, { sign: el._sign }); };             // "1,301.90 USDT"
+  const rVal   = el => { el.textContent = fmtMoney(el._usd, { sign: el._sign }); };             // "1,302.06 USDT"
   const rPlain = el => { el.textContent = moneyPlain(el._usd); };                                // margin
   const rCell  = el => { const v = S(el._usd), r = Math.round(Math.abs(v) * 100) / 100; el.textContent = (v < 0 && r !== 0 ? '−' : '+') + fmtNum(r); };
   const rToBe  = el => { el.textContent = el._toBe < 0 ? 'To BE: +' + moneyPlain(-el._toBe) + ' needed' : 'Above break-even'; };
