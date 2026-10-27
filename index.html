@@ -1625,6 +1625,7 @@
     </div>
     <div class="header-main">
       <div class="header-left">
+      <!--
       <div class="hdr-overview" aria-label="Quick overview">
         <div class="hdr-ov-card">
           <div class="ov-top"><span class="ov-l">Equity</span><span class="ov-pct pos">+2.9%</span></div>
@@ -1652,6 +1653,7 @@
           </div>
         </div>
       </div>
+      -->
       <div class="brand-block hdr-in" style="--d:0s">
         <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="cliLion" color-interpolation-filters="sRGB">
           <feColorMatrix type="saturate" values=".38"/>
@@ -2637,45 +2639,149 @@
 
 
     
+    
     <div class="content-d">
       <div class="metrics">
         <div class="metric">
-          <div class="metric-label">CURRENT BALANCE</div>
-          <div class="metric-value">504.99 USDT</div>
+          <div class="metric-label">Current Balance</div>
+          <div class="metric-value neutral">504.99 USDT</div>
           <div class="metric-sub">Start 26.10.26: 500.00 · Out: 0</div>
         </div>
         <div class="metric">
-          <div class="metric-label">UNREALIZED PNL</div>
+          <div class="metric-label">Unrealized PnL</div>
           <div class="metric-value neg">−0.18 USDT</div>
           <div class="metric-sub">To BE: +0.18 needed</div>
         </div>
         <div class="metric">
-          <div class="metric-label">NET PNL (NOW)</div>
+          <div class="metric-label">Net PnL (now)</div>
           <div class="metric-value pos">+4.99 USDT</div>
           <div class="metric-sub">+1.00% · bal+out − start</div>
         </div>
+        <div class="metric">
+          <div class="metric-label">Risk Level</div>
+          <div class="metric-value neutral">LOW</div>
+          <div class="metric-sub">Binance · APR short · launch</div>
+        </div>
       </div>
-      <div class="stat-grid">
-        <div class="stat-item"><div class="label">Start deposit</div><div class="value neutral">500.00</div></div>
-        <div class="stat-item"><div class="label">Launch</div><div class="value neutral">26.10.2026</div></div>
-        <div class="stat-item"><div class="label">Used / Margin</div><div class="value neutral">1.40 / 13.84</div></div>
-        <div class="stat-item"><div class="label">Risk</div><div class="value"><span class="risk-badge">Low</span></div></div>
+
+      <div class="charts-row">
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title">Deposit Growth</div>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Equity</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Forecast</div>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="chart-d-equity"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title">PnL vs Total Balance</div>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Total balance</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> PnL</div>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="chart-d-tbpnl"></canvas></div>
+        </div>
       </div>
-      <div class="pos-table">
-        <table>
-          <thead><tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>APR</td>
-              <td><span class="side-S">SHORT</span></td>
-              <td>0.03443</td>
-              <td>0.03487</td>
-              <td class="pnl-neg">−0.18</td>
-            </tr>
-          </tbody>
-        </table>
+
+      <div class="charts-row">
+        <div class="chart-box">
+          <div class="chart-header"><div class="chart-title">PnL by Position</div></div>
+          <div class="chart-wrap"><canvas id="chart-d-pnl"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header"><div class="chart-title">Margin Usage</div></div>
+          <div class="chart-wrap"><canvas id="chart-d-margin"></canvas></div>
+        </div>
+      </div>
+
+      <div class="strategies" style="grid-template-columns:1fr">
+        <div class="strategy-panel">
+          <div class="strategy-name">
+            Strategy Delta · Binance Futures
+            <span class="badge">Launch 26.10</span>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-item">
+              <div class="label">PnL</div>
+              <div class="value neg">−0.18 USDT</div>
+            </div>
+            <div class="stat-item">
+              <div class="label">Win rate</div>
+              <div class="value neutral">—</div>
+            </div>
+            <div class="stat-item">
+              <div class="label">Drawdown</div>
+              <div class="value neutral">0%</div>
+            </div>
+            <div class="stat-item">
+              <div class="label">Risk</div>
+              <div class="value neutral">Low</div>
+            </div>
+            <div class="stat-item">
+              <div class="label">Start deposit</div>
+              <div class="value neutral">500.00</div>
+            </div>
+            <div class="stat-item">
+              <div class="label">Used / Margin</div>
+              <div class="value neutral">1.40 / 13.84</div>
+            </div>
+          </div>
+
+          <div class="funding-card" aria-label="APR short funding estimate">
+            <div class="funding-head">
+              <div class="funding-title">APR · funding only · 4h</div>
+              <div class="funding-rate">+0.0050% / 4h</div>
+            </div>
+            <div class="fund-table-wrap"><table class="fund-table">
+              <thead>
+                <tr><th>Leg</th><th class="num">Notional</th><th class="num">1 day</th><th class="num">1 week</th><th class="num">1 month</th><th class="num">1 year</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>SHORT <span class="fund-pair">APR</span></td>
+                  <td class="num">$14.02</td>
+                  <td class="num pos">+$0.004</td>
+                  <td class="num pos">+$0.03</td>
+                  <td class="num pos">+$0.13</td>
+                  <td class="num pos">+$1.54</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Net (short receives +rate)</td>
+                  <td class="num">$14.02</td>
+                  <td class="num pos">+$0.004</td>
+                  <td class="num pos">+$0.03</td>
+                  <td class="num pos">+$0.13</td>
+                  <td class="num pos">+$1.54</td>
+                </tr>
+              </tfoot>
+            </table></div>
+            <div class="funding-note">Rate +0.0050% / 4h. SHORT receives when rate &gt; 0. Notional ≈ 402 × 0.03487. Funding-only.</div>
+          </div>
+
+          <div class="pos-table">
+            <table>
+              <thead><tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>APR</td>
+                  <td><span class="side-S">SHORT</span></td>
+                  <td>0.03443</td>
+                  <td>0.03487</td>
+                  <td class="pnl-neg">−0.18</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
+
 
 <!-- "Data will be added later" modal (Gamma / Delta / Epsilon) -->
 <div class="modal-overlay" id="lead-modal" role="dialog" aria-modal="true" aria-labelledby="lead-title">
@@ -3340,6 +3446,22 @@
     );
     charts.gMarg = doughnutChart('chart-g-margin', ['TIA L','TIA S','ICNT L','ICNT S'], [8.15, 20.62, 11.23, 20.32].map(S),
       ['rgba(0,229,255,0.8)', 'rgba(0,160,200,0.8)', 'rgba(179,136,255,0.8)', 'rgba(130,90,220,0.8)']);
+
+    // Delta · launch 26.10
+    const dEq = labels.map((_, i) => {
+      if (i < labels.length - 2) return null;
+      if (i === labels.length - 2) return S(500);
+      return S(504.99);
+    });
+    charts.dEq = makeLineChart('chart-d-equity', labels, dEq, nowIdx, G);
+    charts.dTb = makePnlBalanceChart('chart-d-tbpnl', labels, dEq, S(500), nowIdx);
+    charts.dPnl = barChart('chart-d-pnl',
+      ['APR S'],
+      [-0.18].map(S),
+      ['rgba(255,23,68,0.75)']
+    );
+    charts.dMarg = doughnutChart('chart-d-margin', ['Used','Free est.'], [1.40, 503.59].map(S),
+      ['rgba(255,196,0,0.85)', 'rgba(0,230,118,0.35)']);
     charts.aWin = doughnutChart('chart-a-winloss', ['Wins','Losses'], [42,58],
       ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']);
     charts.bWin = doughnutChart('chart-b-winloss', ['Wins','Losses'], [48,52],
@@ -3517,11 +3639,19 @@
   document.querySelectorAll('.metric').forEach(metric => {
     const label = metric.querySelector('.metric-label');
     if (!label || !/unrealized pnl/i.test(label.textContent)) return;
-    if (metric.closest('.content-b')) return;   // Beta is liquidated: nothing open, static
-    const scope = metric.closest('.content-a') ? 'alpha' : metric.closest('.content-b') ? 'beta' : metric.closest('.content-g') ? 'gamma' : 'all';
+    if (metric.closest('.content-b')) return;   // Beta liquidated
+    if (metric.closest('.content-d')) return;   // Delta: small/static — do NOT map to "all" (-207)
+    const scope = metric.closest('.content-a') ? 'alpha'
+      : metric.closest('.content-b') ? 'beta'
+      : metric.closest('.content-g') ? 'gamma'
+      : metric.closest('.content-all') ? 'all'
+      : null;
+    if (!scope) return;
     const sub = metric.querySelector('.metric-sub');
-    if (sub) { sub._toBe = metric.querySelector('.metric-value')._usd; fxReg(sub, rToBe); }
-    metricTargets.push({ scope, value: metric.querySelector('.metric-value'), sub });
+    const val = metric.querySelector('.metric-value');
+    if (val && val._usd === undefined) val._usd = parseNum(val.textContent);
+    if (sub) { sub._toBe = val && val._usd; fxReg(sub, rToBe); }
+    metricTargets.push({ scope, value: val, sub });
   });
   const statTargets = [];
   document.querySelectorAll('.stat-item').forEach(item => {
