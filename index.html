@@ -266,7 +266,7 @@
   }
 
   /* ===== Header v2 ===== */
-  .header { --lion: 150px; --lion-shift: 0px; position: relative; display: block; border: 1px solid var(--border); background: var(--bg-panel); padding: 0; overflow: visible; z-index: 30; }
+  .header { --lion: 96px; --lion-shift: 0px; position: relative; display: block; border: 1px solid var(--border); background: var(--bg-panel); padding: 0; overflow: visible; z-index: 30; }
   .header > .pairs-strip, .header > .tabs-row, .header > .header-main { position: relative; z-index: 1; }
   .header > .header-main { z-index: 25; }             /* dropdowns above tabs */
   .header > .tabs-row { z-index: 1; }
@@ -307,14 +307,14 @@
   .header-main {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 6px 14px 6px 168px; /* logo lives inside this row, no overlap */
+    gap: 10px;
+    padding: 6px 12px 6px 110px;
     width: 100%;
     flex-wrap: nowrap;
     overflow: visible;
     position: relative;
     z-index: 40;
-    min-height: calc(var(--lion) + 8px); /* row is lion-tall; text + buttons sit on the lion's centre line */
+    min-height: 0;
   }
   .brand-block {
     display: flex;
@@ -326,7 +326,7 @@
   }
   .brand-block .logo-icon {
     position: absolute;
-    left: -156px;
+    left: calc(-1 * var(--lion) - 8px);
     top: 50%;
     transform: translateY(calc(-50% + var(--lion-shift)));
     width: var(--lion);
@@ -336,7 +336,7 @@
   .brand-block .logo-icon:hover {
     transform: translateY(calc(-50% + var(--lion-shift))) scale(1.04) rotate(-1.5deg);
   }
-  .logo-icon { width: 190px; height: 190px; object-fit: contain; display: block; background: transparent; border-radius: 0; flex-shrink: 0;
+  .logo-icon { width: 96px; height: 96px; object-fit: contain; display: block; background: transparent; border-radius: 0; flex-shrink: 0;
     filter: drop-shadow(0 0 10px rgba(201,168,76,.25)); animation: lion-glow 4.5s ease-in-out infinite; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
   .logo-icon:hover { /* hover handled via .brand-block .logo-icon:hover */ }
   /* Lion: the chin (beard) is a separate jaw layer; every few seconds the lion opens its mouth (click = roar now) */
@@ -489,11 +489,21 @@
 
   .header-main {
     display: grid !important;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 1fr;
     grid-template-areas:
-      "left right";
+      "left"
+      "right";
     align-items: start;
-    gap: 12px 20px;
+    gap: 8px;
+  }
+  @media (min-width: 1100px) {
+    .header-main {
+      grid-template-columns: auto 1fr;
+      grid-template-areas: "left right";
+      align-items: start;
+      gap: 8px 16px;
+    }
+    .header-right { justify-self: end; }
   }
   .header-left {
     grid-area: left;
@@ -506,7 +516,76 @@
     position: relative;
   }
   .header-left .brand-block { order: 1; flex: 0 1 auto; }
-  .header-left .hdr-overview { order: 2; margin-left: 4px; }
+  .header-left .hdr-overview { order: 2; margin-left: 0; }
+
+
+  /* Overview: compact row, aligned under brand text (right of logo) */
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    width: auto;
+    max-width: 100%;
+  }
+  .header-left .brand-block {
+    order: 1;
+    align-self: flex-start;
+  }
+  .header-left .hdr-overview {
+    order: 2;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 6px;
+    width: auto !important;
+    max-width: none;
+    margin: 0 0 0 0 !important;
+    align-self: flex-start !important;
+    padding-left: 0;
+  }
+  .header-left .hdr-ov-card {
+    flex: 0 0 auto !important;
+    max-width: 110px !important;
+    min-width: 96px;
+    width: 106px !important;
+    padding: 6px 8px !important;
+    border-radius: 8px !important;
+  }
+  .header-left .hdr-ov-card .ov-l { font-size: 8px !important; letter-spacing: .35px; }
+  .header-left .hdr-ov-card .ov-pct { font-size: 8px !important; }
+  .header-left .hdr-ov-card .ov-v { font-size: 14px !important; font-weight: 700; letter-spacing: -0.2px; }
+  .header-left .hdr-ov-card .ov-row { margin-top: 3px !important; gap: 4px; }
+  .header-left .hdr-ov-card .ov-spark { width: 34px !important; height: 14px !important; }
+  .header-left .hdr-ov-card .ov-bar { height: 3px !important; min-width: 24px; }
+
+  /* Tighten header vertical space */
+  .header-main { gap: 8px !important; padding-top: 6px !important; padding-bottom: 6px !important; }
+  .header-right { gap: 8px !important; }
+
+  @media (max-width: 760px) {
+    .header-left .hdr-overview {
+      flex-direction: column !important;
+      width: 112px !important;
+      max-width: 40vw !important;
+      margin: 0 !important;
+      align-self: flex-start !important;
+      gap: 4px !important;
+    }
+    .header-left .hdr-ov-card {
+      max-width: none !important;
+      min-width: 0;
+      width: 100% !important;
+      padding: 5px 7px !important;
+    }
+    .header-left .hdr-ov-card .ov-v { font-size: 12px !important; }
+    .header-left .hdr-ov-card .ov-spark { width: 28px !important; height: 12px !important; }
+    .header-right .ex-chip { min-height: 36px; }
+  }
+
+
   .header-right {
     grid-area: right;
     margin-left: 0 !important;
@@ -528,11 +607,11 @@
   .hdr-ov-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 4px 7px;
+    border-radius: 12px;
+    padding: 12px 14px;
     min-width: 0;
     flex: 1 1 0;
-    max-width: 98px;
+    max-width: 220px;
   }
   .hdr-ov-card .ov-top {
     display: flex;
@@ -628,24 +707,32 @@
     .header-left {
       width: 100%;
       flex-direction: column;
-      align-items: stretch;
+      align-items: flex-start;
       gap: 8px;
+    }
+    .header-left {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 8px !important;
     }
     .hdr-overview {
       display: flex;
-      flex-direction: row;
-      width: 100%;
-      max-width: 100%;
-      gap: 6px;
+      flex-direction: column;
+      width: 118px;
+      max-width: 42vw;
+      gap: 5px;
       order: 2;
-      align-self: stretch;
+      align-self: flex-start;
+      margin-left: 0 !important;
     }
     .hdr-ov-card {
       max-width: none;
-      padding: 5px 7px;
+      width: 100%;
+      flex: none;
+      padding: 5px 8px;
     }
-    .hdr-ov-card .ov-v { font-size: 12px; }
-    .hdr-ov-card .ov-spark { width: 28px; height: 14px; }
+    .hdr-ov-card .ov-v { font-size: 13px; }
+    .hdr-ov-card .ov-spark { width: 36px; height: 16px; }
     .brand-block { order: 1; }
     .header-right {
       width: 100%;
@@ -1311,7 +1398,7 @@
     .brand-block .logo-icon { left: -88px; width: 80px; height: 80px; --lion-shift: 0px; }
     .brand-chart { width: 100px; min-width: 100px; max-width: 100px; margin: 0; }
     .header-right { width: 100%; justify-content: flex-start; flex-wrap: wrap; gap: 8px; margin-left: 0; }
-    .brand-block { width: auto; min-height: 84px; }
+    .brand-block { width: auto; min-height: 0; }
     .brand-text { max-width: calc(100vw - 140px); }
     .brand-tag, .brand-since { white-space: normal; max-width: 100%; }
     .logo-text { white-space: nowrap; }
@@ -1399,10 +1486,10 @@
   /* ===================== UI refresh: bigger, clearer, card layout ===================== */
   body { font-size: 14px; }
   .terminal { max-width: 1480px; padding: 18px 22px 28px; }
-  .header { --lion: 132px; border-radius: 16px; border-color: var(--border-bright); }
+  .header { --lion: 96px; border-radius: 16px; border-color: var(--border-bright); }
   .pairs-strip { height: 38px; font-size: 12.5px; border-radius: 16px 16px 0 0; }
   .header-main::before, .header-main::after { display: none; }
-  .header-main { min-height: calc(var(--lion) + 14px); padding-left: calc(var(--lion) + 36px); }
+  .header-main { min-height: 0; padding: 8px 14px 8px calc(var(--lion) + 20px); }
   .brand-block .logo-icon { left: calc(-1 * var(--lion) - 14px); }
   .logo-text { font-size: 38px; }
   .brand-tag { font-size: 12.5px; letter-spacing: .6px; color: var(--text-dim); }
@@ -1542,7 +1629,7 @@
         <div class="hdr-ov-card">
           <div class="ov-top"><span class="ov-l">Equity</span><span class="ov-pct pos">+2.9%</span></div>
           <div class="ov-row">
-            <div class="ov-v">1,881</div>
+            <div class="ov-v">2,386</div>
             <svg class="ov-spark up" viewBox="0 0 64 24" preserveAspectRatio="none" aria-hidden="true">
               <path d="M0,18 8,16 16,17 24,14 32,15 40,11 48,12 56,8 64,6"/>
             </svg>
@@ -2277,8 +2364,8 @@
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Total Balance</div>
-        <div class="metric-value neutral">1,880.94 USDT</div>
-        <div class="metric-sub">Start 01.06.26: 2,387.00 · Out: 81.00</div>
+        <div class="metric-value neutral">2,385.93 USDT</div>
+        <div class="metric-sub">Start: 2,887.00 · Out: 81.00 · incl. Delta</div>
       </div>
       <div class="metric">
         <div class="metric-label">Unrealized PnL</div>
@@ -2287,8 +2374,8 @@
       </div>
       <div class="metric">
         <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value neg">−425.06 USDT</div>
-        <div class="metric-sub">−17.81% · bal+out − start</div>
+        <div class="metric-value neg">−425.00 USDT</div>
+        <div class="metric-sub">−14.72% · bal+out − start</div>
       </div>
       <div class="metric">
         <div class="metric-label">Risk Level</div>
@@ -2533,6 +2620,7 @@
 
 <div class="sheet" id="sheet-support" role="dialog" aria-label="Support">
   <div class="sheet-title">Support</div>
+  <div class="sheet-sub"><a href="cabinet.html" style="color:var(--amber)">Особистий кабінет · Google · реф 10%</a></div>
   <div class="sheet-sub">Questions? Write to us:</div>
   <div class="sheet-list">
     <a class="contact-item" id="support-tg" href="https://t.me/mktiv" target="_blank" rel="noopener noreferrer">
@@ -2548,35 +2636,42 @@
 
 
 
+    
     <div class="content-d">
       <div class="metrics">
         <div class="metric">
           <div class="metric-label">CURRENT BALANCE</div>
-          <div class="metric-value">500.00 USDT</div>
+          <div class="metric-value">504.99 USDT</div>
           <div class="metric-sub">Start 26.10.26: 500.00 · Out: 0</div>
         </div>
         <div class="metric">
           <div class="metric-label">UNREALIZED PNL</div>
-          <div class="metric-value neutral">0.00 USDT</div>
-          <div class="metric-sub">Launch day · no open positions yet</div>
+          <div class="metric-value neg">−0.18 USDT</div>
+          <div class="metric-sub">To BE: +0.18 needed</div>
         </div>
         <div class="metric">
           <div class="metric-label">NET PNL (NOW)</div>
-          <div class="metric-value neutral">0.00 USDT</div>
-          <div class="metric-sub">0.00% · bal+out − start</div>
+          <div class="metric-value pos">+4.99 USDT</div>
+          <div class="metric-sub">+1.00% · bal+out − start</div>
         </div>
       </div>
       <div class="stat-grid">
         <div class="stat-item"><div class="label">Start deposit</div><div class="value neutral">500.00</div></div>
         <div class="stat-item"><div class="label">Launch</div><div class="value neutral">26.10.2026</div></div>
-        <div class="stat-item"><div class="label">Positions</div><div class="value neutral">0 open</div></div>
+        <div class="stat-item"><div class="label">Used / Margin</div><div class="value neutral">1.40 / 13.84</div></div>
         <div class="stat-item"><div class="label">Risk</div><div class="value"><span class="risk-badge">Low</span></div></div>
       </div>
       <div class="pos-table">
         <table>
           <thead><tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr></thead>
           <tbody>
-            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px">No open positions · strategy launched with $500</td></tr>
+            <tr>
+              <td>APR</td>
+              <td><span class="side-S">SHORT</span></td>
+              <td>0.03443</td>
+              <td>0.03487</td>
+              <td class="pnl-neg">−0.18</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -2952,7 +3047,7 @@
   const REAL_BAL = {   // real balances taken from screenshots, key = dd.mm
     alpha: { '04.10': 1208.19, '05.10': 1215.79, '06.10': 1217.01, '07.10': 1219.66, '08.10': 1222.76, '09.10': 1240.59, '10.10': 1290.36, '11.10': 1235.53, '12.10': 1238.45, '13.10': 1243.89, '14.10': 1247.81, '15.10': 1252.69, '16.10': 1258.46, '17.10': 1259.40, '18.10': 1262.22, '19.10': 1266.00, '20.10': 1267.33, '21.10': 1268.04, '22.10': 1273.55, '23.10': 1282.00, '24.10': 1290.00, '25.10': 1299.49, '26.10': 1302.06},
     beta:  { '04.10': 783.01,  '05.10': 784.64,  '06.10': 785.64,  '07.10': 787.18,  '08.10': 790.50,  '09.10': 790.32, '10.10': 895.65, '11.10': 895.87, '12.10': 895.87, '13.10': 930.05, '14.10': 917.74, '15.10': 932.27, '16.10': 932.46, '17.10': 0, '18.10': 0, '19.10': 0, '20.10': 0, '21.10': 0, '22.10': 0, '23.10': 0, '24.10': 0, '25.10': 0, '26.10': 0 },
-    delta: { '26.10': 500.00 },
+    delta: { '26.10': 500.09, '27.10': 504.99 },
     gamma: { '08.10': 500.31,  '09.10': 503.05, '10.10': 505.39, '11.10': 517.08, '12.10': 514.26, '13.10': 518.05, '14.10': 520.21, '15.10': 529.38, '16.10': 534.30, '17.10': 535.47, '18.10': 533.45, '19.10': 540.64, '20.10': 546.27, '21.10': 554.01, '22.10': 557.39, '23.10': 562.00, '24.10': 568.00, '25.10': 573.12, '26.10': 578.88 }
   };
   function fullHistory(startBal, real, vol) {
@@ -3226,7 +3321,7 @@
     charts.bTb = makePnlBalanceChart('chart-b-tbpnl', labels, bAll, S(700), nowIdx);
     charts.gTb = makePnlBalanceChart('chart-g-tbpnl', labels, gAll, S(500), nowIdx);
     // combined: Gamma joins on 08.10 with start 500, so the base steps from 1887 to 2387 on that day
-    const baseArr = labels.map((_, i) => S(gAll[i] != null ? 2387 : 1887));
+    const baseArr = labels.map((_, i) => S(gAll[i] != null ? 2887 : 1887)); // +Delta 500 from 26.10
     charts.allTb = makePnlBalanceChart('chart-all-tbpnl', labels, aAll.map((v, i) => v + bAll[i] + (gAll[i] || 0)), S(2387), nowIdx, outArr, baseArr);
 
     // Static bar / doughnut charts
@@ -3252,11 +3347,11 @@
     charts.aMarg = doughnutChart('chart-a-margin', ['Used','Free'], [39.51, 1262.39].map(S),
       ['rgba(255,196,0,0.8)', 'rgba(0,230,118,0.35)']);
     charts.bExp = doughnutChart('chart-b-exposure', [], [], []);   // Beta: liquidated
-    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma','Delta'], [1302.06, 0, 578.88, 500].map(S),
+    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma','Delta'], [1302.06, 0, 578.88, 504.99].map(S),
       ['rgba(0,230,118,0.8)', 'rgba(0,229,255,0.8)', 'rgba(179,136,255,0.8)']);
     charts.allRisk = doughnutChart('chart-all-risk', ['High','Very High'], [1,1],
       ['rgba(255,196,0,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma','Delta'], [-41.35, 0, -165.76, 0].map(S),
+    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma','Delta'], [-41.35, 0, -165.76, -0.18].map(S),
       ['rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)']);
 
     // Daily PnL last 7 of the selected window
@@ -3706,7 +3801,7 @@
   // Example: 'https://algotradex-binance.YOUR_SUBDOMAIN.workers.dev'
   const BINANCE_PROXY_URL = localStorage.getItem('atx-binance-proxy') || '';
 
-  const START_CAPITAL = { alpha: 1187, beta: 700, gamma: 500, withdrawn: { alpha: 0, beta: 81 } };
+  const START_CAPITAL = { alpha: 1187, beta: 700, gamma: 500, delta: 500, withdrawn: { alpha: 0, beta: 81, gamma: 0, delta: 0 } };
 
   function fmtSide(side) {
     return side === 'LONG'
@@ -3862,19 +3957,20 @@
   // Supabase project (Project Settings -> API): URL and the *anon public* key. The key is meant to be public;
   // security comes from Row Level Security on the "leads" table (insert only, no read).
   // ===== Early Access → Supabase (email + telegram + whatsapp) =====
-  const sbConfig = {
-    url: 'https://qzibwcekumykhbhdfhum.supabase.co',
-    key: 'sb_publishable_zf6Tvo57PPdwEdBGaVxjDQ_z48ue-0F'
-  };
   function getSbConfig() {
-    return { ...sbConfig };
+    try {
+      return {
+        url: (localStorage.getItem('atx-supabase-url') || '').trim(),
+        key: (localStorage.getItem('atx-supabase-anon') || '').trim()
+      };
+    } catch (e) { return { url: '', key: '' }; }
   }
   function setSbStatus() {
     const el = document.getElementById('sb-status');
     if (!el) return;
     const { url, key } = getSbConfig();
     if (url && key) {
-      el.textContent = 'Configured (not tested) · posts to ' + url.replace(/^https?:\/\//,'').split('/')[0] + ' /rest/v1/leads';
+      el.textContent = 'Connected · posts to ' + url.replace(/^https?:\/\//,'').split('/')[0] + ' /rest/v1/leads';
       el.style.color = 'var(--green)';
     } else {
       el.textContent = 'Not connected. Paste URL + anon key from Supabase → Settings → API, then Save.';
@@ -3893,15 +3989,12 @@
     save.addEventListener('click', () => {
       const u = urlIn.value.trim().replace(/\/$/, '');
       const k = keyIn.value.trim();
-      if (!/^https:\/\/[^/]+\.supabase\.co$/.test(u) || !k.startsWith('sb_publishable_')) {
-        const status = document.getElementById('sb-status');
-        if (status) status.textContent = 'Enter a Supabase HTTPS Project URL and publishable key.';
-        return;
-      }
-      sbConfig.url = u;
-      sbConfig.key = k;
+      try {
+        if (u) localStorage.setItem('atx-supabase-url', u); else localStorage.removeItem('atx-supabase-url');
+        if (k) localStorage.setItem('atx-supabase-anon', k); else localStorage.removeItem('atx-supabase-anon');
+      } catch (e) {}
       setSbStatus();
-      save.textContent = 'Applied for this tab ✓';
+      save.textContent = 'Saved ✓';
       setTimeout(() => { save.textContent = 'Save Supabase connection'; }, 1600);
     });
   })();
@@ -3938,8 +4031,9 @@
         telegram: t ? '@' + t : null,
         whatsapp: w ? (w[0] === '+' ? w : '+' + w) : null,
         consent: true,
-        consent_text: (ok.closest('label')?.textContent || '').trim(),
-        page: location.origin + location.pathname
+        consent_text: 'registration link, early-access features and gifts',
+        page: location.href,
+        user_agent: (navigator.userAgent || '').slice(0, 180)
       };
       try {
         const { url, key } = getSbConfig();
@@ -3949,6 +4043,7 @@
           headers: {
             'Content-Type': 'application/json',
             'apikey': key,
+            'Authorization': 'Bearer ' + key,
             'Prefer': 'return=minimal'
           },
           body: JSON.stringify(row)
@@ -3962,7 +4057,7 @@
       } catch (x) {
         console.error('lead form:', x);
         if (x.message === 'not-configured') {
-          err.textContent = 'Supabase не налаштовано. Перевірте Project URL і publishable key.';
+          err.textContent = 'Supabase не підключено. Settings → вставте Project URL і anon key → Save.';
         } else if (String(x.message).startsWith('http-')) {
           err.textContent = 'Помилка сервера (' + x.message + '). Перевірте таблицю leads і RLS policy.';
         } else {
