@@ -1884,7 +1884,7 @@
         <div class="pos-table">
           <table>
             <thead>
-              <tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr>
+              <tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr>
             </thead>
             <tbody>
               <tr>
@@ -2143,7 +2143,7 @@
         <div class="pos-table">
           <table>
             <thead>
-              <tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr>
+              <tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr>
             </thead>
             <tbody>
 </tbody>
@@ -2322,7 +2322,7 @@
         <div class="pos-table">
           <table>
             <thead>
-              <tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr>
+              <tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr>
             </thead>
             <tbody>
               <tr>
@@ -2815,7 +2815,7 @@
 
           <div class="pos-table">
             <table>
-              <thead><tr><th>Pair</th><th>Side</th><th>Entry</th><th>Mark</th><th>PnL</th></tr></thead>
+              <thead><tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr></thead>
               <tbody>
                 <tr>
                   <td>APR</td>
@@ -4006,7 +4006,15 @@
   // ===== Live account data from YOUR Binance (via private proxy) =====
   // Set the Worker URL after deploy. Leave empty to keep manual numbers.
   // Example: 'https://algotradex-binance.YOUR_SUBDOMAIN.workers.dev'
-  const BINANCE_PROXY_URL = localStorage.getItem('atx-binance-proxy') || '';
+  const BINANCE_PROXY_URL = (function() {
+    try {
+      const saved = (localStorage.getItem('atx-binance-proxy') || '').trim();
+      if (saved) return saved;
+      // Local admin on same machine
+      if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') return 'http://localhost:8787';
+    } catch (e) {}
+    return '';
+  })();
 
   const START_CAPITAL = { alpha: 1187, beta: 700, gamma: 500, delta: 500, withdrawn: { alpha: 0, beta: 81, gamma: 0, delta: 0 } };
 
@@ -4020,19 +4028,28 @@
     const tbody = document.querySelector(scopeSel + ' .pos-table tbody');
     if (!tbody) return;
     if (!positions || !positions.length) {
-      tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text-muted)">No open positions</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" style="color:var(--text-muted)">No open positions</td></tr>';
       return;
     }
     tbody.innerHTML = positions.map(p => {
-      const pnl = p.unRealizedProfit;
+      const pnl = Number(p.unRealizedProfit || 0);
       const cls = pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
       const sign = pnl >= 0 ? '+' : '−';
-      const pair = p.symbol.replace('USDT', '');
+      const pair = String(p.symbol || '').replace('USDT', '');
+      const size = p.contracts != null ? Math.abs(p.contracts) : Math.abs(p.positionAmt || 0);
+      const notional = Number(p.notional || 0);
+      const liqPct = p.liqDistancePct != null ? Number(p.liqDistancePct).toFixed(2) + '%' : '—';
+      const risk = p.liqRisk || '';
+      const riskCls = risk === 'critical' || risk === 'high' ? 'pnl-neg' : (risk === 'low' ? 'pnl-pos' : '');
       return `<tr>
         <td>${pair}</td>
         <td>${fmtSide(p.side)}</td>
+        <td>${size}</td>
+        <td>$${notional.toFixed(2)}</td>
         <td>${formatPx(p.entryPrice)}</td>
         <td>${formatPx(p.markPrice)}</td>
+        <td>${p.liquidationPrice ? formatPx(p.liquidationPrice) : '—'}</td>
+        <td class="${riskCls}" title="${risk}">${liqPct}</td>
         <td class="${cls}">${sign}${fmtNum(Math.abs(pnl))}</td>
       </tr>`;
     }).join('');
@@ -4095,29 +4112,37 @@
 
       const alpha = data.alpha || {};
       const beta = data.beta || {};
+      const gamma = data.gamma || {};
+      const delta = data.delta || {};
 
-      if (!alpha.error && alpha.balance != null) {
-        setMetricBalance('.content-a', alpha.balance, START_CAPITAL.alpha, START_CAPITAL.withdrawn.alpha);
-        setUnrealized('.content-a', alpha.unrealizedPnl || 0);
-        updatePosTable('.content-a', alpha.positions || []);
-      }
-      if (!beta.error && beta.balance != null) {
-        setMetricBalance('.content-b', beta.balance, START_CAPITAL.beta, START_CAPITAL.withdrawn.beta);
-        setUnrealized('.content-b', beta.unrealizedPnl || 0);
-        updatePosTable('.content-b', beta.positions || []);
+      function applyBot(scope, snap, start, out) {
+        if (!snap || snap.error || snap.balance == null) return;
+        setMetricBalance(scope, snap.balance, start, out);
+        setUnrealized(scope, snap.unrealizedPnl || 0);
+        updatePosTable(scope, snap.positions || []);
+        // free margin under balance sub if present
+        const free = snap.freeMargin != null ? snap.freeMargin : snap.availableBalance;
+        if (free != null) {
+          const m = document.querySelector(scope + ' .metric');
+          // annotate risk metric sub when possible
+        }
       }
 
-      // Combined
-      if (alpha.balance != null && beta.balance != null) {
-        const totalBal = (alpha.balance || 0) + (beta.balance || 0);
-        const totalUpnl = (alpha.unrealizedPnl || 0) + (beta.unrealizedPnl || 0);
-        const startAll = START_CAPITAL.alpha + START_CAPITAL.beta;
-        const outAll = START_CAPITAL.withdrawn.alpha + START_CAPITAL.withdrawn.beta;
+      applyBot('.content-a', alpha, START_CAPITAL.alpha, START_CAPITAL.withdrawn.alpha);
+      applyBot('.content-b', beta, START_CAPITAL.beta, START_CAPITAL.withdrawn.beta);
+      applyBot('.content-g', gamma, START_CAPITAL.gamma, START_CAPITAL.withdrawn.gamma);
+      applyBot('.content-d', delta, START_CAPITAL.delta, START_CAPITAL.withdrawn.delta);
+
+      const bots = [alpha, beta, gamma, delta].filter(s => s && s.balance != null && !s.error);
+      if (bots.length) {
+        const totalBal = bots.reduce((a, s) => a + (s.balance || 0), 0);
+        const totalUpnl = bots.reduce((a, s) => a + (s.unrealizedPnl || 0), 0);
+        const startAll = START_CAPITAL.alpha + START_CAPITAL.beta + START_CAPITAL.gamma + START_CAPITAL.delta;
+        const outAll = START_CAPITAL.withdrawn.alpha + START_CAPITAL.withdrawn.beta + START_CAPITAL.withdrawn.gamma + START_CAPITAL.withdrawn.delta;
         setMetricBalance('.content-all', totalBal, startAll, outAll);
         setUnrealized('.content-all', totalUpnl);
       }
 
-      // Refresh fx registration for new cells
       document.querySelectorAll('.pos-table td:last-child').forEach(cell => {
         if (cell._fx) return;
         const v = parseNum(cell.textContent);
@@ -4125,7 +4150,10 @@
         fxReg(cell, rCell, v);
       });
 
-      console.info('Binance account synced', data.alpha && data.alpha.updatedAt, data.beta && data.beta.updatedAt);
+      console.info('Account synced', {
+        alpha: alpha.updatedAt, gamma: gamma.updatedAt, delta: delta.updatedAt,
+        free: { a: alpha.freeMargin, g: gamma.freeMargin, d: delta.freeMargin }
+      });
     } catch (e) {
       console.warn('Account sync failed:', e.message || e);
     }
@@ -4134,8 +4162,11 @@
   // Optional: set proxy URL from Settings or console:
   // localStorage.setItem('atx-binance-proxy', 'https://xxx.workers.dev'); location.reload();
   if (BINANCE_PROXY_URL) {
+    console.info('Live proxy:', BINANCE_PROXY_URL);
     syncBinanceAccount();
-    setInterval(syncBinanceAccount, 15000);
+    setInterval(syncBinanceAccount, 30000);
+  } else {
+    console.info('No atx-binance-proxy — dashboard uses static numbers. Set localStorage atx-binance-proxy to your API URL.');
   }
 
 
