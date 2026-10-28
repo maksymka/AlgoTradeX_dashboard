@@ -2649,21 +2649,10 @@
     <button type="button" class="cur-opt" data-cur="GBP"><span class="cur-sym">£</span><span class="cur-name">Pound<small data-rate-for="GBP"></small></span></button>
   </div>
   <div class="sheet-note">All amounts are tracked in USDT and converted for display only (1 USDT ≈ 1 USD).</div>
-  <div class="sheet-title" style="margin-top:20px">Supabase · Early Access</div>
-  <div class="sheet-sub">Leads: email · Telegram · WhatsApp → table <code>leads</code></div>
-  <label class="lead-f" style="margin-top:10px"><span>Project URL</span>
-    <input type="url" id="sb-url" placeholder="https://xxxx.supabase.co" autocomplete="off" autocapitalize="none" spellcheck="false">
-  </label>
-  <label class="lead-f"><span>anon public key</span>
-    <input type="text" id="sb-anon" placeholder="eyJhbGciOi..." autocomplete="off" autocapitalize="none" spellcheck="false">
-  </label>
-  <div class="sheet-note" id="sb-status">Not connected. Paste URL + anon key from Supabase → Settings → API, then Save.</div>
-  <button type="button" class="lead-submit" id="sb-save" style="margin-top:10px">Save Supabase connection</button>
 </div>
 
 <div class="sheet" id="sheet-support" role="dialog" aria-label="Support">
   <div class="sheet-title">Support</div>
-  <div class="sheet-sub"><a href="cabinet.html" style="color:var(--amber)">Особистий кабінет · Google · реф 10%</a></div>
   <div class="sheet-sub">Questions? Write to us:</div>
   <div class="sheet-list">
     <a class="contact-item" id="support-tg" href="https://t.me/mktiv" target="_blank" rel="noopener noreferrer">
@@ -3788,7 +3777,7 @@
     redraw(charts.gPnl, [0, 1, 2, 3].map(i => pos.gamma[i].cur));                          // ZK S, ENA L/S
     redraw(charts.allPnl, [totals.alpha, totals.beta, totals.gamma]);                  // Alpha, Beta, Gamma
   }
-  setInterval(animatePnl, 1800);
+  setInterval(() => { if (!window.__ATX_LIVE) animatePnl(); }, 1800);
 
   const themeBtn = document.getElementById('theme-toggle');
   const THEME_CYCLE = ['dark', 'cli', 'prime'];
@@ -4055,7 +4044,7 @@
     }).join('');
   }
 
-  function setMetricBalance(scopeSel, balance, start, withdrawn) {
+  function setMetricBalance(scopeSel, balance, start, withdrawn, startLabel) {
     const metrics = document.querySelectorAll(scopeSel + ' .metric');
     metrics.forEach(m => {
       const label = (m.querySelector('.metric-label') || {}).textContent || '';
@@ -4066,8 +4055,10 @@
         val.textContent = fmtDisp(S(balance));
         val.classList.remove('pos','neg'); val.classList.add('neutral');
         if (sub && start != null) {
-          sub.textContent = `Start 01.06.26: ${fmtNum(start)} · Out: ${fmtNum(withdrawn || 0)}`;
+          sub.textContent = (startLabel || (`Start: ${fmtNum(start)}`)) + ` · Out: ${fmtNum(withdrawn || 0)}`;
         }
+        val._usd = balance;
+        val._live = true;
       }
       if (/unrealized pnl/i.test(label)) {
         // filled by animate / direct below
@@ -4105,33 +4096,43 @@
   async function syncBinanceAccount() {
     if (!BINANCE_PROXY_URL) return;
     try {
-      const res = await fetch(BINANCE_PROXY_URL.replace(/\/$/, '') + '/api/account?bot=all', { cache: 'no-store' });
-      if (!res.ok) throw new Error('Proxy HTTP ' + res.status);
+      const url = BINANCE_PROXY_URL.replace(/\/$/, '') + '/api/account?bot=all';
+      const res = await fetch(url, { cache: 'no-store', mode: 'cors' });
+      if (!res.ok) throw new Error('Proxy HTTP ' + res.status + ' ' + url);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
+      console.info('API bots', Object.keys(data), data);
 
       const alpha = data.alpha || {};
       const beta = data.beta || {};
       const gamma = data.gamma || {};
       const delta = data.delta || {};
 
-      function applyBot(scope, snap, start, out) {
-        if (!snap || snap.error || snap.balance == null) return;
-        setMetricBalance(scope, snap.balance, start, out);
+      function applyBot(scope, snap, start, out, startLabel) {
+        if (!snap || snap.error || snap.balance == null) return false;
+        setMetricBalance(scope, snap.balance, start, out, startLabel);
         setUnrealized(scope, snap.unrealizedPnl || 0);
         updatePosTable(scope, snap.positions || []);
-        // free margin under balance sub if present
         const free = snap.freeMargin != null ? snap.freeMargin : snap.availableBalance;
-        if (free != null) {
-          const m = document.querySelector(scope + ' .metric');
-          // annotate risk metric sub when possible
-        }
+        const used = snap.usedMargin;
+        document.querySelectorAll(scope + ' .metric').forEach(m => {
+          const label = (m.querySelector('.metric-label') || {}).textContent || '';
+          const sub = m.querySelector('.metric-sub');
+          if (!sub) return;
+          if (/current balance|total balance/i.test(label) && free != null) {
+            const usedTxt = used != null ? ` · Used ${fmtNum(used)}` : '';
+            sub.textContent = (startLabel || ('Start: ' + fmtNum(start))) + ' · Out: ' + fmtNum(out || 0) + ' · Free ' + fmtNum(free) + usedTxt;
+          }
+        });
+        return true;
       }
 
-      applyBot('.content-a', alpha, START_CAPITAL.alpha, START_CAPITAL.withdrawn.alpha);
-      applyBot('.content-b', beta, START_CAPITAL.beta, START_CAPITAL.withdrawn.beta);
-      applyBot('.content-g', gamma, START_CAPITAL.gamma, START_CAPITAL.withdrawn.gamma);
-      applyBot('.content-d', delta, START_CAPITAL.delta, START_CAPITAL.withdrawn.delta);
+      let liveN = 0;
+      if (applyBot('.content-a', alpha, START_CAPITAL.alpha, START_CAPITAL.withdrawn.alpha, 'Start 01.06.26: 1,187')) liveN++;
+      if (applyBot('.content-b', beta, START_CAPITAL.beta, START_CAPITAL.withdrawn.beta, 'Start 01.06.26: 700')) liveN++;
+      if (applyBot('.content-g', gamma, START_CAPITAL.gamma, START_CAPITAL.withdrawn.gamma, 'Start 08.10.26: 500')) liveN++;
+      if (applyBot('.content-d', delta, START_CAPITAL.delta, START_CAPITAL.withdrawn.delta, 'Start 26.10.26: 500')) liveN++;
+      if (liveN > 0) window.__ATX_LIVE = true;
 
       const bots = [alpha, beta, gamma, delta].filter(s => s && s.balance != null && !s.error);
       if (bots.length) {
