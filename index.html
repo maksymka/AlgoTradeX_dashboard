@@ -4237,14 +4237,11 @@
       if ($('lead-hp') && $('lead-hp').value) { showDone(); return; }
       err.textContent = ''; btn.disabled = true;
       // 3 fields → Supabase table leads
+      // Only columns that exist on public.leads (avoid PGRST204 / http-400)
       const row = {
         email: em || null,
         telegram: t ? '@' + t : null,
-        whatsapp: w ? (w[0] === '+' ? w : '+' + w) : null,
-        consent: true,
-        consent_text: 'registration link, early-access features and gifts',
-        page: location.href,
-        user_agent: (navigator.userAgent || '').slice(0, 180)
+        whatsapp: w ? (w[0] === '+' ? w : '+' + w) : null
       };
       try {
         const { url, key } = getSbConfig();
