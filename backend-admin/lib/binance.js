@@ -30,11 +30,26 @@ export async function testKeys(apiKey, apiSecret) {
   return { ok: true };
 }
 
+function liqRisk(pct) {
+  if (pct == null || !isFinite(pct)) return 'unknown';
+  if (pct >= 20) return 'low';
+  if (pct >= 10) return 'medium';
+  if (pct >= 5) return 'high';
+  return 'critical';
+}
+
 export async function fetchAccount(apiKey, apiSecret) {
   const acc = await signedGet('/fapi/v2/account', {}, apiKey, apiSecret);
   const positionsRaw = await signedGet('/fapi/v2/positionRisk', {}, apiKey, apiSecret);
-  const balance = parseFloat(acc.totalWalletBalance || acc.availableBalance || 0);
+
+  const balance = parseFloat(acc.totalWalletBalance || 0);
+  const availableBalance = parseFloat(acc.availableBalance || 0);
   const unrealizedPnl = parseFloat(acc.totalUnrealizedProfit || 0);
+  const totalMarginBalance = parseFloat(acc.totalMarginBalance || balance);
+  const usedMargin = parseFloat(acc.totalInitialMargin || 0);
+  const maintMargin = parseFloat(acc.totalMaintMargin || 0);
+  const freeMargin = availableBalance;
+
   const positions = (positionsRaw || [])
     .filter(p => Math.abs(parseFloat(p.positionAmt || 0)) > 0)
     .map(p => {
@@ -44,24 +59,32 @@ export async function fetchAccount(apiKey, apiSecret) {
       const liq = parseFloat(p.liquidationPrice || 0);
       const upnl = parseFloat(p.unRealizedProfit || 0);
       const notional = Math.abs(amt * mark);
-      const liqDistancePct = liq > 0 && mark > 0
-        ? Math.abs(mark - liq) / mark * 100
-        : null;
+      const liqDistancePct = liq > 0 && mark > 0 ? (Math.abs(mark - liq) / mark * 100) : null;
       return {
         symbol: p.symbol,
         side: amt > 0 ? 'LONG' : 'SHORT',
         positionAmt: amt,
+        contracts: Math.abs(amt),
         entryPrice: entry,
         markPrice: mark,
         liquidationPrice: liq,
         liqDistancePct,
+        liqRisk: liqRisk(liqDistancePct),
         unRealizedProfit: upnl,
         notional,
         leverage: parseFloat(p.leverage || 0),
+        marginType: p.marginType || 'cross',
+        isolatedWallet: parseFloat(p.isolatedWallet || 0),
       };
     });
+
   return {
     balance,
+    availableBalance,
+    freeMargin,
+    usedMargin,
+    totalMarginBalance,
+    maintMargin,
     unrealizedPnl,
     positions,
     updatedAt: new Date().toISOString(),
@@ -70,25 +93,14 @@ export async function fetchAccount(apiKey, apiSecret) {
 
 export async function fetchFundingIncome(apiKey, apiSecret, { limit = 50 } = {}) {
   const rows = await signedGet('/fapi/v1/income', { incomeType: 'FUNDING_FEE', limit }, apiKey, apiSecret);
-  return (rows || []).map(r => ({
-    symbol: r.symbol,
-    income: parseFloat(r.income),
-    time: new Date(r.time).toISOString(),
-    tranId: r.tranId,
-  }));
+  return rows || [];
 }
 
 export async function publicPremium(symbols = []) {
   const res = await fetch(`${BASE}/fapi/v1/premiumIndex`);
   const data = await res.json();
   if (!Array.isArray(data)) return [];
+  if (!symbols.length) return data;
   const set = new Set(symbols);
-  return data
-    .filter(x => !set.size || set.has(x.symbol))
-    .map(x => ({
-      symbol: x.symbol,
-      markPrice: parseFloat(x.markPrice),
-      lastFundingRate: parseFloat(x.lastFundingRate),
-      nextFundingTime: x.nextFundingTime,
-    }));
+  return data.filter(x => set.has(x.symbol));
 }

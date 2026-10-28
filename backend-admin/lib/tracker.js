@@ -1,24 +1,43 @@
-/** In-memory latest snapshots; optional POST to Supabase if configured */
+/** In-memory latest snapshots + funding ring log (persisted every sync) */
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { getStrategy, listStrategiesPublic } from './store.js';
 import * as binance from './binance.js';
 import * as bybit from './bybit.js';
 
-const latest = {}; // id -> account snapshot
-const fundingLog = []; // ring buffer
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const FUNDING_FILE = path.join(DATA_DIR, 'funding.jsonl');
+
+const latest = {};
+const fundingLog = [];
+const MAX_LOG = 5000;
+
+function ensureDataDir() {
+  try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (_) {}
+}
+
+function appendFunding(rows) {
+  if (!rows.length) return;
+  ensureDataDir();
+  const lines = rows.map(r => JSON.stringify(r)).join('\n') + '\n';
+  try { fs.appendFileSync(FUNDING_FILE, lines); } catch (e) { console.warn('funding write', e.message); }
+}
 
 export function getLatest(id) {
   if (id === 'all') return { ...latest };
   return latest[id] || null;
 }
 
-export function getFundingLog(limit = 100) {
+export function getFundingLog(limit = 200) {
   return fundingLog.slice(-limit);
 }
 
 async function pullOne(id) {
   const s = getStrategy(id);
   if (!s || !s.enabled || !s.apiKey || !s.apiSecret) {
-    latest[id] = { error: 'not configured', updatedAt: new Date().toISOString() };
+    latest[id] = { error: 'not configured', strategy: id, updatedAt: new Date().toISOString() };
     return latest[id];
   }
   try {
@@ -26,68 +45,61 @@ async function pullOne(id) {
     if (s.exchange === 'bybit') data = await bybit.fetchAccount(s.apiKey, s.apiSecret);
     else data = await binance.fetchAccount(s.apiKey, s.apiSecret);
 
-    // attach public funding rates for open symbols
-    try {
-      const syms = data.positions.map(p => p.symbol);
-      const prem = await binance.publicPremium(syms);
-      const map = Object.fromEntries(prem.map(x => [x.symbol, x]));
-      data.positions = data.positions.map(p => ({
-        ...p,
-        lastFundingRate: map[p.symbol]?.lastFundingRate ?? null,
-        nextFundingTime: map[p.symbol]?.nextFundingTime ?? null,
-      }));
-    } catch (_) {}
-
     data.strategy = id;
     data.exchange = s.exchange;
-    latest[id] = data;
+    data.label = s.label;
 
-    if (s.exchange === 'binance') {
-      try {
-        const inc = await binance.fetchFundingIncome(s.apiKey, s.apiSecret, { limit: 20 });
-        for (const row of inc) {
-          fundingLog.push({ strategy: id, ...row });
+    // public funding rates for open symbols (Binance premiumIndex works for USDT-M symbols)
+    const fundRows = [];
+    try {
+      const syms = [...new Set((data.positions || []).map(p => p.symbol))];
+      if (syms.length) {
+        const prem = await binance.publicPremium(syms);
+        const map = Object.fromEntries(prem.map(x => [x.symbol, x]));
+        for (const p of data.positions) {
+          const m = map[p.symbol];
+          if (!m) continue;
+          const rate = parseFloat(m.lastFundingRate || 0);
+          p.lastFundingRate = rate;
+          p.nextFundingTime = m.nextFundingTime ? new Date(Number(m.nextFundingTime)).toISOString() : null;
+          fundRows.push({
+            ts: new Date().toISOString(),
+            strategy: id,
+            symbol: p.symbol,
+            side: p.side,
+            rate,
+            ratePct: rate * 100,
+            notional: p.notional,
+            contracts: p.contracts ?? Math.abs(p.positionAmt),
+            markPrice: p.markPrice,
+            liqDistancePct: p.liqDistancePct,
+            liqRisk: p.liqRisk,
+          });
         }
-        while (fundingLog.length > 500) fundingLog.shift();
-      } catch (_) {}
+      }
+    } catch (e) {
+      console.warn('funding attach', id, e.message);
     }
 
-    await pushSupabase(id, data);
+    latest[id] = data;
+    for (const r of fundRows) {
+      fundingLog.push(r);
+      if (fundingLog.length > MAX_LOG) fundingLog.shift();
+    }
+    appendFunding(fundRows);
     return data;
   } catch (e) {
-    latest[id] = { error: e.message, updatedAt: new Date().toISOString() };
+    latest[id] = {
+      error: e.message,
+      strategy: id,
+      updatedAt: new Date().toISOString(),
+    };
     return latest[id];
   }
 }
 
-async function pushSupabase(strategy, data) {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_KEY;
-  if (!url || !key || data.error) return;
-  try {
-    await fetch(`${url.replace(/\/$/, '')}/rest/v1/position_snapshots`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        Prefer: 'return=minimal',
-      },
-      body: JSON.stringify({
-        strategy,
-        balance: data.balance,
-        unrealized_pnl: data.unrealizedPnl,
-        positions: data.positions,
-        taken_at: data.updatedAt,
-      }),
-    });
-  } catch (e) {
-    console.warn('supabase snapshot', e.message);
-  }
-}
-
 export async function syncAll() {
-  const ids = listStrategiesPublic().filter(s => s.enabled).map(s => s.id);
+  const ids = listStrategiesPublic().map(s => s.id);
   const results = {};
   for (const id of ids) {
     results[id] = await pullOne(id);
@@ -95,8 +107,9 @@ export async function syncAll() {
   return results;
 }
 
-export function startCron(ms = 60_000) {
-  const tick = () => syncAll().catch(e => console.warn('sync', e.message));
-  tick();
-  return setInterval(tick, ms);
+export function startCron(ms = 60000) {
+  const run = () => syncAll().catch(e => console.error('cron sync', e.message));
+  run();
+  setInterval(run, ms);
+  console.log(`Sync cron every ${ms}ms → funding log ${FUNDING_FILE}`);
 }

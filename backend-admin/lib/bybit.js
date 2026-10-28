@@ -69,5 +69,22 @@ export async function fetchAccount(apiKey, apiSecret) {
       };
     });
 
-  return { balance, unrealizedPnl, positions, updatedAt: new Date().toISOString() };
+  const availableBalance = parseFloat(coin.availableToWithdraw || coin.equity || balance);
+  const usedMargin = parseFloat(list?.totalInitialMargin || list?.totalPositionIM || 0);
+  return {
+    balance,
+    availableBalance,
+    freeMargin: availableBalance,
+    usedMargin,
+    unrealizedPnl,
+    positions: positions.map(p => ({
+      ...p,
+      contracts: Math.abs(p.positionAmt),
+      liqRisk: (p.liqDistancePct == null ? 'unknown'
+        : p.liqDistancePct >= 20 ? 'low'
+        : p.liqDistancePct >= 10 ? 'medium'
+        : p.liqDistancePct >= 5 ? 'high' : 'critical'),
+    })),
+    updatedAt: new Date().toISOString(),
+  };
 }
