@@ -754,11 +754,11 @@
   .period-wrap { position: relative; z-index: 55; }
   .ex-chip { display: flex; align-items: center; gap: 7px; padding: 5px 11px; font-size: 11px; color: var(--text); border: 1px solid var(--amber-border); border-radius: 6px; background: var(--amber-bg); transition: border-color .2s, background .2s, color .2s; }
   .ex-chip.bybit {
-    border-color: rgba(247, 166, 0, 0.55);
-    background: rgba(247, 166, 0, 0.12);
-    color: #f7c14b;
+    border-color: rgba(64, 158, 255, 0.55);
+    background: rgba(40, 120, 220, 0.18);
+    color: #8ec5ff;
   }
-  .ex-chip.bybit .ex-ico { color: #f7a600; }
+  .ex-chip.bybit .ex-ico { color: #5aadff; }
   .ex-ico { color: var(--amber); font-size: 9px; }
 
   .status {
@@ -4165,12 +4165,16 @@
   // security comes from Row Level Security on the "leads" table (insert only, no read).
   // ===== Early Access → Supabase (email + telegram + whatsapp) =====
   function getSbConfig() {
+    // Defaults baked in (anon/publishable key is public; RLS protects leads table).
+    // Settings can override via localStorage.
+    const DEF_URL = 'https://qzibwcekumykhbhdfhum.supabase.co';
+    const DEF_KEY = 'sb_publishable_zf6Tvo57PPdwEdBGaVxjDQ_z48ue-0F';
     try {
       return {
-        url: (localStorage.getItem('atx-supabase-url') || '').trim(),
-        key: (localStorage.getItem('atx-supabase-anon') || '').trim()
+        url: (localStorage.getItem('atx-supabase-url') || DEF_URL).trim(),
+        key: (localStorage.getItem('atx-supabase-anon') || DEF_KEY).trim()
       };
-    } catch (e) { return { url: '', key: '' }; }
+    } catch (e) { return { url: DEF_URL, key: DEF_KEY }; }
   }
   function setSbStatus() {
     const el = document.getElementById('sb-status');
