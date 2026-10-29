@@ -96,10 +96,17 @@ export async function fetchFundingIncome(apiKey, apiSecret, { limit = 50 } = {})
   return rows || [];
 }
 
+let premiumCache = { ts: 0, data: null };
 export async function publicPremium(symbols = []) {
-  const res = await fetch(`${BASE}/fapi/v1/premiumIndex`);
-  const data = await res.json();
-  if (!Array.isArray(data)) return [];
+  const now = Date.now();
+  if (!premiumCache.data || now - premiumCache.ts > 60_000) {
+    const res = await fetch(`${BASE}/fapi/v1/premiumIndex`);
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      premiumCache = { ts: now, data };
+    }
+  }
+  const data = premiumCache.data || [];
   if (!symbols.length) return data;
   const set = new Set(symbols);
   return data.filter(x => set.has(x.symbol));
