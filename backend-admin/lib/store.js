@@ -1,13 +1,13 @@
 /**
- * Strategy key store.
- * Production: prefer env BINANCE_KEY_ALPHA / SECRET_... or encrypted JSON in STRATEGY_KEYS.
- * Runtime admin updates write to memory + optional file (VOLUME path).
+ * Strategy key store — memory + encrypted data/keys.json
  */
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { encrypt, decrypt } from './crypto.js';
 
-const DATA_FILE = process.env.KEYS_FILE || path.join(process.cwd(), 'data', 'keys.json');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DATA_FILE = process.env.KEYS_FILE || path.join(__dirname, '..', 'data', 'keys.json');
 
 const DEFAULTS = {
   alpha: { id: 'alpha', name: 'Strategy Alpha', exchange: 'binance', label: 'k-bot_0512', enabled: true, apiKey: '', apiSecret: '' },
@@ -24,7 +24,6 @@ function loadFromEnv() {
     if (k) out[id].apiKey = k;
     if (s) out[id].apiSecret = s;
   }
-  // Bybit gamma
   if (process.env.BYBIT_KEY_GAMMA) out.gamma.apiKey = process.env.BYBIT_KEY_GAMMA;
   if (process.env.BYBIT_SECRET_GAMMA) out.gamma.apiSecret = process.env.BYBIT_SECRET_GAMMA;
   return out;
@@ -32,25 +31,39 @@ function loadFromEnv() {
 
 function loadFromFile() {
   try {
-    if (!fs.existsSync(DATA_FILE)) return null;
+    if (!fs.existsSync(DATA_FILE)) {
+      console.warn('[keys] no file yet:', DATA_FILE);
+      return null;
+    }
     const raw = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
     const base = loadFromEnv();
+    let loaded = 0;
     for (const [id, row] of Object.entries(raw)) {
       if (!base[id]) continue;
-      if (row.apiKeyEnc) base[id].apiKey = decrypt(row.apiKeyEnc);
-      if (row.apiSecretEnc) base[id].apiSecret = decrypt(row.apiSecretEnc);
+      try {
+        if (row.apiKeyEnc) {
+          base[id].apiKey = decrypt(row.apiKeyEnc);
+          loaded++;
+        }
+        if (row.apiSecretEnc) base[id].apiSecret = decrypt(row.apiSecretEnc);
+      } catch (e) {
+        console.error(`[keys] decrypt failed for ${id} — is MASTER_KEY the same as when saved?`, e.message);
+      }
       if (typeof row.enabled === 'boolean') base[id].enabled = row.enabled;
       if (row.label) base[id].label = row.label;
       if (row.exchange) base[id].exchange = row.exchange;
     }
+    console.log(`[keys] loaded ${loaded} key(s) from`, DATA_FILE);
     return base;
   } catch (e) {
-    console.warn('keys file load failed', e.message);
+    console.warn('[keys] file load failed', e.message);
     return null;
   }
 }
 
 let cache = loadFromFile() || loadFromEnv();
+console.log('[keys] store ready · file=', DATA_FILE, '· has=',
+  Object.values(cache).filter(s => s.apiKey && s.apiSecret).map(s => s.id).join(',') || '(none)');
 
 export function listStrategiesPublic() {
   return Object.values(cache).map(s => ({
@@ -70,8 +83,8 @@ export function getStrategy(id) {
 
 export function upsertStrategyKeys(id, { apiKey, apiSecret, enabled, label, exchange }) {
   if (!cache[id]) throw new Error('unknown strategy');
-  if (apiKey != null && apiKey !== '') cache[id].apiKey = apiKey.trim();
-  if (apiSecret != null && apiSecret !== '') cache[id].apiSecret = apiSecret.trim();
+  if (apiKey != null && String(apiKey).trim() !== '') cache[id].apiKey = String(apiKey).trim();
+  if (apiSecret != null && String(apiSecret).trim() !== '') cache[id].apiSecret = String(apiSecret).trim();
   if (typeof enabled === 'boolean') cache[id].enabled = enabled;
   if (label) cache[id].label = label;
   if (exchange) cache[id].exchange = exchange;
@@ -94,8 +107,10 @@ function persist() {
       };
     }
     fs.writeFileSync(DATA_FILE, JSON.stringify(payload, null, 2));
+    console.log('[keys] saved →', DATA_FILE,
+      Object.values(cache).filter(s => s.apiKey).map(s => s.id).join(','));
   } catch (e) {
-    console.warn('persist keys failed (set KEYS_FILE on a volume):', e.message);
+    console.error('[keys] persist FAILED:', e.message);
   }
 }
 
