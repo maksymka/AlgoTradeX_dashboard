@@ -100,6 +100,6 @@ app.get('/admin', (_, res) => {
 app.listen(PORT, () => {
   console.log(`AlgoTradeX admin API on :${PORT}`);
   console.log(`Admin UI: http://localhost:${PORT}/admin`);
-  const ms = Number(process.env.SYNC_INTERVAL_MS || 60000);
+  const ms = Number(process.env.SYNC_INTERVAL_MS || 300000); // default 5 min — avoid Binance IP ban
   startCron(ms);
 });
