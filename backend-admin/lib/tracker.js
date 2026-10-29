@@ -98,11 +98,15 @@ async function pullOne(id) {
   }
 }
 
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
 export async function syncAll() {
   const ids = listStrategiesPublic().map(s => s.id);
   const results = {};
   for (const id of ids) {
     results[id] = await pullOne(id);
+    // Binance bans aggressive REST — pause between strategies
+    await sleep(2500);
   }
   return results;
 }
