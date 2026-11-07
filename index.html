@@ -4379,6 +4379,7 @@ setInterval(() => {
         email: em || null,
         telegram: t ? '@' + t : null,
         whatsapp: w ? (w[0] === '+' ? w : '+' + w) : null
+        consent: ok.checked
       };
       try {
         const { url, key } = getSbConfig();
