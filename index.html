@@ -3496,7 +3496,7 @@
     });
   }
 
-  async function renderAllCharts(days) {
+  function renderAllCharts(days) {
     currentDays = days;
     destroyCharts();
 
@@ -3569,68 +3569,69 @@
     // Daily PnL last 7 of the selected window
     const dailyLabels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
            // === АВТОМАТИЧНИЙ РОЗРАХУНОК ДЕННИХ БАРІВ З БЕКЕНДУ ===
-    async function getDailyPnLFromAPI(strategy, labelsArr) {
+        // === АВТОМАТИЧНИЙ РОЗРАХУНОК ДЕННИХ БАРІВ З БЕКЕНДУ ===
+    const last7Labels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
+    
+    // Малюємо порожні бари відразу (щоб графік не був порожнім)
+    const emptyBars = last7Labels.map(() => 0);
+    charts.aDaily = barChart('chart-a-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
+    charts.bDaily = barChart('chart-b-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
+    charts.allDaily = barChart('chart-all-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
+
+    // Асинхронно підвантажуємо реальні дані і оновлюємо бари
+    (async () => {
       try {
         const res = await fetch(BINANCE_PROXY_URL + '/api/history');
-        if (!res.ok) return labelsArr.map(() => 0);
+        if (!res.ok) return;
         const rows = await res.json();
         
-        // Групуємо по датах для цієї стратегії
-        const byDate = {};
-        rows.filter(r => r.strategy === strategy).forEach(r => {
-          const d = new Date(r.recorded_at);
-          const key = String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0');
-          if (!byDate[key]) byDate[key] = [];
-          byDate[key].push(r.balance);
-        });
-        
-        // Беремо останній баланс за кожен день
-        const dailyBalance = {};
-        Object.keys(byDate).forEach(k => {
-          dailyBalance[k] = byDate[k][byDate[k].length - 1];
-        });
-        
-        // Рахуємо різницю між днями
-        return labelsArr.map((label, idx) => {
-          if (idx === 0) return 0;
-          const prevLabel = labelsArr[idx - 1];
-          const cur = dailyBalance[label];
-          const prev = dailyBalance[prevLabel];
-          if (cur != null && prev != null) return Math.round((cur - prev) * 100) / 100;
-          return 0;
-        });
+        const getDailyPnL = (strategy) => {
+          const byDate = {};
+          rows.filter(r => r.strategy === strategy).forEach(r => {
+            const d = new Date(r.recorded_at);
+            const key = String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0');
+            if (!byDate[key]) byDate[key] = [];
+            byDate[key].push(r.balance);
+          });
+          const dailyBalance = {};
+          Object.keys(byDate).forEach(k => { dailyBalance[k] = byDate[k][byDate[k].length - 1]; });
+          
+          return last7Labels.map((label, idx) => {
+            if (idx === 0) return 0;
+            const prevLabel = last7Labels[idx - 1];
+            const cur = dailyBalance[label];
+            const prev = dailyBalance[prevLabel];
+            if (cur != null && prev != null) return Math.round((cur - prev) * 100) / 100;
+            return 0;
+          });
+        };
+
+        const dailyA = getDailyPnL('alpha');
+        const dailyB = getDailyPnL('beta');
+        const dailyG = getDailyPnL('gamma');
+        const dailyD = getDailyPnL('delta');
+
+        // Оновлюємо графіки з реальними даними
+        if (charts.aDaily) {
+          charts.aDaily.data.datasets[0].data = dailyA.map(S);
+          charts.aDaily.data.datasets[0].backgroundColor = dailyA.map(v => v >= 0 ? 'rgba(0,230,118,0.75)' : 'rgba(255,23,68,0.75)');
+          charts.aDaily.update();
+        }
+        if (charts.bDaily) {
+          charts.bDaily.data.datasets[0].data = dailyB.map(S);
+          charts.bDaily.data.datasets[0].backgroundColor = dailyB.map(v => v >= 0 ? 'rgba(0,230,118,0.75)' : 'rgba(255,23,68,0.75)');
+          charts.bDaily.update();
+        }
+        if (charts.allDaily) {
+          const total = dailyA.map((v, i) => v + dailyB[i] + dailyG[i] + dailyD[i]);
+          charts.allDaily.data.datasets[0].data = total.map(S);
+          charts.allDaily.data.datasets[0].backgroundColor = total.map(v => v >= 0 ? 'rgba(0,230,118,0.75)' : 'rgba(255,23,68,0.75)');
+          charts.allDaily.update();
+        }
       } catch (e) {
-        console.warn('history fetch failed:', e);
-        return labelsArr.map(() => 0);
+        console.warn('Daily PnL fetch failed:', e);
       }
-    }
-
-    const last7Labels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
-    const dailyA = await getDailyPnLFromAPI('alpha', last7Labels);
-    const dailyB = await getDailyPnLFromAPI('beta', last7Labels);
-    const dailyG = await getDailyPnLFromAPI('gamma', last7Labels);
-    const dailyD = await getDailyPnLFromAPI('delta', last7Labels);
-
-    charts.aDaily = barChart('chart-a-daily', last7Labels, dailyA.map(S), dailyA.map(v => v >= 0 ? 'rgba(0,230,118,0.75)' : 'rgba(255,23,68,0.75)'));
-    charts.bDaily = barChart('chart-b-daily', last7Labels, dailyB.map(S), dailyB.map(v => v >= 0 ? 'rgba(0,230,118,0.75)' : 'rgba(255,23,68,0.75)'));
-    charts.allDaily = barChart('chart-all-daily', last7Labels, dailyA.map((v, i) => S(v + dailyB[i] + dailyG[i] + dailyD[i])), last7Labels.map((_, i) => {
-      const total = dailyA[i] + dailyB[i] + dailyG[i] + dailyD[i];
-      return total >= 0 ? 'rgba(0,230,118,0.75)' : 'rgba(255,23,68,0.75)';
-    }));
-    }
-
-    const last7Labels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
-    const dailyA = getDailyPnL(REAL_BAL.alpha, last7Labels);
-    const dailyB = getDailyPnL(REAL_BAL.beta, last7Labels);
-    const dailyG = getDailyPnL(REAL_BAL.gamma, last7Labels);
-    const dailyD = getDailyPnL(REAL_BAL.delta, last7Labels);
-
-    charts.aDaily = barChart('chart-a-daily', last7Labels, dailyA.map(S), dailyA.map(v => v >= 0 ? 'rgba(0,230,118,0.75)' : 'rgba(255,23,68,0.75)'));
-    charts.bDaily = barChart('chart-b-daily', last7Labels, dailyB.map(S), dailyB.map(v => v >= 0 ? 'rgba(0,230,118,0.75)' : 'rgba(255,23,68,0.75)'));
-    charts.allDaily = barChart('chart-all-daily', last7Labels, dailyA.map((v, i) => S(v + dailyB[i] + dailyG[i] + dailyD[i])), last7Labels.map((_, i) => {
-      const total = dailyA[i] + dailyB[i] + dailyG[i] + dailyD[i];
-      return total >= 0 ? 'rgba(0,230,118,0.75)' : 'rgba(255,23,68,0.75)';
-    }));
+    })();
   }
 
   // Period toggle — switches ALL equity / daily charts
@@ -4250,7 +4251,7 @@
 
 
   // Initial render
-  renderAllCharts(7).catch(console.error);
+  renderAllCharts(7);
   updateFxUi();
   try { const saved = localStorage.getItem('atx-currency'); if (saved && FX_META[saved] && saved !== 'USD') setCurrency(saved); } catch (e) {}
 
