@@ -3585,22 +3585,41 @@
         if (!res.ok) return;
         const rows = await res.json();
         
-        const getDailyPnL = (strategy) => {
+                const getDailyPnL = (strategy) => {
           const byDate = {};
           rows.filter(r => r.strategy === strategy).forEach(r => {
             const d = new Date(r.recorded_at);
             const key = String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0');
             if (!byDate[key]) byDate[key] = [];
-            byDate[key].push(r.balance);
+            byDate[key].push({ balance: r.balance, ts: d.getTime() });
           });
+
+          // Беремо останній баланс за кожен день
           const dailyBalance = {};
-          Object.keys(byDate).forEach(k => { dailyBalance[k] = byDate[k][byDate[k].length - 1]; });
-          
+          Object.keys(byDate).forEach(k => {
+            byDate[k].sort((a,b) => a.ts - b.ts); // сортуємо за часом
+            dailyBalance[k] = byDate[k][byDate[k].length - 1].balance;
+          });
+
+          // Визначаємо сьогоднішню дату у форматі dd.mm
+          const today = new Date();
+          const todayKey = String(today.getDate()).padStart(2,'0') + '.' + String(today.getMonth()+1).padStart(2,'0');
+
           return last7Labels.map((label, idx) => {
             if (idx === 0) return 0;
             const prevLabel = last7Labels[idx - 1];
-            const cur = dailyBalance[label];
+            
+            let cur = dailyBalance[label];
             const prev = dailyBalance[prevLabel];
+
+            // Якщо це сьогоднішній день — беремо ПОТОЧНИЙ баланс з API (live), а не останній з бази
+            if (label === todayKey) {
+              const liveSnap = window.__ATX_LIVE_DATA && window.__ATX_LIVE_DATA[strategy];
+              if (liveSnap && liveSnap.balance != null) {
+                cur = liveSnap.balance;
+              }
+            }
+
             if (cur != null && prev != null) return Math.round((cur - prev) * 100) / 100;
             return 0;
           });
@@ -4179,6 +4198,7 @@
       const res = await fetch(url, { cache: 'no-store', mode: 'cors' });
       if (!res.ok) throw new Error('Proxy HTTP ' + res.status + ' ' + url);
       const data = await res.json();
+      window.__ATX_LIVE_DATA = data; // Зберігаємо поточні баланси для денних барів
       if (data.error) throw new Error(data.error);
       console.info('API bots', Object.keys(data), data);
 
@@ -4252,6 +4272,12 @@
 
   // Initial render
   renderAllCharts(7);
+
+// Оновлюємо графіки (включаючи сьогоднішній бар) кожні 5 хвилин
+setInterval(() => {
+  renderAllCharts(currentDays);
+}, 30 * 60 * 1000); // 30 хвилин. Для години: 60 * 60 * 1000
+  
   updateFxUi();
   try { const saved = localStorage.getItem('atx-currency'); if (saved && FX_META[saved] && saved !== 'USD') setCurrency(saved); } catch (e) {}
 
