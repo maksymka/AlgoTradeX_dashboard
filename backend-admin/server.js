@@ -70,6 +70,7 @@ app.get('/api/history', async (req, res) => {
     if (error) throw error;
     res.json(data || []);
   } catch (e) {
+    console.error('history error:', e);
     res.status(500).json({ error: e.message });
   }
 });
@@ -113,10 +114,12 @@ app.get('/admin', (_, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
+// ---------- START SERVER ----------
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`AlgoTradeX admin API on :${PORT}`);
   console.log(`Admin UI: http://localhost:${PORT}/admin`);
   
+  // Запуск синхронізації акаунтів (кожні 5 хвилин за замовчуванням)
   const ms = Number(process.env.SYNC_INTERVAL_MS || 300000);
   startCron(ms);
 
@@ -125,12 +128,17 @@ app.listen(PORT, '0.0.0.0', () => {
     const now = new Date();
     const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1, 0, 0, 0);
     const msUntilNext = nextHour.getTime() - now.getTime();
+    
     console.log(`[Cron] Next funding sync in ${Math.round(msUntilNext / 1000 / 60)} min.`);
+    
     setTimeout(() => {
       syncAllFunding().catch(e => console.error('funding cron error', e.message));
       scheduleHourlyFunding();
     }, msUntilNext);
   }
+  
+  // Запускаємо одразу при старті
   syncAllFunding().catch(e => console.error('funding initial error', e.message));
+  // І плануємо наступні
   scheduleHourlyFunding();
 });
