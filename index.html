@@ -1742,6 +1742,7 @@
       <button type="button" class="bn-btn tn active" data-nav="strategy" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Strategy</button>
       <button type="button" class="bn-btn tn" data-nav="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Settings</button>
       <button type="button" class="bn-btn tn" data-nav="support"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-9 9H4l2.2-3.3A9 9 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/></svg>Support</button>
+            <button type="button" class="bn-btn tn" data-nav="funding"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Funding</button>
       <button type="button" class="lead-btn" id="lead-open">★ Early access</button>
     </div>
     <div class="tabs-row hdr-in" style="--d:.36s">
@@ -1757,6 +1758,29 @@
         <div class="tab" data-tab="th" data-soon="Strategy Theta" id="tab-theta">Strategy Theta</div>
         <div class="tab" data-tab="i" data-soon="Strategy Iota" id="tab-iota">Strategy Iota</div>
         <span class="tab-ind" id="tab-ind"></span>
+      </div>
+    </div>
+  </div>
+
+    <!-- ==================== FUNDING ==================== -->
+  <div class="content-funding" style="display:none;">
+    <div class="metrics" style="grid-template-columns: repeat(4, 1fr);">
+      <div class="metric"><div class="metric-label">Alpha Funding</div><div class="metric-value neutral" id="funding-alpha">—</div></div>
+      <div class="metric"><div class="metric-label">Beta Funding</div><div class="metric-value neutral" id="funding-beta">—</div></div>
+      <div class="metric"><div class="metric-label">Gamma Funding</div><div class="metric-value neutral" id="funding-gamma">—</div></div>
+      <div class="metric"><div class="metric-label">Delta Funding</div><div class="metric-value neutral" id="funding-delta">—</div></div>
+    </div>
+    
+    <div class="chart-box" style="margin-top:14px;">
+      <div class="chart-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="chart-title">Funding History (Last 30 Days)</div>
+        <button class="contact-btn" id="btn-sync-funding" onclick="triggerFundingSync()" style="height:32px; font-size:11px; padding:0 12px;">🔄 Sync Now</button>
+      </div>
+      <div class="chart-wrap" style="height:auto; min-height:200px;">
+        <table class="pos-table" id="funding-table" style="margin-top:0;">
+          <thead><tr><th>Date</th><th>Strategy</th><th>Amount</th></tr></thead>
+          <tbody id="funding-tbody"><tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Loading...</td></tr></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -3989,6 +4013,105 @@
     setTimeout(closeSheets, 150);
   });
 
+    // ===== FUNDING TAB LOGIC =====
+  // Додаємо обробку кліку для нової кнопки в меню
+  document.querySelectorAll('.bn-btn[data-nav="funding"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Ховаємо всі контейнери стратегій
+      document.querySelectorAll('.content-a, .content-b, .content-g, .content-d, .content-all').forEach(c => c.style.display = 'none');
+      // Показуємо контейнер фандингу
+      document.querySelector('.content-funding').style.display = 'block';
+      
+      // Знімаємо активний клас з усіх кнопок меню і ставимо на "Funding"
+      document.querySelectorAll('.bn-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Завантажуємо дані
+      loadFundingSummary();
+    });
+  });
+
+  // При перемиканні на інші вкладки (Strategy, Settings) ховаємо фандинг
+  document.querySelectorAll('.bn-btn[data-nav="strategy"], .bn-btn[data-nav="settings"], .bn-btn[data-nav="support"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelector('.content-funding').style.display = 'none';
+    });
+  });
+
+  async function loadFundingSummary() {
+    const tbody = document.getElementById('funding-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Loading...</td></tr>';
+    
+    try {
+      const res = await fetch(BINANCE_PROXY_URL + '/api/funding/summary');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error || 'Unknown error');
+      
+      const data = json.data;
+      
+      // Оновлюємо картки
+      ['alpha','beta','gamma','delta'].forEach(s => {
+        const el = document.getElementById('funding-' + s);
+        if (el && data[s]) {
+          const total = data[s].total;
+          el.textContent = (total >= 0 ? '+' : '') + total.toFixed(2) + ' USDT';
+          el.className = 'metric-value ' + (total >= 0 ? 'pos' : 'neg');
+        }
+      });
+      
+      // Збираємо всю історію в один масив для таблиці
+      let allHistory = [];
+      ['alpha','beta','gamma','delta'].forEach(s => {
+        if (data[s] && data[s].history) {
+          data[s].history.forEach(h => allHistory.push({...h, strategy: s}));
+        }
+      });
+      
+      // Сортуємо за датою (спадання)
+      allHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
+      
+      // Малюємо таблицю
+      if (allHistory.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">No funding data yet. Click "Sync Now".</td></tr>';
+      } else {
+        tbody.innerHTML = allHistory.slice(0, 50).map(h => {
+          const d = new Date(h.date);
+          const dateStr = String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+          const amt = h.amount;
+          const cls = amt >= 0 ? 'pnl-pos' : 'pnl-neg';
+          const sign = amt >= 0 ? '+' : '';
+          return `<tr><td>${dateStr}</td><td style="text-transform:capitalize;">${h.strategy}</td><td class="${cls}">${sign}${amt.toFixed(4)} USDT</td></tr>`;
+        }).join('');
+      }
+    } catch (e) {
+      console.error('Funding load error:', e);
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--red);">Error: ${e.message}</td></tr>`;
+    }
+  }
+
+  async function triggerFundingSync() {
+    const btn = document.getElementById('btn-sync-funding');
+    if (!btn) return;
+    const oldText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Syncing...';
+    
+    try {
+      const res = await fetch(BINANCE_PROXY_URL + '/api/funding/sync', { method: 'POST' });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error || 'Sync failed');
+      alert('✅ Funding synced successfully!');
+      loadFundingSummary(); // Оновлюємо таблицю після синхронізації
+    } catch (e) {
+      console.error('Sync error:', e);
+      alert('❌ Sync failed: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = oldText;
+    }
+  }
 
   // ===== Live Binance Futures public prices (no API keys needed) =====
   // Market data is public. NEVER put secret API keys in frontend HTML.
