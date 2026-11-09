@@ -4015,12 +4015,16 @@
 
     // ===== FUNDING TAB LOGIC =====
   // Додаємо обробку кліку для нової кнопки в меню
+   // ===== FUNDING TAB LOGIC =====
+  
+  // Обробка кліку на кнопку Funding
   document.querySelectorAll('.bn-btn[data-nav="funding"]').forEach(btn => {
     btn.addEventListener('click', () => {
       // Ховаємо всі контейнери стратегій
       document.querySelectorAll('.content-a, .content-b, .content-g, .content-d, .content-all').forEach(c => c.style.display = 'none');
       // Показуємо контейнер фандингу
-      document.querySelector('.content-funding').style.display = 'block';
+      const fundingView = document.querySelector('.content-funding');
+      if(fundingView) fundingView.style.display = 'block';
       
       // Знімаємо активний клас з усіх кнопок меню і ставимо на "Funding"
       document.querySelectorAll('.bn-btn').forEach(b => b.classList.remove('active'));
@@ -4031,17 +4035,32 @@
     });
   });
 
-  // При перемиканні на інші вкладки (Strategy, Settings) ховаємо фандинг
+  // При перемиканні на інші вкладки (Strategy, Settings, Support) ховаємо фандинг
+  // і повертаємо відображення для Strategy
   document.querySelectorAll('.bn-btn[data-nav="strategy"], .bn-btn[data-nav="settings"], .bn-btn[data-nav="support"]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelector('.content-funding').style.display = 'none';
+      const fundingView = document.querySelector('.content-funding');
+      if(fundingView) fundingView.style.display = 'none';
+      
+      // Якщо натиснули Strategy - показуємо активну вкладку стратегій (за замовчуванням All Strategies)
+      if (btn.dataset.nav === 'strategy') {
+        // Знаходимо, яка вкладка стратегії була активною, або показуємо "All"
+        const activeTab = document.querySelector('.tab.active');
+        const map = { a: 'content-a', b: 'content-b', g: 'content-g', d: 'content-d', all: 'content-all' };
+        const targetClass = activeTab ? map[activeTab.dataset.tab] : 'content-all';
+        
+        // Показуємо потрібний контейнер
+        document.querySelectorAll('.content-a, .content-b, .content-g, .content-d, .content-all').forEach(c => c.style.display = 'none');
+        const targetView = document.querySelector('.' + (targetClass || 'content-all'));
+        if(targetView) targetView.style.display = 'block';
+      }
     });
   });
 
   async function loadFundingSummary() {
     const tbody = document.getElementById('funding-tbody');
     if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Loading...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Loading...</td></tr>';
     
     try {
       const res = await fetch(BINANCE_PROXY_URL + '/api/funding/summary');
@@ -4049,10 +4068,9 @@
       const json = await res.json();
       if (!json.success) throw new Error(json.error || 'Unknown error');
       
-      const data = json.data; // Це масив об'єктів { symbol, exchange, rate, mark_price, next_time }
+      const data = json.data;
 
-      // Оновлюємо картки (просто показуємо, що дані є)
-      // Оскільки немає прив'язки до стратегій, ми можемо показати загальну кількість пар
+      // Оновлюємо картки
       document.getElementById('funding-alpha').textContent = data.length + ' pairs';
       document.getElementById('funding-beta').textContent = '—';
       document.getElementById('funding-gamma').textContent = '—';
@@ -4060,7 +4078,7 @@
       
       // Малюємо таблицю
       if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">No funding data yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No funding data yet.</td></tr>';
       } else {
         tbody.innerHTML = data.map(item => {
           const d = new Date(item.next_time);
@@ -4078,9 +4096,9 @@
       }
     } catch (e) {
       console.error('Funding load error:', e);
-      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--red);">Error: ${e.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--red);">Error: ${e.message}</td></tr>`;
     }
-}
+  }
 
   async function triggerFundingSync() {
     const btn = document.getElementById('btn-sync-funding');
