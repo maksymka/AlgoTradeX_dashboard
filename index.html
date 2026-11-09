@@ -1779,7 +1779,7 @@
       <div class="chart-wrap" style="height:auto; min-height:200px;">
         <table class="pos-table" id="funding-table" style="margin-top:0;">
           <thead><tr><th>Date</th><th>Strategy</th><th>Amount</th></tr></thead>
-          <tbody id="funding-tbody"><tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Loading...</td></tr></tbody>
+          <tbody id="funding-tbody"><tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Loading...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -4049,47 +4049,38 @@
       const json = await res.json();
       if (!json.success) throw new Error(json.error || 'Unknown error');
       
-      const data = json.data;
-      
-      // Оновлюємо картки
-      ['alpha','beta','gamma','delta'].forEach(s => {
-        const el = document.getElementById('funding-' + s);
-        if (el && data[s]) {
-          const total = data[s].total;
-          el.textContent = (total >= 0 ? '+' : '') + total.toFixed(2) + ' USDT';
-          el.className = 'metric-value ' + (total >= 0 ? 'pos' : 'neg');
-        }
-      });
-      
-      // Збираємо всю історію в один масив для таблиці
-      let allHistory = [];
-      ['alpha','beta','gamma','delta'].forEach(s => {
-        if (data[s] && data[s].history) {
-          data[s].history.forEach(h => allHistory.push({...h, strategy: s}));
-        }
-      });
-      
-      // Сортуємо за датою (спадання)
-      allHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
+      const data = json.data; // Це масив об'єктів { symbol, exchange, rate, mark_price, next_time }
+
+      // Оновлюємо картки (просто показуємо, що дані є)
+      // Оскільки немає прив'язки до стратегій, ми можемо показати загальну кількість пар
+      document.getElementById('funding-alpha').textContent = data.length + ' pairs';
+      document.getElementById('funding-beta').textContent = '—';
+      document.getElementById('funding-gamma').textContent = '—';
+      document.getElementById('funding-delta').textContent = '—';
       
       // Малюємо таблицю
-      if (allHistory.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">No funding data yet. Click "Sync Now".</td></tr>';
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">No funding data yet.</td></tr>';
       } else {
-        tbody.innerHTML = allHistory.slice(0, 50).map(h => {
-          const d = new Date(h.date);
+        tbody.innerHTML = data.map(item => {
+          const d = new Date(item.next_time);
           const dateStr = String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-          const amt = h.amount;
-          const cls = amt >= 0 ? 'pnl-pos' : 'pnl-neg';
-          const sign = amt >= 0 ? '+' : '';
-          return `<tr><td>${dateStr}</td><td style="text-transform:capitalize;">${h.strategy}</td><td class="${cls}">${sign}${amt.toFixed(4)} USDT</td></tr>`;
+          const rateCls = item.rate >= 0 ? 'pnl-pos' : 'pnl-neg';
+          const sign = item.rate >= 0 ? '+' : '';
+          
+          return `<tr>
+            <td>${item.symbol}</td>
+            <td>${item.exchange}</td>
+            <td class="${rateCls}">${sign}${(item.rate * 100).toFixed(4)}%</td>
+            <td>${dateStr}</td>
+          </tr>`;
         }).join('');
       }
     } catch (e) {
       console.error('Funding load error:', e);
       tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--red);">Error: ${e.message}</td></tr>`;
     }
-  }
+}
 
   async function triggerFundingSync() {
     const btn = document.getElementById('btn-sync-funding');
