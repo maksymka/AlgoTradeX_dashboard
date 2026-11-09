@@ -4017,21 +4017,66 @@
   // Додаємо обробку кліку для нової кнопки в меню
    // ===== FUNDING TAB LOGIC =====
   
+   // ===== FUNDING TAB LOGIC =====
+  
   // Обробка кліку на кнопку Funding
   document.querySelectorAll('.bn-btn[data-nav="funding"]').forEach(btn => {
     btn.addEventListener('click', () => {
-      // Ховаємо всі контейнери стратегій
+      // 1. Ховаємо всі контейнери стратегій
       document.querySelectorAll('.content-a, .content-b, .content-g, .content-d, .content-all').forEach(c => c.style.display = 'none');
-      // Показуємо контейнер фандингу
+      
+      // 2. Показуємо контейнер фандингу
       const fundingView = document.querySelector('.content-funding');
       if(fundingView) fundingView.style.display = 'block';
       
-      // Знімаємо активний клас з усіх кнопок меню і ставимо на "Funding"
+      // 3. ЗНІМАЄМО АКТИВНИЙ КЛАС З УСІХ ВКЛАДОК СТРАТЕГІЙ
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      // Також прибираємо підсвічування (індикатор), якщо він є
+      const tabInd = document.getElementById('tab-ind');
+      if (tabInd) tabInd.style.width = '0px';
+      
+      // 4. Знімаємо активний клас з усіх кнопок меню і ставимо на "Funding"
       document.querySelectorAll('.bn-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       
-      // Завантажуємо дані
+      // 5. Завантажуємо дані
       loadFundingSummary();
+    });
+  });
+
+  // При перемиканні на інші вкладки (Strategy, Settings, Support) ховаємо фандинг
+  // і повертаємо відображення для Strategy
+  document.querySelectorAll('.bn-btn[data-nav="strategy"], .bn-btn[data-nav="settings"], .bn-btn[data-nav="support"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const fundingView = document.querySelector('.content-funding');
+      if(fundingView) fundingView.style.display = 'none';
+      
+      // Якщо натиснули Strategy - показуємо активну вкладку стратегій (за замовчуванням All Strategies)
+      if (btn.dataset.nav === 'strategy') {
+        // Знаходимо, яка вкладка стратегії була активною, або показуємо "All"
+        const activeTab = document.querySelector('.tab.active');
+        const map = { a: 'content-a', b: 'content-b', g: 'content-g', d: 'content-d', all: 'content-all' };
+        const targetClass = activeTab ? map[activeTab.dataset.tab] : 'content-all';
+        
+        // Показуємо потрібний контейнер
+        document.querySelectorAll('.content-a, .content-b, .content-g, .content-d, .content-all').forEach(c => c.style.display = 'none');
+        const targetView = document.querySelector('.' + (targetClass || 'content-all'));
+        if(targetView) targetView.style.display = 'block';
+        
+        // Якщо вкладки не було активної (ми їх прибрали), повертаємо "All Strategies"
+        if (!activeTab) {
+            const allTab = document.querySelector('.tab[data-tab="all"]');
+            if (allTab) {
+                allTab.classList.add('active');
+                // Оновлюємо індикатор
+                const tabInd = document.getElementById('tab-ind');
+                if (tabInd) {
+                    tabInd.style.width = allTab.offsetWidth + 'px';
+                    tabInd.style.transform = 'translateX(' + allTab.offsetLeft + 'px)';
+                }
+            }
+        }
+      }
     });
   });
 
