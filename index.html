@@ -1797,10 +1797,10 @@
     <!-- ==================== FUNDING ==================== -->
   <div class="content-funding" style="display:none;">
     <div class="metrics" style="grid-template-columns: repeat(4, 1fr);">
-      <div class="metric"><div class="metric-label">Alpha Funding</div><div class="metric-value neutral" id="funding-alpha">—</div></div>
-      <div class="metric"><div class="metric-label">Beta Funding</div><div class="metric-value neutral" id="funding-beta">—</div></div>
-      <div class="metric"><div class="metric-label">Gamma Funding</div><div class="metric-value neutral" id="funding-gamma">—</div></div>
-      <div class="metric"><div class="metric-label">Delta Funding</div><div class="metric-value neutral" id="funding-delta">—</div></div>
+      <div class="metric"><div class="metric-label">Binance</div><div class="metric-value neutral" id="funding-binance">—</div></div>
+      <div class="metric"><div class="metric-label">Bybit</div><div class="metric-value neutral" id="funding-bybit">—</div></div>
+      <div class="metric"><div class="metric-label">Total pairs</div><div class="metric-value neutral" id="funding-total">—</div></div>
+      <div class="metric"><div class="metric-label">Exchanges</div><div class="metric-value neutral" id="funding-exchanges">2</div></div>
     </div>
     
     <div class="chart-box" style="margin-top:14px;">
@@ -4241,14 +4241,14 @@
       let rows = json.data || [];
       window.__ATX_FUNDING_ROWS = rows;
 
-      // cards: count pairs per exchange (alpha/delta ~ binance, gamma ~ bybit)
+      // all coins from both exchanges (global_funding)
       const binanceN = rows.filter(r => (r.exchange || '').toLowerCase() === 'binance').length;
       const bybitN = rows.filter(r => (r.exchange || '').toLowerCase() === 'bybit').length;
       const setCard = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
-      setCard('funding-alpha', binanceN ? binanceN + ' pairs' : '—');
-      setCard('funding-beta', '—');
-      setCard('funding-gamma', bybitN ? bybitN + ' pairs' : '—');
-      setCard('funding-delta', binanceN ? binanceN + ' pairs' : '—');
+      setCard('funding-binance', binanceN ? binanceN + ' pairs' : '—');
+      setCard('funding-bybit', bybitN ? bybitN + ' pairs' : '—');
+      setCard('funding-total', (binanceN + bybitN) ? (binanceN + bybitN) + ' pairs' : '—');
+      setCard('funding-exchanges', 'Binance · Bybit');
 
       renderFundingTable();
     } catch (e) {
