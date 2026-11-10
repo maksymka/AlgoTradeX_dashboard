@@ -1823,14 +1823,14 @@
               <th>Symbol</th><th>Exchange</th><th class="num">Rate</th>
               <th class="num">2h</th><th class="num">4h</th><th class="num">8h</th>
               <th class="num">30d</th><th class="num">90d</th><th class="num">180d</th><th class="num">360d</th>
-              <th>Next</th>
+              <th>Next funding</th>
             </tr>
           </thead>
           <tbody id="funding-tbody"><tr><td colspan="11" style="text-align:center; color:var(--text-muted);">Loading...</td></tr></tbody>
         </table>
       </div>
       <div class="funding-note" style="margin-top:8px; font-size:11px; color:var(--text-muted);">
-        Rate = last funding interval (exchange: usually 8h, sometimes 4h). 2h/4h/8h and 30–360d are projections if rate stays constant (not realized PnL).
+        Rate / 2h–360d = projected % if rate stays the same (not wallet PnL). Last column = next funding time (date), not profit.
       </div>
     </div>
   </div>
@@ -4285,7 +4285,17 @@
       return;
     }
     tbody.innerHTML = rows.map(item => {
-      const next = item.next_time ? new Date(item.next_time).toLocaleString('uk-UA', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—';
+      let next = '—';
+      if (item.next_time) {
+        const nd = new Date(item.next_time);
+        if (!isNaN(nd.getTime())) {
+          const dd = String(nd.getDate()).padStart(2,'0');
+          const mm = String(nd.getMonth()+1).padStart(2,'0');
+          const hh = String(nd.getHours()).padStart(2,'0');
+          const mi = String(nd.getMinutes()).padStart(2,'0');
+          next = dd + '.' + mm + ' ' + hh + ':' + mi;
+        }
+      }
       const p2 = item.pnl_2h != null ? item.pnl_2h : (item.rate || 0) * 0.25;
       const p4 = item.pnl_4h != null ? item.pnl_4h : (item.rate || 0) * 0.5;
       const p8 = item.pnl_8h != null ? item.pnl_8h : (item.rate || 0);
