@@ -1739,7 +1739,7 @@
     </div>
     </div>
     <div class="top-nav hdr-in" style="--d:.3s" aria-label="Main">
-      <button type="button" class="bn-btn tn active" data-nav="strategy" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Strategy</button>
+      <button type="button" class="bn-btn tn active" data-nav="strategy" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Market</button>
       <button type="button" class="bn-btn tn" data-nav="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Settings</button>
       <button type="button" class="bn-btn tn" data-nav="support"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-9 9H4l2.2-3.3A9 9 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/></svg>Support</button>
             <button type="button" class="bn-btn tn" data-nav="funding"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Funding</button>
@@ -1772,15 +1772,33 @@
     </div>
     
     <div class="chart-box" style="margin-top:14px;">
-      <div class="chart-header" style="display:flex; justify-content:space-between; align-items:center;">
-        <div class="chart-title">Funding History (Last 30 Days)</div>
-        <button class="contact-btn" id="btn-sync-funding" onclick="triggerFundingSync()" style="height:32px; font-size:11px; padding:0 12px;">🔄 Sync Now</button>
+      <div class="chart-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <div class="chart-title">Funding History (rates · projected)</div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <select id="funding-sort" class="period" style="height:32px; font-size:11px; padding:0 10px; cursor:pointer;">
+            <option value="pnl_desc">Sort: PnL ↓</option>
+            <option value="pnl_asc">Sort: PnL ↑</option>
+            <option value="date_desc">Sort: Date ↓</option>
+            <option value="date_asc">Sort: Date ↑</option>
+          </select>
+          <button class="contact-btn" id="btn-sync-funding" onclick="triggerFundingSync()" style="height:32px; font-size:11px; padding:0 12px;">🔄 Sync Now</button>
+        </div>
       </div>
-      <div class="chart-wrap" style="height:auto; min-height:200px;">
-        <table class="pos-table" id="funding-table" style="margin-top:0;">
-          <thead><tr><th>Date</th><th>Strategy</th><th>Amount</th></tr></thead>
-          <tbody id="funding-tbody"><tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Loading...</td></tr></tbody>
+      <div class="chart-wrap" style="height:auto; min-height:200px; overflow-x:auto;">
+        <table class="pos-table fund-table" id="funding-table" style="margin-top:0; min-width:720px;">
+          <thead>
+            <tr>
+              <th>Symbol</th><th>Exchange</th><th class="num">Rate</th>
+              <th class="num">2h</th><th class="num">4h</th><th class="num">8h</th>
+              <th class="num">30d</th><th class="num">90d</th><th class="num">180d</th><th class="num">360d</th>
+              <th>Next</th>
+            </tr>
+          </thead>
+          <tbody id="funding-tbody"><tr><td colspan="11" style="text-align:center; color:var(--text-muted);">Loading...</td></tr></tbody>
         </table>
+      </div>
+      <div class="funding-note" style="margin-top:8px; font-size:11px; color:var(--text-muted);">
+        Rate = last funding interval (exchange: usually 8h, sometimes 4h). 2h/4h/8h and 30–360d are projections if rate stays constant (not realized PnL).
       </div>
     </div>
   </div>
@@ -1814,6 +1832,11 @@
             <div class="rs d" style="width:35%"></div>
             <div class="metric-risk-needle" style="left:80%"></div>
           </div>
+      <div class="metric">
+        <div class="metric-label">Max Drawdown</div>
+        <div class="metric-value neg" data-mdd="content-a">—</div>
+        <div class="metric-sub">peak → trough (hist.)</div>
+      </div>
         </div>
       </div>
     </div>
@@ -2071,6 +2094,11 @@
             <div class="rs d" style="width:40%"></div>
             <div class="metric-risk-needle" style="left:100%"></div>
           </div>
+      <div class="metric">
+        <div class="metric-label">Max Drawdown</div>
+        <div class="metric-value neg" data-mdd="content-b">—</div>
+        <div class="metric-sub">peak → trough (hist.)</div>
+      </div>
         </div>
       </div>
     </div>
@@ -2259,6 +2287,11 @@
         <div class="metric-label">Risk Level</div>
         <div class="metric-value neutral">LOW</div>
         <div class="metric-sub">Bybit · Robot #451 · 2 pairs</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Max Drawdown</div>
+        <div class="metric-value neg" data-mdd="content-g">—</div>
+        <div class="metric-sub">peak → trough (hist.)</div>
       </div>
     </div>
 
@@ -2463,6 +2496,11 @@
             <div class="metric-risk-needle" style="left:96%"></div>
           </div>
         </div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Max Drawdown</div>
+        <div class="metric-value neg" data-mdd="content-all">—</div>
+        <div class="metric-sub">worst of strategies</div>
       </div>
     </div>
 
@@ -2723,6 +2761,11 @@
           <div class="metric-value neutral">LOW</div>
           <div class="metric-sub">Binance · APR short · launch</div>
         </div>
+      <div class="metric">
+        <div class="metric-label">Max Drawdown</div>
+        <div class="metric-value neg" data-mdd="content-d">—</div>
+        <div class="metric-sub">peak → trough (hist.)</div>
+      </div>
       </div>
 
       <div class="charts-row">
@@ -4101,45 +4144,88 @@
   async function loadFundingSummary() {
     const tbody = document.getElementById('funding-tbody');
     if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Loading...</td></tr>';
-    
+    if (!BINANCE_PROXY_URL) {
+      tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-muted)">Set atx-binance-proxy to load funding</td></tr>';
+      return;
+    }
     try {
-      const res = await fetch(BINANCE_PROXY_URL + '/api/funding/summary');
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const res = await fetch(BINANCE_PROXY_URL.replace(/\/$/, '') + '/api/funding/summary', { cache: 'no-store' });
       const json = await res.json();
-      if (!json.success) throw new Error(json.error || 'Unknown error');
-      
-      const data = json.data;
+      if (!json.success && !json.data) throw new Error(json.error || 'Bad response');
+      let rows = json.data || [];
+      window.__ATX_FUNDING_ROWS = rows;
 
-      // Оновлюємо картки
-      document.getElementById('funding-alpha').textContent = data.length + ' pairs';
-      document.getElementById('funding-beta').textContent = '—';
-      document.getElementById('funding-gamma').textContent = '—';
-      document.getElementById('funding-delta').textContent = '—';
-      
-      // Малюємо таблицю
-      if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No funding data yet.</td></tr>';
-      } else {
-        tbody.innerHTML = data.map(item => {
-          const d = new Date(item.next_time);
-          const dateStr = String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-          const rateCls = item.rate >= 0 ? 'pnl-pos' : 'pnl-neg';
-          const sign = item.rate >= 0 ? '+' : '';
-          
-          return `<tr>
-            <td>${item.symbol}</td>
-            <td>${item.exchange}</td>
-            <td class="${rateCls}">${sign}${(item.rate * 100).toFixed(4)}%</td>
-            <td>${dateStr}</td>
-          </tr>`;
-        }).join('');
-      }
+      // cards: count pairs per exchange (alpha/delta ~ binance, gamma ~ bybit)
+      const binanceN = rows.filter(r => (r.exchange || '').toLowerCase() === 'binance').length;
+      const bybitN = rows.filter(r => (r.exchange || '').toLowerCase() === 'bybit').length;
+      const setCard = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+      setCard('funding-alpha', binanceN ? binanceN + ' pairs' : '—');
+      setCard('funding-beta', '—');
+      setCard('funding-gamma', bybitN ? bybitN + ' pairs' : '—');
+      setCard('funding-delta', binanceN ? binanceN + ' pairs' : '—');
+
+      renderFundingTable();
     } catch (e) {
       console.error('Funding load error:', e);
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--red);">Error: ${e.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--red);">Error: ${e.message}</td></tr>`;
     }
   }
+
+  function fundingPct(v) {
+    const n = Number(v) || 0;
+    const cls = n > 0 ? 'pnl-pos' : (n < 0 ? 'pnl-neg' : '');
+    const sign = n > 0 ? '+' : '';
+    return `<span class="${cls}">${sign}${(n * 100).toFixed(4)}%</span>`;
+  }
+
+  function renderFundingTable() {
+    const tbody = document.getElementById('funding-tbody');
+    if (!tbody) return;
+    let rows = (window.__ATX_FUNDING_ROWS || []).slice();
+    const sort = (document.getElementById('funding-sort') || {}).value || 'pnl_desc';
+    rows.sort((a, b) => {
+      const ra = Number(a.rate || a.pnl_8h || 0);
+      const rb = Number(b.rate || b.pnl_8h || 0);
+      const ta = new Date(a.next_time || 0).getTime();
+      const tb = new Date(b.next_time || 0).getTime();
+      if (sort === 'pnl_desc') return rb - ra;
+      if (sort === 'pnl_asc') return ra - rb;
+      if (sort === 'date_desc') return tb - ta;
+      if (sort === 'date_asc') return ta - tb;
+      return rb - ra;
+    });
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-muted)">No funding rows</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(item => {
+      const next = item.next_time ? new Date(item.next_time).toLocaleString('uk-UA', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—';
+      const p2 = item.pnl_2h != null ? item.pnl_2h : (item.rate || 0) * 0.25;
+      const p4 = item.pnl_4h != null ? item.pnl_4h : (item.rate || 0) * 0.5;
+      const p8 = item.pnl_8h != null ? item.pnl_8h : (item.rate || 0);
+      const d = (item.rate || 0) * 3; // ~3 settlements / day if 8h
+      const p30 = item.pnl_30d != null ? item.pnl_30d : d * 30;
+      const p90 = item.pnl_90d != null ? item.pnl_90d : d * 90;
+      const p180 = item.pnl_180d != null ? item.pnl_180d : d * 180;
+      const p360 = item.pnl_360d != null ? item.pnl_360d : d * 360;
+      return `<tr>
+        <td>${item.symbol || '—'}</td>
+        <td>${item.exchange || '—'}</td>
+        <td class="num">${fundingPct(item.rate)}</td>
+        <td class="num">${fundingPct(p2)}</td>
+        <td class="num">${fundingPct(p4)}</td>
+        <td class="num">${fundingPct(p8)}</td>
+        <td class="num">${fundingPct(p30)}</td>
+        <td class="num">${fundingPct(p90)}</td>
+        <td class="num">${fundingPct(p180)}</td>
+        <td class="num">${fundingPct(p360)}</td>
+        <td>${next}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  
+  document.getElementById('funding-sort')?.addEventListener('change', renderFundingTable);
 
   async function triggerFundingSync() {
     const btn = document.getElementById('btn-sync-funding');
@@ -4443,8 +4529,55 @@
   }
 
 
+  
+  function maxDrawdownFromMap(balMap) {
+    if (!balMap) return null;
+    const keys = Object.keys(balMap).sort((a, b) => {
+      const [da, ma] = a.split('.').map(Number);
+      const [db, mb] = b.split('.').map(Number);
+      return ma !== mb ? ma - mb : da - db;
+    });
+    let peak = -Infinity, mdd = 0;
+    for (const k of keys) {
+      const v = Number(balMap[k]);
+      if (!isFinite(v)) continue;
+      if (v > peak) peak = v;
+      if (peak > 0) {
+        const dd = (peak - v) / peak;
+        if (dd > mdd) mdd = dd;
+      }
+    }
+    return mdd;
+  }
+  function paintMaxDrawdowns() {
+    const maps = {
+      'content-a': typeof REAL_BAL !== 'undefined' ? REAL_BAL.alpha : null,
+      'content-b': typeof REAL_BAL !== 'undefined' ? REAL_BAL.beta : null,
+      'content-g': typeof REAL_BAL !== 'undefined' ? REAL_BAL.gamma : null,
+      'content-d': typeof REAL_BAL !== 'undefined' ? REAL_BAL.delta : null,
+    };
+    let allVals = [];
+    Object.entries(maps).forEach(([cls, map]) => {
+      const el = document.querySelector('[data-mdd="' + cls + '"]');
+      if (!el) return;
+      const mdd = maxDrawdownFromMap(map);
+      if (mdd == null) { el.textContent = '—'; return; }
+      el.textContent = '−' + (mdd * 100).toFixed(2) + '%';
+      el.classList.add('neg');
+      allVals.push(mdd);
+    });
+    const elAll = document.querySelector('[data-mdd="content-all"]');
+    if (elAll && allVals.length) {
+      const m = Math.max(...allVals);
+      elAll.textContent = '−' + (m * 100).toFixed(2) + '%';
+      elAll.classList.add('neg');
+    }
+  }
+
   // Initial render
   renderAllCharts(7);
+  try { paintMaxDrawdowns(); } catch (e) {}
+
 
 // Оновлюємо графіки (включаючи сьогоднішній бар) кожні 5 хвилин
 setInterval(() => {
