@@ -1072,6 +1072,38 @@
   .fund-table .pos { color:var(--green); font-weight:600; }
   .fund-table .neg { color:var(--red); font-weight:600; }
   .fund-table tfoot td { border-top:1px solid var(--border-bright); font-weight:600; padding-top:9px; }
+
+  #funding-sort {
+    appearance: none;
+    -webkit-appearance: none;
+    height: 32px;
+    padding: 0 28px 0 12px;
+    font-size: 11px;
+    font-family: inherit;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: var(--bg-card)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M1 1l5 5 5-5'/%3E%3C/svg%3E")
+      no-repeat right 10px center;
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    cursor: pointer;
+    outline: none;
+  }
+  #funding-sort:hover { border-color: var(--green-border); color: var(--green); }
+  #funding-sort:focus { border-color: rgba(0,230,118,.55); box-shadow: 0 0 0 2px rgba(0,230,118,.12); }
+  #funding-sort option {
+    background: #141414;
+    color: #e8e8e8;
+  }
+  html[data-theme="cli"] #funding-sort {
+    background-color: var(--bg-card);
+    color: var(--text);
+    border-color: var(--border);
+  }
+  html[data-theme="cli"] #funding-sort option { background: #d3d4d6; color: #1d2230; }
+
   .fund-pair { color:var(--text-dim); font-size:10px; }
   /* hdr-overview display controlled in layout block */
   .hdr-ov-card {
@@ -1775,7 +1807,7 @@
       <div class="chart-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
         <div class="chart-title">Funding History (rates · projected)</div>
         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-          <select id="funding-sort" class="period" style="height:32px; font-size:11px; padding:0 10px; cursor:pointer;">
+          <select id="funding-sort" aria-label="Sort funding">
             <option value="pnl_desc">Sort: PnL ↓</option>
             <option value="pnl_asc">Sort: PnL ↑</option>
             <option value="date_desc">Sort: Date ↓</option>
@@ -3190,7 +3222,7 @@
   const C = '#00e5ff';
 
   // ===== Date helpers =====
-  const TODAY = new Date(2026, 10, 6); // 6 листопада 2026
+  const TODAY = new Date(2026, 10, 10); // 10 листопада 2026
   const END_FORECAST = new Date(2026, 11, 31); // Dec 31, 2026
 
   function fmtDate(d) {
@@ -3282,7 +3314,8 @@
       '19.10': 1266.00, '20.10': 1267.33, '21.10': 1268.04, '22.10': 1273.55, '23.10': 1282.00,
       '24.10': 1290.00, '25.10': 1299.49, '26.10': 1302.06, '27.10': 1300.99, '28.10': 1297.87,
       '29.10': 1297.87, '30.10': 1298.08, '31.10': 1304.86,
-      '01.11': 1306.03, '02.11': 1306.44, '03.11': 1307.15, '04.11': 1309.67, '05.11': 1315.80, '06.11': 1317.44
+      '01.11': 1306.03, '02.11': 1306.44, '03.11': 1307.15, '04.11': 1309.67, '05.11': 1315.80, '06.11': 1317.44,
+      '07.11': 1338.89, '08.11': 1338.89, '09.11': 1338.89, '10.11': 1338.89
     },
     beta: {
       '04.10': 783.01, '05.10': 784.64, '06.10': 785.64, '07.10': 787.18, '08.10': 790.50,
@@ -3290,11 +3323,13 @@
       '14.10': 917.74, '15.10': 932.27, '16.10': 932.46, '17.10': 0, '18.10': 0, '19.10': 0,
       '20.10': 0, '21.10': 0, '22.10': 0, '23.10': 0, '24.10': 0, '25.10': 0, '26.10': 0,
       '27.10': 0, '28.10': 0, '29.10': 0, '30.10': 0, '31.10': 0,
-      '01.11': 0, '02.11': 0, '03.11': 0, '04.11': 0, '05.11': 0, '06.11': 0
+      '01.11': 0, '02.11': 0, '03.11': 0, '04.11': 0, '05.11': 0, '06.11': 0,
+      '07.11': 0, '08.11': 0, '09.11': 0, '10.11': 0
     },
     delta: {
       '26.10': 500.00, '27.10': 510.05, '28.10': 505.45, '29.10': 518.75, '30.10': 526.73, '31.10': 533.56,
-      '01.11': 538.88, '02.11': 541.67, '03.11': 546.49, '04.11': 549.56, '05.11': 552.27, '06.11': 553.80
+      '01.11': 538.88, '02.11': 541.67, '03.11': 546.49, '04.11': 549.56, '05.11': 552.27, '06.11': 553.80,
+      '07.11': 551.30, '08.11': 551.30, '09.11': 551.30, '10.11': 551.30
     },
     gamma: {
       '08.10': 500.31, '09.10': 503.05, '10.10': 505.39, '11.10': 517.08, '12.10': 514.26,
@@ -3302,9 +3337,60 @@
       '18.10': 533.45, '19.10': 540.64, '20.10': 546.27, '21.10': 554.01, '22.10': 557.39,
       '23.10': 562.00, '24.10': 568.00, '25.10': 573.12, '26.10': 578.88, '27.10': 572.45,
       '28.10': 571.05, '29.10': 571.05, '30.10': 572.86, '31.10': 574.13,
-      '01.11': 575.10, '02.11': 575.79, '03.11': 585.12, '04.11': 590.53, '05.11': 599.13, '06.11': 601.13
+      '01.11': 575.10, '02.11': 575.79, '03.11': 585.12, '04.11': 590.53, '05.11': 599.13, '06.11': 601.13,
+      '07.11': 659.33, '08.11': 659.33, '09.11': 659.33, '10.11': 659.33
     }
   };
+
+  async function mergeHistoryIntoRealBal() {
+    if (!BINANCE_PROXY_URL) return false;
+    let changed = false;
+    try {
+      const res = await fetch(BINANCE_PROXY_URL.replace(/\/$/, '') + '/api/history', { cache: 'no-store' });
+      if (res.ok) {
+        const rows = await res.json();
+        if (Array.isArray(rows)) {
+          const byStrat = {};
+          rows.forEach(r => {
+            const id = (r.strategy || '').toLowerCase();
+            if (!id || r.balance == null) return;
+            const d = new Date(r.recorded_at);
+            if (isNaN(d.getTime())) return;
+            const key = String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0');
+            if (!byStrat[id]) byStrat[id] = {};
+            const ts = d.getTime();
+            if (!byStrat[id][key] || byStrat[id][key].ts < ts) {
+              byStrat[id][key] = { balance: Number(r.balance), ts };
+            }
+          });
+          ['alpha','beta','gamma','delta'].forEach(id => {
+            if (!REAL_BAL[id] || !byStrat[id]) return;
+            Object.entries(byStrat[id]).forEach(([k, v]) => {
+              REAL_BAL[id][k] = Math.round(v.balance * 100) / 100;
+              changed = true;
+            });
+          });
+        }
+      }
+    } catch (e) { console.warn('history merge', e.message); }
+
+    // live snapshot for TODAY key
+    try {
+      const live = window.__ATX_LIVE_DATA;
+      if (live) {
+        const key = fmtDate(TODAY);
+        ['alpha','beta','gamma','delta'].forEach(id => {
+          const s = live[id];
+          if (s && s.balance != null && !s.error) {
+            REAL_BAL[id][key] = Math.round(Number(s.balance) * 100) / 100;
+            changed = true;
+          }
+        });
+      }
+    } catch (e) {}
+    return changed;
+  }
+
   function fullHistory(startBal, real, vol) {
     const n = daysBetween(START_DATE, TODAY) + 1;
     const keys = Array.from({ length: n }, (_, i) => fmtDate(addDays(START_DATE, i)));
@@ -4513,6 +4599,11 @@
         alpha: alpha.updatedAt, gamma: gamma.updatedAt, delta: delta.updatedAt,
         free: { a: alpha.freeMargin, g: gamma.freeMargin, d: delta.freeMargin }
       });
+      try {
+        await mergeHistoryIntoRealBal();
+        if (typeof renderAllCharts === 'function') renderAllCharts(currentDays);
+        if (typeof paintMaxDrawdowns === 'function') paintMaxDrawdowns();
+      } catch (e) {}
     } catch (e) {
       console.warn('Account sync failed:', e.message || e);
     }
@@ -4577,6 +4668,18 @@
   // Initial render
   renderAllCharts(7);
   try { paintMaxDrawdowns(); } catch (e) {}
+  (async () => {
+    try {
+      // wait a tick for live sync to populate __ATX_LIVE_DATA
+      await new Promise(r => setTimeout(r, 2500));
+      const ok = await mergeHistoryIntoRealBal();
+      if (ok) {
+        renderAllCharts(currentDays || 7);
+        try { paintMaxDrawdowns(); } catch (e) {}
+        console.info('Charts refreshed from /api/history + live balances');
+      }
+    } catch (e) { console.warn(e); }
+  })();
 
 
 // Оновлюємо графіки (включаючи сьогоднішній бар) кожні 5 хвилин
