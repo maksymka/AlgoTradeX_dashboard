@@ -3222,8 +3222,9 @@
   const C = '#00e5ff';
 
   // ===== Date helpers =====
-  const TODAY = new Date(2026, 10, 10); // 10 листопада 2026
-  const END_FORECAST = new Date(2026, 11, 31); // Dec 31, 2026
+  function localMidnight(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  let TODAY = localMidnight(new Date());          // автоматично = сьогодні (оновлюється при кожному рендері)
+  const endForecast = () => new Date(TODAY.getFullYear(), 11, 31);   // кінець поточного року
 
   function fmtDate(d) {
     const dd = String(d.getDate()).padStart(2, '0');
@@ -3259,7 +3260,7 @@
     }
     // forecast to end of year
     // forecast horizon mirrors the window (1D -> 3 days, 7D -> 7, 30D -> 30), capped at year end
-    const forecastDays = Math.min(daysBetween(TODAY, END_FORECAST), Math.max(3, daysBack));
+    const forecastDays = Math.max(0, Math.min(daysBetween(TODAY, endForecast()), Math.max(3, daysBack)));
     for (let i = 1; i <= forecastDays; i++) {
       const d = addDays(TODAY, i);
       dates.push(d);
@@ -3343,6 +3344,7 @@
   };
 
   async function mergeHistoryIntoRealBal() {
+    TODAY = localMidnight(new Date());
     if (!BINANCE_PROXY_URL) return false;
     let changed = false;
     try {
@@ -3395,15 +3397,18 @@
     const n = daysBetween(START_DATE, TODAY) + 1;
     const keys = Array.from({ length: n }, (_, i) => fmtDate(addDays(START_DATE, i)));
     const first = keys.findIndex(k => real[k] != null);          // first real point; before it the path is a smooth estimate
-    return keys.map((k, i) => {
-      if (real[k] != null) return real[k];
+    const out = [];
+    keys.forEach((k, i) => {
+      if (real[k] != null) { out.push(real[k]); return; }
+      if (i > first) { out.push(out[i - 1]); return; }   // день без снапшота після першої реальної точки → переносимо останній баланс
       const t = i / first, eased = t * t * (3 - 2 * t);
       let v = startBal + (real[keys[first]] - startBal) * eased;
       if (i > 0) v += Math.sin(i * 0.55) * vol * (1 - Math.abs(t - 0.5) * 1.2) + Math.cos(i * 0.27) * vol * 0.35;
-      return Math.round(v * 100) / 100;
+      out.push(Math.round(v * 100) / 100);
     });
+    return out;
   }
-  const FULL = { alpha: fullHistory(1187, REAL_BAL.alpha, 28), beta: fullHistory(700, REAL_BAL.beta, 40) };
+  let FULL = { alpha: fullHistory(1187, REAL_BAL.alpha, 28), beta: fullHistory(700, REAL_BAL.beta, 40) };
   function windowSeries(full, win, forecastDays, startBal) {
     const hist = full.slice(full.length - 1 - win);
     const cur = hist[hist.length - 1], recoverTo = cur > 0 ? cur + Math.max(40, Math.abs(startBal) * 0.06) : 0, forecast = [];   // a liquidated account (0) stays at 0
@@ -3411,15 +3416,18 @@
     return { hist, forecast, all: hist.concat(forecast) };
   }
   function gammaSeries(win, forecastDays) {
-    const hist = Array.from({ length: win + 1 }, (_, i) => { const v = REAL_BAL.gamma[fmtDate(addDays(TODAY, i - win))]; return v == null ? null : v; });
+    let carry = null;
+    const hist = Array.from({ length: win + 1 }, (_, i) => { const v = REAL_BAL.gamma[fmtDate(addDays(TODAY, i - win))]; if (v != null) carry = v; return carry; });   // порожні дні після старту = останній відомий баланс
     const last = hist[hist.length - 1];
     return { hist, all: hist.concat(Array(forecastDays).fill(last)) };      // flat forecast
   }
   function deltaSeries(win, forecastDays) {
     // Launch 26.10.26 @ 500 — only real points, null before start, flat forecast
+    let carry = null;
     const hist = Array.from({ length: win + 1 }, (_, i) => {
       const v = REAL_BAL.delta[fmtDate(addDays(TODAY, i - win))];
-      return v == null ? null : v;
+      if (v != null) carry = v;
+      return carry;
     });
     const last = hist.reduceRight((a, v) => (a != null ? a : v), null);
     const fc = Array(forecastDays).fill(last != null ? last : null);
@@ -3649,8 +3657,93 @@
     });
   }
 
+  // ===== Live widgets driven by REAL open positions (margin / PnL per position / funding) =====
+  function liveSnap(id) {
+    const d = window.__ATX_LIVE_DATA, s = d && d[id];
+    return (s && !s.error && s.balance != null) ? s : null;
+  }
+  const coinOf = p => String(p.symbol || '').replace(/(USDT|USDC|BUSD)$/, '');
+  function sortedPositions(snap) {
+    return (snap.positions || []).slice().sort((a, b) =>
+      coinOf(a).localeCompare(coinOf(b)) || (a.side === b.side ? 0 : a.side === 'LONG' ? -1 : 1));
+  }
+  function posColors(positions) {
+    const coins = [...new Set(positions.map(coinOf))];
+    return positions.map(p => {
+      const h = Math.round((coins.indexOf(coinOf(p)) * 360) / Math.max(coins.length, 1) + 160) % 360;
+      return p.side === 'LONG' ? `hsla(${h},70%,62%,0.85)` : `hsla(${h},55%,42%,0.80)`;
+    });
+  }
+  function posPnlChart(canvasId, id) {
+    const snap = liveSnap(id);
+    if (!snap) return barChart(canvasId, [], [], []);
+    const pos = sortedPositions(snap);
+    const vals = pos.map(p => Number(p.unRealizedProfit || 0));
+    return barChart(canvasId, pos.map(p => coinOf(p) + (p.side === 'LONG' ? ' L' : ' S')), vals.map(S),
+      vals.map(v => v < 0 ? 'rgba(255,23,68,0.75)' : 'rgba(0,230,118,0.8)'));
+  }
+  function posMarginChart(canvasId, id, withFree) {
+    const snap = liveSnap(id);
+    if (!snap) return doughnutChart(canvasId, [], [], []);
+    const pos = sortedPositions(snap);
+    const labels = pos.map(p => coinOf(p) + (p.side === 'LONG' ? ' L' : ' S'));
+    const vals = pos.map(p => Number(p.initialMargin) > 0 ? Number(p.initialMargin) : (p.leverage > 0 ? Number(p.notional || 0) / p.leverage : Number(p.notional || 0)));
+    const colors = posColors(pos);
+    if (withFree) {
+      const free = snap.freeMargin != null ? snap.freeMargin : snap.availableBalance;
+      if (free > 0) { labels.push('Free'); vals.push(free); colors.push('rgba(80,90,110,0.3)'); }
+    }
+    return doughnutChart(canvasId, labels, vals.map(S), colors);
+  }
+  const _usd = (v, sign) => (sign ? (v >= 0 ? '+' : '−') : '') + '$' + Math.abs(v).toFixed(2);
+  function renderFundingCard(scope, positions) {
+    const card = document.querySelector(scope + ' .funding-card');
+    if (!card) return;
+    const by = {};
+    (positions || []).forEach(p => {
+      const c = coinOf(p);
+      const o = by[c] || (by[c] = { coin: c, long: 0, short: 0, rate: null, h: 8 });
+      if (p.side === 'LONG') o.long += Number(p.notional || 0); else o.short += Number(p.notional || 0);
+      if (p.lastFundingRate != null) { o.rate = Number(p.lastFundingRate); o.h = Number(p.fundingIntervalHours) || 8; }
+    });
+    const rows = Object.values(by).sort((a, b) => a.coin.localeCompare(b.coin));
+    const title = rows.length ? rows.map(r => r.coin).join(' · ') + ' · funding only' : 'Funding only';
+    const hs = [...new Set(rows.filter(r => r.rate != null).map(r => r.h))];
+    const head = 'live rates · ' + (hs.length ? hs.map(h => h + 'h').join('/') : '—');
+    let tot = { d: 0, w: 0, m: 0, y: 0 };
+    const body = rows.map(r => {
+      const net = r.short - r.long;
+      const netTxt = Math.abs(net) < 0.5 ? 'hedged' : ('$' + Math.abs(net).toFixed(1) + (net > 0 ? ' short' : ' long'));
+      if (r.rate == null) return `<tr><td>${r.coin} L+S</td><td class="num">${netTxt}</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>`;
+      const day = net * r.rate * (24 / r.h);                // short отримує при rate>0, long платить
+      const w = day * 7, m = day * 30, y = day * 365;
+      tot.d += day; tot.w += w; tot.m += m; tot.y += y;
+      const c = v => v >= 0 ? 'pos' : 'neg';
+      return `<tr><td>${r.coin} L+S</td><td class="num">${netTxt}</td>
+        <td class="num ${c(r.rate)}">${r.rate >= 0 ? '+' : '−'}${Math.abs(r.rate * 100).toFixed(5)}%</td>
+        <td class="num ${c(day)}">${_usd(day, 1)}</td><td class="num ${c(w)}">${_usd(w, 1)}</td>
+        <td class="num ${c(m)}">${_usd(m, 1)}</td><td class="num ${c(y)}">${_usd(y, 1)}</td></tr>`;
+    }).join('') || '<tr><td colspan="7" style="color:var(--text-muted)">No open positions</td></tr>';
+    const c = v => v >= 0 ? 'pos' : 'neg';
+    const note = rows.length
+      ? 'Rates: ' + rows.filter(r => r.rate != null).map(r => `${r.coin} ${r.rate >= 0 ? '+' : '−'}${Math.abs(r.rate * 100).toFixed(4)}%/${r.h}h`).join(' · ') + '. Net short receives when rate > 0. Funding-only estimate from open positions.'
+      : 'No open positions.';
+    card.innerHTML = `
+      <div class="funding-head"><div class="funding-title">${title}</div><div class="funding-rate">${head}</div></div>
+      <div class="fund-table-wrap"><table class="fund-table">
+        <thead><tr><th>Hedge</th><th class="num">Net notional</th><th class="num">Rate</th><th class="num">1 day</th><th class="num">1 week</th><th class="num">1 month</th><th class="num">1 year</th></tr></thead>
+        <tbody>${body}</tbody>
+        <tfoot><tr><td>Net carry (all)</td><td class="num">—</td><td class="num">—</td>
+          <td class="num ${c(tot.d)}">${_usd(tot.d, 1)}</td><td class="num ${c(tot.w)}">${_usd(tot.w, 1)}</td>
+          <td class="num ${c(tot.m)}">${_usd(tot.m, 1)}</td><td class="num ${c(tot.y)}">${_usd(tot.y, 1)}</td></tr></tfoot>
+      </table></div>
+      <div class="funding-note">${note}</div>`;
+  }
+
   function renderAllCharts(days) {
     currentDays = days;
+    TODAY = localMidnight(new Date());
+    FULL = { alpha: fullHistory(1187, REAL_BAL.alpha, 28), beta: fullHistory(700, REAL_BAL.beta, 40) };
     destroyCharts();
 
     const { labels, dates, nowIdx, forecastDays } = buildDates(days);
@@ -3677,47 +3770,34 @@
 
     // Static bar / doughnut charts
     const pcol = v => (v < 0 ? 'rgba(255,23,68,0.75)' : 'rgba(0,230,118,0.8)');
-    const aVals = [-61.55, 20.44], gVals = [-17.53, -7.15, -29.66, -72.37];
-    charts.aPnl = barChart('chart-a-pnl',
-      ['THE L','THE S','INIT L','INIT S','SYN L','SYN S'],
-      [-58.12, 9.01, -6.55, -29.86, -10.66, 7.78].map(S),
-      ['rgba(255,23,68,0.75)', 'rgba(0,230,118,0.8)', 'rgba(255,23,68,0.7)', 'rgba(255,23,68,0.85)', 'rgba(255,23,68,0.7)', 'rgba(0,230,118,0.75)']
-    );
-    charts.bPnl = barChart('chart-b-pnl', [], [], []);      // Beta: liquidated, no positions
-    charts.gPnl = barChart('chart-g-pnl',
-      ['INIT S','ICNT S','HUMA S','ARIA S','TIA L','ICNT L'],
-      [-89.51, -85.43, -40.94, -27.60, -20.29, -25.74].map(S),
-      ['rgba(255,23,68,0.85)', 'rgba(255,23,68,0.8)', 'rgba(255,23,68,0.75)', 'rgba(255,23,68,0.7)', 'rgba(255,23,68,0.65)', 'rgba(255,23,68,0.7)']
-    );
-    charts.gMarg = doughnutChart('chart-g-margin', ['TIA L','TIA S','ARIA L','ARIA S','HUMA L','HUMA S','ICNT L','ICNT S','INIT L','INIT S'],
-      [8.15, 20.62, 6.92, 20.50, 7.49, 20.84, 11.23, 20.32, 7.79, 20.38].map(S),
-      ['rgba(0,229,255,0.85)','rgba(0,160,200,0.75)','rgba(179,136,255,0.85)','rgba(130,90,220,0.75)','rgba(0,230,118,0.75)','rgba(0,180,100,0.65)','rgba(255,196,0,0.8)','rgba(255,160,0,0.7)','rgba(255,100,150,0.75)','rgba(200,80,120,0.7)']);
+    // Per-position PnL + Margin usage: ТІЛЬКИ реальні відкриті позиції з /api/account
+    charts.aPnl = posPnlChart('chart-a-pnl', 'alpha');
+    charts.bPnl = posPnlChart('chart-b-pnl', 'beta');
+    charts.gPnl = posPnlChart('chart-g-pnl', 'gamma');
+    charts.gMarg = posMarginChart('chart-g-margin', 'gamma', false);
 
     // Delta · launch 26.10 @ 500
     const delta = deltaSeries(nowIdx, forecastDays);
     const dAll = delta.all.map(v => (v == null ? null : S(v)));
     charts.dEq = makeLineChart('chart-d-equity', labels, dAll, nowIdx, G);
     charts.dTb = makePnlBalanceChart('chart-d-tbpnl', labels, dAll, S(500), nowIdx);
-    charts.dPnl = barChart('chart-d-pnl',
-      ['BEAT S'],
-      [0.03].map(S),
-      ['rgba(255,23,68,0.75)', 'rgba(255,23,68,0.85)']
-    );
-    charts.dMarg = doughnutChart('chart-d-margin', ['BEAT S','Free'], [0.59, 518.16].map(S), ['rgba(255,23,68,0.75)', 'rgba(0,230,118,0.25)']);
+    charts.dPnl = posPnlChart('chart-d-pnl', 'delta');
+    charts.dMarg = posMarginChart('chart-d-margin', 'delta', true);
     charts.aWin = doughnutChart('chart-a-winloss', ['Wins','Losses'], [42,58],
       ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']);
     charts.bWin = doughnutChart('chart-b-winloss', ['Wins','Losses'], [48,52],
       ['rgba(0,230,118,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.aMarg = doughnutChart('chart-a-margin', ['THE L','THE S','INIT L','INIT S','SYN L','SYN S','Free'],
-      [15.18, 32.12, 9.58, 26.80, 8.96, 27.14, 1184.33].map(S),
-      ['rgba(0,230,118,0.85)','rgba(255,23,68,0.75)','rgba(0,229,255,0.8)','rgba(0,160,200,0.7)','rgba(179,136,255,0.75)','rgba(80,90,110,0.3)']);
+    charts.aMarg = posMarginChart('chart-a-margin', 'alpha', true);
     charts.bExp = doughnutChart('chart-b-exposure', [], [], []);   // Beta: liquidated
-    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma','Delta'], [1297.87, 0, 571.05, 518.75].map(S),
+    const _ids = ['alpha','beta','gamma','delta'], _live = _ids.map(liveSnap);
+    const _bal = _ids.map((id, i) => _live[i] ? _live[i].balance : [1297.87, 0, 571.05, 518.75][i]);
+    const _upnl = _ids.map((id, i) => _live[i] ? Number(_live[i].unrealizedPnl || 0) : [-88.40, 0, -292.07, 0.03][i]);
+    charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma','Delta'], _bal.map(S),
       ['rgba(0,230,118,0.8)', 'rgba(0,229,255,0.8)', 'rgba(179,136,255,0.8)']);
     charts.allRisk = doughnutChart('chart-all-risk', ['High','Very High'], [1,1],
       ['rgba(255,196,0,0.8)', 'rgba(255,23,68,0.8)']);
-    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma','Delta'], [-88.40, 0, -292.07, 0.03].map(S),
-      ['rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)', 'rgba(255,23,68,0.8)']);
+    charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma','Delta'], _upnl.map(S),
+      _upnl.map(v => v < 0 ? 'rgba(255,23,68,0.8)' : 'rgba(0,230,118,0.8)'));
 
     // Daily PnL last 7 of the selected window
     const dailyLabels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
@@ -4028,7 +4108,7 @@
     redraw(charts.gPnl, [0, 1, 2, 3].map(i => pos.gamma[i].cur));                          // ZK S, ENA L/S
     redraw(charts.allPnl, [totals.alpha, totals.beta, totals.gamma]);                  // Alpha, Beta, Gamma
   }
-  setInterval(() => { if (!window.__ATX_LIVE) animatePnl(); }, 1800);
+  setInterval(() => { if (!window.__ATX_LIVE && !BINANCE_PROXY_URL) animatePnl(); }, 1800);   // демо-режим лише без бекенду
 
   const themeBtn = document.getElementById('theme-toggle');
   const THEME_CYCLE = ['dark', 'cli', 'prime'];
@@ -4567,6 +4647,7 @@
         setMetricBalance(scope, snap.balance, start, out, startLabel);
         setUnrealized(scope, snap.unrealizedPnl || 0);
         updatePosTable(scope, snap.positions || []);
+        renderFundingCard(scope, snap.positions || []);
         const free = snap.freeMargin != null ? snap.freeMargin : snap.availableBalance;
         const used = snap.usedMargin;
         document.querySelectorAll(scope + ' .metric').forEach(m => {
