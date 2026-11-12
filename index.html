@@ -1162,6 +1162,7 @@
     border: 1px solid var(--amber-border);
   }
 
+  .risk-badge.med { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); opacity: .8; }
   .risk-badge.vhigh {
     background: var(--red-bg);
     color: var(--red);
@@ -1766,12 +1767,13 @@
           <div class="period-opt" data-days="30">30D</div>
           <div class="period-opt" data-days="180">180D</div>
           <div class="period-opt" data-days="365">1Y</div>
+          <div class="period-opt" data-days="all">AllTime</div>
         </div>
       </div>
     </div>
     </div>
     <div class="top-nav hdr-in" style="--d:.3s" aria-label="Main">
-      <button type="button" class="bn-btn tn active" data-nav="strategy" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Market</button>
+      <button type="button" class="bn-btn tn active" data-nav="strategy" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Strategies</button>
       <button type="button" class="bn-btn tn" data-nav="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Settings</button>
       <button type="button" class="bn-btn tn" data-nav="support"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-9 9H4l2.2-3.3A9 9 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14.5h4"/></svg>Support</button>
             <button type="button" class="bn-btn tn" data-nav="funding"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Funding</button>
@@ -3363,6 +3365,10 @@
             const ts = d.getTime();
             if (!byStrat[id][key] || byStrat[id][key].ts < ts) {
               byStrat[id][key] = { balance: Number(r.balance), ts };
+              if (r.equity != null && REAL_EQ[id]) {
+                const e = Number(r.equity);
+                REAL_EQ[id][key] = { c: e, lo: Number(r.equity_min != null ? r.equity_min : e), hi: Number(r.equity_max != null ? r.equity_max : e) };
+              }
             }
           });
           ['alpha','beta','gamma','delta'].forEach(id => {
@@ -3385,6 +3391,9 @@
           const s = live[id];
           if (s && s.balance != null && !s.error) {
             REAL_BAL[id][key] = Math.round(Number(s.balance) * 100) / 100;
+            const eqNow = s.equity != null ? Number(s.equity) : Number(s.balance) + Number(s.unrealizedPnl || 0);
+            const pv = REAL_EQ[id][key];
+            REAL_EQ[id][key] = { c: eqNow, lo: Math.min(pv ? pv.lo : eqNow, eqNow), hi: Math.max(pv ? pv.hi : eqNow, eqNow) };
             changed = true;
           }
         });
@@ -3657,6 +3666,180 @@
     });
   }
 
+  // ===== Equity series, drawdown, live strategy panels =====
+  const ALL_DAYS = 100000;                                   // «AllTime»
+  const BOT_IDS = ['alpha', 'beta', 'gamma', 'delta'];
+  const REAL_EQ = { alpha: {}, beta: {}, gamma: {}, delta: {} };   // dd.mm -> { c: close, lo: day min, hi: day max } (equity = balance + unrealized PnL)
+  function keyToDate(k) {
+    const [d, m] = k.split('.').map(Number);
+    return new Date(START_DATE.getFullYear() + (m < START_DATE.getMonth() + 1 ? 1 : 0), m - 1, d);
+  }
+  function equityDays(id) {                                   // equity where the backend stored it, wallet balance otherwise
+    const bal = REAL_BAL[id] || {}, eq = REAL_EQ[id] || {};
+    return [...new Set([...Object.keys(bal), ...Object.keys(eq)])].map(k => {
+      const e = eq[k], b = bal[k], c = e ? e.c : b;
+      if (c == null || !isFinite(c)) return null;
+      return { key: k, date: keyToDate(k), c, lo: e ? e.lo : c, hi: e ? e.hi : c };
+    }).filter(Boolean).sort((a, b) => a.date - b.date);
+  }
+  function windowDays(arr, days) {
+    if (days >= ALL_DAYS) return arr;
+    const from = addDays(TODAY, -days);
+    return arr.filter(d => d.date >= from);
+  }
+  function ddStats(arr) {
+    let peak = -Infinity, mdd = 0;
+    for (const d of arr) {
+      if (peak > 0) mdd = Math.max(mdd, (peak - d.lo) / peak);   // day's low vs peak reached BEFORE that day
+      if (d.hi > peak) peak = d.hi;
+      if (peak > 0) mdd = Math.max(mdd, (peak - d.c) / peak);
+    }
+    const last = arr[arr.length - 1];
+    return { max: mdd, cur: (peak > 0 && last) ? Math.max(0, (peak - last.c) / peak) : 0 };
+  }
+  function combinedDays() {                                   // sum of all strategies' equity, last known value carried forward
+    const per = BOT_IDS.map(equityDays);
+    const dates = new Map();
+    per.forEach(a => a.forEach(d => dates.set(+d.date, d.date)));
+    const idx = per.map(() => 0), lastC = per.map(() => 0);
+    return [...dates.values()].sort((a, b) => a - b).map(dt => {
+      let sum = 0;
+      per.forEach((a, i) => { while (idx[i] < a.length && a[idx[i]].date <= dt) { lastC[i] = a[idx[i]].c; idx[i]++; } sum += lastC[i]; });
+      return { key: fmtDate(dt), date: dt, c: sum, lo: sum, hi: sum };
+    });
+  }
+  function paintMaxDrawdowns() {
+    const lbl = currentDays >= ALL_DAYS ? 'all time' : currentDays + 'D';
+    const put = (cls, arr) => {
+      const el = document.querySelector('[data-mdd="' + cls + '"]');
+      if (!el) return;
+      const sub = el.parentElement && el.parentElement.querySelector('.metric-sub');
+      if (!arr.length) { el.textContent = '—'; return; }
+      const m = ddStats(arr).max, bad = m > 0.00005;
+      el.textContent = bad ? '−' + (m * 100).toFixed(2) + '%' : '0.00%';
+      el.classList.toggle('neg', bad); el.classList.toggle('neutral', !bad);
+      if (sub) sub.textContent = 'peak → trough · ' + lbl;
+    };
+    put('content-a', windowDays(equityDays('alpha'), currentDays));
+    put('content-b', windowDays(equityDays('beta'), currentDays));
+    put('content-g', windowDays(equityDays('gamma'), currentDays));
+    put('content-d', windowDays(equityDays('delta'), currentDays));
+    put('content-all', windowDays(combinedDays(), currentDays));
+  }
+
+  const RISK_RANK = { low: 0, medium: 1, high: 2, critical: 3 };
+  const RISK_VIEW = [
+    { label: 'Low', badge: '', metric: 'neutral', needle: 14 },
+    { label: 'Medium', badge: 'med', metric: 'amber', needle: 50 },
+    { label: 'High', badge: 'high', metric: 'amber', needle: 78 },
+    { label: 'Very high', badge: 'vhigh', metric: 'neg', needle: 92 },
+  ];
+  function riskOf(positions) {
+    if (!positions.length) return { none: true };
+    let worst = -1, minDist = null, minSym = '';
+    positions.forEach(p => {
+      const r = RISK_RANK[p.liqRisk];
+      if (r != null && r > worst) worst = r;
+      if (p.liqDistancePct != null && isFinite(p.liqDistancePct) && (minDist == null || p.liqDistancePct < minDist)) { minDist = Number(p.liqDistancePct); minSym = coinOf(p); }
+    });
+    return worst < 0 ? { unknown: true } : { v: RISK_VIEW[worst], minDist, minSym };
+  }
+  function hedgeStats(positions) {
+    const by = {};
+    positions.forEach(p => { const c = coinOf(p); const o = by[c] || (by[c] = { l: 0, s: 0 }); if (p.side === 'LONG') o.l += Number(p.notional || 0); else o.s += Number(p.notional || 0); });
+    let L = 0, Sh = 0, hedged = 0;
+    Object.values(by).forEach(o => { L += o.l; Sh += o.s; hedged += 2 * Math.min(o.l, o.s); });
+    const gross = L + Sh;
+    return gross > 0 ? { bias: (Sh - L) / gross, eff: hedged / gross } : null;
+  }
+  function setMoney(el, usd, sign, plain) {
+    if (!el) return;
+    el._sign = !!sign;
+    if (!el._fx) fxReg(el, plain ? rPlain : rVal, usd); else { el._usd = usd; el._fx(el); }
+  }
+  function setValCls(el, cls) { el.classList.remove('pos', 'neg', 'neutral', 'amber'); el.classList.add(cls); }
+  function paintRiskMetric(scope, positions) {
+    const root = document.querySelector(scope);
+    if (!root) return;
+    root.querySelectorAll('.metric').forEach(m => {
+      const l = m.querySelector('.metric-label');
+      if (!l || !/risk level/i.test(l.textContent)) return;
+      const val = m.querySelector('.metric-value'), sub = m.querySelector('.metric-sub'), needle = m.querySelector('.metric-risk-needle');
+      const r = riskOf(positions);
+      if (r.none || r.unknown) {
+        val.textContent = r.none ? 'NONE' : 'N/A'; setValCls(val, 'neutral');
+        if (sub) sub.textContent = r.none ? 'No open positions' : 'No liquidation price (hedged)';
+        if (needle) needle.style.left = '5%';
+        return;
+      }
+      val.textContent = r.v.label.toUpperCase(); setValCls(val, r.v.metric);
+      if (sub) sub.textContent = r.minDist != null ? `Liq distance min ${r.minDist.toFixed(1)}% · ${r.minSym}` : 'Liq distance n/a';
+      if (needle) needle.style.left = r.v.needle + '%';
+    });
+  }
+  function paintStrategyPanels() {
+    const pct = v => '−' + (v * 100).toFixed(1) + '%';
+    document.querySelectorAll('.strategy-panel:not(.dimmed)').forEach(panel => {
+      const name = (panel.querySelector('.strategy-name') || {}).textContent || '';
+      const id = /Alpha/.test(name) ? 'alpha' : /Beta/.test(name) ? 'beta' : /Gamma/.test(name) ? 'gamma' : /Delta/.test(name) ? 'delta' : null;
+      if (!id) return;
+      const snap = liveSnap(id), arr = equityDays(id);
+      const items = {};
+      panel.querySelectorAll('.stat-item').forEach(it => { const l = it.querySelector('.label'); if (l) items[l.textContent.trim().toLowerCase()] = { it, l, v: it.querySelector('.value') }; });
+
+      const pnl = items['pnl'] || items['unrealized pnl'];
+      if (pnl && snap) {
+        pnl.l.textContent = 'Unrealized PnL';
+        const u = Number(snap.unrealizedPnl || 0);
+        setMoney(pnl.v, u, true); setValCls(pnl.v, u < 0 ? 'neg' : u > 0 ? 'pos' : 'neutral');
+      }
+      const dd = items['drawdown'];                                   // current drawdown from the all-time equity peak
+      if (dd && arr.length) {
+        const c = ddStats(arr).cur;
+        dd.v.textContent = c > 0.0005 ? pct(c) : '0%'; setValCls(dd.v, c > 0.0005 ? 'neg' : 'neutral');
+        dd.it.title = 'Current drawdown: now vs. highest equity ever recorded';
+      }
+      const win = items['win rate'] || items['win days'];             // share of days with positive equity change
+      if (win && arr.length) {
+        let w = 0, n = 0;
+        for (let i = 1; i < arr.length; i++) { const d = arr[i].c - arr[i - 1].c; if (Math.abs(d) > 1e-9) { n++; if (d > 0) w++; } }
+        win.l.textContent = 'Win days';
+        win.v.textContent = n >= 3 ? Math.round(100 * w / n) + '%' : '—'; setValCls(win.v, 'neutral');
+        win.it.title = 'Share of days when equity grew (not per-trade win rate)';
+      }
+      if (snap) {
+        const risk = items['risk'];
+        if (risk) {
+          const r = riskOf(snap.positions || []);
+          risk.v.innerHTML = r.none ? '<span class="risk-badge">None</span>' : r.unknown ? '<span class="risk-badge">n/a</span>'
+            : `<span class="risk-badge ${r.v.badge}">${r.v.label}</span>`;
+        }
+        const pos = items['positions'];
+        if (pos) pos.v.textContent = (snap.positions || []).length + ' open';
+        const um = items['used margin'];
+        if (um && snap.usedMargin != null) setMoney(um.v, Number(snap.usedMargin), false, true);
+        const h = hedgeStats(snap.positions || []);
+        if (items['net bias']) {
+          const b = items['net bias'].v;
+          b.textContent = h ? (h.bias > 0.2 ? 'Short-heavy' : h.bias < -0.2 ? 'Long-heavy' : 'Balanced') : '—'; setValCls(b, 'neutral');
+        }
+        if (items['hedge eff.']) {
+          const e = items['hedge eff.'].v;
+          e.textContent = h ? (h.eff >= 0.8 ? 'High' : h.eff >= 0.5 ? 'Partial' : 'Low') : '—';
+          setValCls(e, h ? (h.eff >= 0.8 ? 'pos' : h.eff >= 0.5 ? 'amber' : 'neg') : 'neutral');
+          items['hedge eff.'].it.title = 'Share of gross notional that is offset by an opposite leg on the same coin';
+        }
+      }
+    });
+    const live = BOT_IDS.map(liveSnap);
+    const all = [];
+    live.forEach(sn => { if (sn) all.push(...(sn.positions || [])); });
+    paintRiskMetric('.content-a', (live[0] || {}).positions || []);
+    paintRiskMetric('.content-g', (live[2] || {}).positions || []);
+    paintRiskMetric('.content-d', (live[3] || {}).positions || []);
+    if (live.some(Boolean)) paintRiskMetric('.content-all', all);
+  }
+
   // ===== Live widgets driven by REAL open positions (margin / PnL per position / funding) =====
   function liveSnap(id) {
     const d = window.__ATX_LIVE_DATA, s = d && d[id];
@@ -3884,6 +4067,7 @@
         console.warn('Daily PnL fetch failed:', e);
       }
     })();
+    try { paintMaxDrawdowns(); paintStrategyPanels(); } catch (e) { console.warn('panels', e); }
   }
 
   // Period toggle — switches ALL equity / daily charts
@@ -3907,13 +4091,14 @@
   periodMenu.addEventListener('click', (e) => e.stopPropagation());
 
   function periodLabel(days) {
+    if (days >= ALL_DAYS) return 'AllTime ▾';
     if (days >= 365) return '1Y ▾';
     return days + 'D ▾';
   }
   document.querySelectorAll('.period-opt').forEach(opt => {
     opt.addEventListener('click', (e) => {
       e.stopPropagation();
-      const days = parseInt(opt.dataset.days, 10);
+      const days = opt.dataset.days === 'all' ? ALL_DAYS : parseInt(opt.dataset.days, 10);
       if (!days || !isFinite(days)) return;
       periodBtn.textContent = periodLabel(days);
       document.querySelectorAll('.period-opt').forEach(o => o.classList.toggle('active', o === opt));
@@ -4712,50 +4897,6 @@
 
 
   
-  function maxDrawdownFromMap(balMap) {
-    if (!balMap) return null;
-    const keys = Object.keys(balMap).sort((a, b) => {
-      const [da, ma] = a.split('.').map(Number);
-      const [db, mb] = b.split('.').map(Number);
-      return ma !== mb ? ma - mb : da - db;
-    });
-    let peak = -Infinity, mdd = 0;
-    for (const k of keys) {
-      const v = Number(balMap[k]);
-      if (!isFinite(v)) continue;
-      if (v > peak) peak = v;
-      if (peak > 0) {
-        const dd = (peak - v) / peak;
-        if (dd > mdd) mdd = dd;
-      }
-    }
-    return mdd;
-  }
-  function paintMaxDrawdowns() {
-    const maps = {
-      'content-a': typeof REAL_BAL !== 'undefined' ? REAL_BAL.alpha : null,
-      'content-b': typeof REAL_BAL !== 'undefined' ? REAL_BAL.beta : null,
-      'content-g': typeof REAL_BAL !== 'undefined' ? REAL_BAL.gamma : null,
-      'content-d': typeof REAL_BAL !== 'undefined' ? REAL_BAL.delta : null,
-    };
-    let allVals = [];
-    Object.entries(maps).forEach(([cls, map]) => {
-      const el = document.querySelector('[data-mdd="' + cls + '"]');
-      if (!el) return;
-      const mdd = maxDrawdownFromMap(map);
-      if (mdd == null) { el.textContent = '—'; return; }
-      el.textContent = '−' + (mdd * 100).toFixed(2) + '%';
-      el.classList.add('neg');
-      allVals.push(mdd);
-    });
-    const elAll = document.querySelector('[data-mdd="content-all"]');
-    if (elAll && allVals.length) {
-      const m = Math.max(...allVals);
-      elAll.textContent = '−' + (m * 100).toFixed(2) + '%';
-      elAll.classList.add('neg');
-    }
-  }
-
   // Initial render
   renderAllCharts(7);
   try { paintMaxDrawdowns(); } catch (e) {}
