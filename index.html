@@ -881,7 +881,9 @@
   .metric-value.pos { color: var(--green); }
   .metric-value.neg { color: var(--red); }
   .metric-value.amber { color: var(--amber); }
-  .metric-value.neutral { color: var(--white); }
+  .metric-value.neutral:not(.pos):not(.neg):not(.amber) { color: var(--white); }
+  .metric-sub .pos { color: var(--green); font-weight: 600; }
+  .metric-sub .neg { color: var(--red); font-weight: 600; }
 
   .metric-risk {
     margin-top: 10px;
@@ -1042,7 +1044,7 @@
   .stat-item .value.pos { color: var(--green); }
   .stat-item .value.neg { color: var(--red); }
   .stat-item .value.amber { color: var(--amber); }
-  .stat-item .value.neutral { color: var(--text); }
+  .stat-item .value.neutral:not(.pos):not(.neg):not(.amber) { color: var(--text); }
 
   /* Funding is kept separate from trading PnL: it is an estimate at the displayed rate. */
   .funding-card {
@@ -1982,7 +1984,7 @@
       <div class="forecast-grid">
         <div class="forecast-card base">
           <div class="fc-label">Expected 24h PnL</div>
-          <div class="fc-value amber">−180 → −100</div>
+          <div class="fc-value neg">−180 → −100</div>
           <div class="fc-desc">Moderate mean-reversion across alts. Partial LONG recovery.</div>
           <div class="fc-conf">Most likely · <span>42%</span></div>
         </div>
@@ -1994,7 +1996,7 @@
         </div>
         <div class="forecast-card bull">
           <div class="fc-label">Recovery target</div>
-          <div class="fc-value pos">−40</div>
+          <div class="fc-value neg">−40</div>
           <div class="fc-desc">Simultaneous bounce THE + HOME + STRK. High payoff.</div>
           <div class="fc-conf">Confidence: <span>20%</span></div>
         </div>
@@ -3444,7 +3446,8 @@
     return m ? (m[1] === '−' || m[1] === '-' ? -1 : 1) * parseFloat(m[2]) : 0;
   };
   function setSignClass(el, v, pos, neg) {
-    if (!el.classList.contains(pos) && !el.classList.contains(neg)) return;
+    if (!el.classList.contains(pos) && !el.classList.contains(neg) && !el.classList.contains('neutral')) return;
+    el.classList.remove('neutral', 'amber');
     el.classList.toggle(neg, v < 0);
     el.classList.toggle(pos, v >= 0);
   }
@@ -3459,7 +3462,12 @@
   const rTpl   = el => { el.textContent = el._orig.replace(/(Start [\d.]+: |Out: )([\d,]+(?:\.\d+)?)/g, (m, pre, n) => {
                     const v = parseFloat(n.replace(/,/g, '')); return pre + (v === 0 ? '0' : moneyPlain(v)); }); };
   const rInts  = el => { el.textContent = el._orig.replace(/[−+]?\d[\d,]*/g, m => moneyPlain(parseNum(m), { dec: 0 })); };
-  const rZone  = el => { el.textContent = el._orig.replace(/^[−+]?\d[\d,]*/, m => moneyPlain(parseNum(m), { dec: 0 })); };
+  const rZone  = el => {
+    const mm = el._orig.match(/^([−+]?\d[\d,]*)\s+(\w+)$/);
+    if (!mm) { el.textContent = el._orig; return; }
+    const n = parseNum(mm[1]);
+    el.innerHTML = `<span style="color:var(--${n < 0 ? 'red' : 'green'})">${moneyPlain(n, { dec: 0 })}</span> ${mm[2]}`;
+  };
   const rNow   = el => { el.setAttribute('data-label', el._orig.replace(/[−+]?\d[\d,]*\.\d+/, m => fmtMoney(parseNum(m), { unit: false, sign: false }))); };
   const rTh    = el => { el.textContent = 'PnL' + (FX.code === 'USD' ? '' : ' (' + FX_META[FX.code].sym + ')'); };
 
@@ -3492,9 +3500,9 @@
 
   // Positions: every row of both position tables
   const tableCells = {
-    alpha: [...document.querySelectorAll('.content-a .pos-table td:last-child')],
-    beta:  [...document.querySelectorAll('.content-b .pos-table td:last-child')],
-    gamma: [...document.querySelectorAll('.content-g .pos-table td:last-child')]
+    alpha: [...document.querySelectorAll('.content-a .pos-table td:last-child:not([colspan])')],
+    beta:  [...document.querySelectorAll('.content-b .pos-table td:last-child:not([colspan])')],
+    gamma: [...document.querySelectorAll('.content-g .pos-table td:last-child:not([colspan])')]
   };
   const pos = { alpha: [], beta: [], gamma: [] };
   Object.keys(tableCells).forEach(k => tableCells[k].forEach(cell => {
@@ -3811,8 +3819,8 @@
 
   function fundingPct(v) {
     const n = Number(v) || 0;
-    const cls = n > 0 ? 'pnl-pos' : (n < 0 ? 'pnl-neg' : '');
-    const sign = n > 0 ? '+' : '';
+    const cls = n >= 0 ? 'pnl-pos' : 'pnl-neg';
+    const sign = n >= 0 ? '+' : '';
     return `<span class="${cls}">${sign}${(n * 100).toFixed(4)}%</span>`;
   }
 
@@ -4074,7 +4082,7 @@
         setSignClass(val, net, 'pos', 'neg');
         if (sub) {
           const pct = start ? (net / start) * 100 : 0;
-          sub.textContent = `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}% · bal+out − start`;
+          sub.innerHTML = `<span class="${pct >= 0 ? 'pos' : 'neg'}">${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%</span> · bal+out − start`;
         }
       }
     });
@@ -4157,7 +4165,7 @@
         setUnrealized('.content-all', totalUpnl);
       }
 
-      document.querySelectorAll('.pos-table td:last-child').forEach(cell => {
+      document.querySelectorAll('.pos-table td:last-child:not([colspan])').forEach(cell => {
         if (cell._fx) return;
         const v = parseNum(cell.textContent);
         cell._usd = v;
