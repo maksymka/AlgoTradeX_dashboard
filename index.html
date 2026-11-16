@@ -1639,6 +1639,29 @@
     .pos-table th, .pos-table td { white-space: nowrap; }
   }
 
+
+  /* ---------- single-strategy tabs: panel uses the full width ---------- */
+  .content-a .strategies, .content-b .strategies, .content-g .strategies, .content-d .strategies { grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 1000px) {
+    .content-a .stat-grid, .content-b .stat-grid, .content-g .stat-grid, .content-d .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  .pos-table { scrollbar-width: thin; scrollbar-color: rgba(120,110,170,.5) transparent; }
+
+  /* ---------- open positions chart (TradingView Lightweight Charts) ---------- */
+  .tv-box { border-right: none; }
+  .tv-box .chart-header { flex-wrap: wrap; gap: 10px; }
+  .tv-ctrl { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .tv-tabs, .tv-tf { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tv-tabs button, .tv-tf button { background: rgba(255,255,255,.04); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 5px 11px; font: inherit; font-size: 12px; cursor: pointer; }
+  .tv-tabs button.on, .tv-tf button.on { color: var(--amber, #f0b90b); border-color: var(--amber, #f0b90b); background: rgba(240,185,11,.08); }
+  .tv-link { font-size: 12px; color: var(--amber, #f0b90b); text-decoration: none; white-space: nowrap; }
+  .tv-wrap { position: relative; height: 380px; }
+  .tv-chart { position: absolute; inset: 0; }
+  .tv-empty { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; color: var(--text-muted); font-size: 13px; }
+  .tv-wrap.empty .tv-empty { display: flex; }
+  .tv-wrap.empty .tv-chart { visibility: hidden; }
+  @media (max-width: 760px) { .tv-wrap { height: 300px; } .tv-ctrl { gap: 8px; } }
+
   /* ---------- lead form (early access) ---------- */
   .lead-btn { height: 42px; padding: 0 16px; font: inherit; font-size: 14px; font-weight: 600; letter-spacing: .3px; color: #1a1304; background: linear-gradient(180deg, #f2d27a, #c9a24b); border: 1px solid #a8832f; border-radius: 10px; cursor: pointer; white-space: nowrap; transition: .2s; }
   .lead-btn:hover { filter: brightness(1.08); }
@@ -1993,6 +2016,7 @@
     </div>
   </div>
 
+  <div class="content-d"></div>
   <!-- FOOTER -->
   <div class="footer">
     <div>AlgoTradeX · <span>Terminal v1.1</span></div>
@@ -2034,7 +2058,7 @@
 
     
     
-    <div class="content-d"></div>
+    
 
 
 <!-- "Data will be added later" modal (Gamma / Delta / Epsilon) -->
@@ -2071,15 +2095,16 @@
   </div>
 </div>
 
+<script src="https://unpkg.com/lightweight-charts@4.2.1/dist/lightweight-charts.standalone.production.js"></script>
 <script>
   // ===== Единый шаблон вкладок стратегий (Alpha / Beta / Gamma / Delta) и панелей на вкладке All =====
   (function buildStrategyTabs() {
     const CFG = [
-      { cls: 'a', title: 'Strategy Alpha · THE Dual', badge: 'k-bot_0512' },
-      { cls: 'b', title: 'Strategy Beta · Multi', badge: 'k-bot_0493', dead: true,
+      { cls: 'a', id: 'alpha', title: 'Strategy Alpha · THE Dual', badge: 'k-bot_0512' },
+      { cls: 'b', id: 'beta', title: 'Strategy Beta · Multi', badge: 'k-bot_0493', dead: true,
         banner: '⚠ Strategy Beta was liquidated: account balance 0.00 USDT as of 17.10.26. Net result since start (incl. 81.00 withdrawn): −619.00 USDT.' },
-      { cls: 'g', title: 'Strategy Gamma · Bybit Futures', badge: 'Robot #451' },
-      { cls: 'd', title: 'Strategy Delta · Binance Futures', badge: 'Launch 26.10' },
+      { cls: 'g', id: 'gamma', title: 'Strategy Gamma · Bybit Futures', badge: 'Robot #451' },
+      { cls: 'd', id: 'delta', title: 'Strategy Delta · Binance Futures', badge: 'Launch 26.10' },
     ];
     const dot = (bg, t) => `<div class="legend-item"><div class="legend-dot" style="background:${bg}"></div> ${t}</div>`;
     const LEG_EQ = dot('var(--green)', 'Equity') + dot('var(--amber)', 'Forecast');
@@ -2098,6 +2123,7 @@
         `<div class="metrics">${metric('Current Balance', '—', 'neutral', 'Waiting for live data')}${metric('Unrealized PnL', '—', 'neutral', '—')}${metric('Net PnL (now)', '—', 'neutral', 'bal+out − start')}${risk(c)}${metric('Max Drawdown', '—', 'neutral', 'peak → trough', ` data-mdd="content-${c.cls}"`)}</div>` +
         `<div class="charts-row">${box('Deposit Growth', `chart-${c.cls}-equity`, LEG_EQ)}${box('PnL by Position', `chart-${c.cls}-pnl`)}</div>` +
         `<div class="charts-row" style="grid-template-columns:1fr">${box('PnL vs Total Balance', `chart-${c.cls}-tbpnl`, LEG_TB)}</div>` +
+        `<div class="charts-row" style="grid-template-columns:1fr"><div class="chart-box tv-box" data-tv="${c.id}"><div class="chart-header"><div class="chart-title">Open Positions · TradingView</div><div class="tv-ctrl"><div class="tv-tabs"></div><div class="tv-tf"><button data-tf="15m">15m</button><button data-tf="1h" class="on">1h</button><button data-tf="4h">4h</button><button data-tf="1d">1D</button></div><a class="tv-link" target="_blank" rel="noopener">Open in TradingView ↗</a></div></div><div class="tv-wrap empty"><div class="tv-chart"></div><div class="tv-empty">No open positions</div></div></div></div>` +
         `<div class="strategies"><div class="strategy-panel">${head(c)}${stats(c)}` +
         `<div class="funding-card"><div class="funding-head"><div class="funding-title">Funding only</div><div class="funding-rate">live rates · —</div></div><div class="funding-note">${c.dead ? 'No open positions.' : 'Waiting for live positions…'}</div></div>` +
         `<div class="pos-table"><table><thead><tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr></thead><tbody><tr><td colspan="9" style="color:var(--text-muted)">${c.dead ? 'No open positions' : 'Loading…'}</td></tr></tbody></table></div>` +
@@ -3058,6 +3084,85 @@
     if (live.some(Boolean)) paintRiskMetric('.content-all', all);
   }
 
+  // ===== Open positions chart: TradingView Lightweight Charts + entry / liquidation lines from live positions =====
+  const TV = {}, TV_POS = {};
+  const TV_TF = { '15m': '15', '1h': '60', '4h': '240', '1d': 'D' };
+  function tvState(id) {
+    if (TV[id]) return TV[id];
+    const box = document.querySelector('[data-tv="' + id + '"]');
+    if (!box) return null;
+    const el = box.querySelector('.tv-chart');
+    if (!window.LightweightCharts) { box.querySelector('.tv-empty').textContent = 'Chart library unavailable'; box.querySelector('.tv-wrap').classList.add('empty'); return null; }
+    if (!el.clientWidth) return null;                        // вкладка прихована — створимо, коли стане видимою
+    const LW = window.LightweightCharts;
+    const chart = LW.createChart(el, {
+      width: el.clientWidth, height: el.clientHeight || 380,
+      layout: { background: { color: 'transparent' }, textColor: '#9d97c4', fontFamily: 'inherit' },
+      grid: { vertLines: { color: 'rgba(120,110,170,.10)' }, horzLines: { color: 'rgba(120,110,170,.10)' } },
+      rightPriceScale: { borderVisible: false }, timeScale: { borderVisible: false, timeVisible: true },
+      crosshair: { mode: 0 },
+    });
+    const series = chart.addCandlestickSeries({ upColor: '#26a69a', downColor: '#ef5350', borderVisible: false, wickUpColor: '#26a69a', wickDownColor: '#ef5350' });
+    const st = { id, box, el, chart, series, lines: [], coin: null, tf: '1h', loadedKey: '', loadedAt: 0, sig: '', tabsSig: '', exchange: 'BINANCE' };
+    new ResizeObserver(() => { if (el.clientWidth) chart.applyOptions({ width: el.clientWidth, height: el.clientHeight }); }).observe(el);
+    box.querySelectorAll('.tv-tf button').forEach(b => b.addEventListener('click', () => {
+      st.tf = b.dataset.tf;
+      box.querySelectorAll('.tv-tf button').forEach(x => x.classList.toggle('on', x === b));
+      st.loadedKey = ''; tvTick();
+    }));
+    return (TV[id] = st);
+  }
+  async function tvLoad(st) {
+    const key = st.coin + '|' + st.tf;
+    st.loadedKey = key; st.loadedAt = Date.now();
+    try {
+      const r = await fetch(BINANCE_PROXY_URL.replace(/\/$/, '') + '/api/klines?strategy=' + st.id + '&symbol=' + st.coin + '&interval=' + st.tf + '&limit=300', { cache: 'no-store' });
+      const j = await r.json();
+      if (!r.ok || !j.candles) throw new Error(j.error || 'no candles');
+      st.exchange = j.exchange;
+      st.series.setData(j.candles);
+      if (st.fitted !== key) { st.chart.timeScale().fitContent(); st.fitted = key; }
+      const a = st.box.querySelector('.tv-link');
+      a.href = 'https://www.tradingview.com/chart/?symbol=' + j.exchange + ':' + st.coin + '.P&interval=' + TV_TF[st.tf];
+    } catch (e) { console.warn('klines', e.message); st.loadedKey = ''; }
+  }
+  function tvTick() {
+    Object.keys(TV_POS).concat(['alpha', 'beta', 'gamma', 'delta']).filter((v, i, a) => a.indexOf(v) === i).forEach(id => {
+      const box = document.querySelector('[data-tv="' + id + '"]');
+      if (!box || !box.offsetParent) return;                // рендеримо лише видиму вкладку
+      const positions = TV_POS[id] || [];
+      const wrap = box.querySelector('.tv-wrap');
+      wrap.classList.toggle('empty', !positions.length);
+      const tabs = box.querySelector('.tv-tabs');
+      const coins = [...new Set(positions.map(p => p.symbol))].sort();
+      const st = tvState(id);
+      if (!st) return;
+      if (!coins.length) return;
+      if (!st.coin || !coins.includes(st.coin)) st.coin = coins[0];
+      const tsig = coins.join(',') + '|' + st.coin;
+      if (tsig !== st.tabsSig) {
+        st.tabsSig = tsig;
+        tabs.innerHTML = coins.map(c => `<button data-c="${c}" class="${c === st.coin ? 'on' : ''}">${c.replace(/(USDT|USDC)$/, '')}</button>`).join('');
+        tabs.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { st.coin = b.dataset.c; st.loadedKey = ''; tvTick(); }));
+      }
+      if (st.loadedKey !== st.coin + '|' + st.tf || Date.now() - st.loadedAt > 60000) tvLoad(st);
+      const mine = positions.filter(p => p.symbol === st.coin);
+      const sig = mine.map(p => [p.side, p.entryPrice, p.liquidationPrice].join(':')).join('|');
+      if (sig !== st.sig) {
+        st.sig = sig;
+        st.lines.forEach(l => st.series.removePriceLine(l));
+        st.lines = [];
+        const LS = window.LightweightCharts.LineStyle;
+        mine.forEach(p => {
+          const long = p.side === 'LONG';
+          if (Number(p.entryPrice) > 0) st.lines.push(st.series.createPriceLine({ price: Number(p.entryPrice), color: long ? '#00e676' : '#ff1744', lineWidth: 1, lineStyle: LS.Solid, axisLabelVisible: true, title: (long ? 'LONG' : 'SHORT') + ' entry' }));
+          if (Number(p.liquidationPrice) > 0) st.lines.push(st.series.createPriceLine({ price: Number(p.liquidationPrice), color: '#ffc400', lineWidth: 1, lineStyle: LS.Dashed, axisLabelVisible: true, title: 'LIQ ' + (long ? 'L' : 'S') }));
+        });
+      }
+    });
+  }
+  setInterval(tvTick, 1500);
+
   // ===== Live widgets driven by REAL open positions (margin / PnL per position / funding) =====
   function liveSnap(id) {
     const d = window.__ATX_LIVE_DATA, s = d && d[id];
@@ -3211,7 +3316,11 @@
     const dailyLabels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
            // === АВТОМАТИЧНИЙ РОЗРАХУНОК ДЕННИХ БАРІВ З БЕКЕНДУ ===
         // === АВТОМАТИЧНИЙ РОЗРАХУНОК ДЕННИХ БАРІВ З БЕКЕНДУ ===
-    const last7Labels = labels.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
+    const dailyN = Math.min(120, Math.max(7, currentDays >= ALL_DAYS ? daysBetween(earliestData(), TODAY) + 1 : currentDays));
+    const last7Dates = Array.from({ length: dailyN }, (_, i) => addDays(TODAY, i - (dailyN - 1)));
+    const last7Labels = last7Dates.map(fmtDate);
+    const dailyTitle = 'Daily PnL (' + (currentDays >= ALL_DAYS ? 'AllTime' : dailyN + 'D') + ')';
+    ['a', 'b', 'g', 'd', 'all'].forEach(c => { const cv = document.getElementById('chart-' + c + '-daily'); const t = cv && cv.closest('.chart-box') && cv.closest('.chart-box').querySelector('.chart-title'); if (t) t.textContent = dailyTitle; });
     
     // Малюємо порожні бари відразу (щоб графік не був порожнім)
     const emptyBars = last7Labels.map(() => 0);
@@ -3222,7 +3331,6 @@
     charts.allDaily = barChart('chart-all-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
 
     // Денний PnL = зміна балансу за день мінус поповнення/виведення цього дня (з тієї ж історії, що й графіки)
-    const last7Dates = dates.slice(Math.max(0, nowIdx - 6), nowIdx + 1);
     const dailyOf = (id) => last7Dates.map(d => {
       const k = keyOf(d), pk = keyOf(addDays(d, -1));
       const cur = REAL_BAL[id][k], prev = REAL_BAL[id][pk];
@@ -4028,6 +4136,7 @@
 
       let liveN = 0;
       const ab = (scope, snap, id, label) => {
+        if (snap && !snap.error) TV_POS[id] = snap.positions || [];
         const f = flowTotals(id);
         return applyBot(scope, snap, START_CAPITAL[id] + f.dep, f.out, label + (f.dep > 0 ? ` (+${fmtNum(f.dep)} in)` : ''));
       };
