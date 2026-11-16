@@ -1657,6 +1657,10 @@
   .tv-tabs button, .tv-tf button { background: rgba(255,255,255,.04); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 5px 11px; font: inherit; font-size: 12px; cursor: pointer; }
   .tv-tabs button.on, .tv-tf button.on { color: var(--amber, #f0b90b); border-color: var(--amber, #f0b90b); background: rgba(240,185,11,.08); }
   .tv-link { font-size: 12px; color: var(--amber, #f0b90b); text-decoration: none; white-space: nowrap; }
+  .tv-info { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--text-dim); margin: 2px 0 10px; }
+  .tv-info b { color: var(--white); font-weight: 600; }
+  .tv-info .pos { color: var(--green); } .tv-info .neg { color: var(--red); }
+  .tv-info:empty { display: none; }
   .tv-wrap { position: relative; height: 380px; }
   .tv-chart { position: absolute; inset: 0; }
   .tv-empty { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; color: var(--text-muted); font-size: 13px; }
@@ -2125,7 +2129,7 @@
         `<div class="metrics">${metric('Current Balance', '—', 'neutral', 'Waiting for live data')}${metric('Unrealized PnL', '—', 'neutral', '—')}${metric('Net PnL (now)', '—', 'neutral', 'bal+out − start')}${risk(c)}${metric('Max Drawdown', '—', 'neutral', 'peak → trough', ` data-mdd="content-${c.cls}"`)}</div>` +
         `<div class="charts-row">${box('Deposit Growth', `chart-${c.cls}-equity`, LEG_EQ)}${box('PnL by Position', `chart-${c.cls}-pnl`)}</div>` +
         `<div class="charts-row" style="grid-template-columns:1fr">${box('PnL vs Total Balance', `chart-${c.cls}-tbpnl`, LEG_TB)}</div>` +
-        `<div class="charts-row" style="grid-template-columns:1fr"><div class="chart-box tv-box" data-tv="${c.id}"><div class="chart-header"><div class="chart-title">Open Positions · TradingView</div><div class="tv-ctrl"><div class="tv-tabs"></div><div class="tv-tf"><button data-tf="15m">15m</button><button data-tf="1h" class="on">1h</button><button data-tf="4h">4h</button><button data-tf="1d">1D</button></div><a class="tv-link" target="_blank" rel="noopener">Open in TradingView ↗</a></div></div><div class="tv-wrap empty"><div class="tv-chart"></div><div class="tv-empty">No open positions</div></div></div></div>` +
+        `<div class="charts-row" style="grid-template-columns:1fr"><div class="chart-box tv-box" data-tv="${c.id}"><div class="chart-header"><div class="chart-title">Open Positions · TradingView</div><div class="tv-ctrl"><div class="tv-tabs"></div><div class="tv-tf"><button data-tf="15m">15m</button><button data-tf="1h" class="on">1h</button><button data-tf="4h">4h</button><button data-tf="1d">1D</button></div><a class="tv-link" target="_blank" rel="noopener">Open in TradingView ↗</a></div></div><div class="tv-info"></div><div class="tv-wrap empty"><div class="tv-chart"></div><div class="tv-empty">No open positions</div></div></div></div>` +
         `<div class="strategies"><div class="strategy-panel">${head(c)}${stats(c)}` +
         `<div class="funding-card"><div class="funding-head"><div class="funding-title">Funding only</div><div class="funding-rate">live rates · —</div></div><div class="funding-note">${c.dead ? 'No open positions.' : 'Waiting for live positions…'}</div></div>` +
         `<div class="pos-table"><table><thead><tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr></thead><tbody><tr><td colspan="9" style="color:var(--text-muted)">${c.dead ? 'No open positions' : 'Loading…'}</td></tr></tbody></table></div>` +
@@ -2500,7 +2504,7 @@
   const START_DAY = { alpha: new Date(2026, 5, 1), beta: new Date(2026, 5, 1), gamma: new Date(2026, 9, 8), delta: new Date(2026, 9, 26) };
   let _ledgerAt = 0;
 
-  async function mergeHistoryIntoRealBal() {
+  async function mergeHistoryIntoRealBal(onPartial) {
     TODAY = localMidnight(new Date());
     if (!BINANCE_PROXY_URL) return false;
     let changed = false;
@@ -2536,6 +2540,8 @@
         }
       }
     } catch (e) { console.warn('history merge', e.message); }
+
+    if (changed && typeof onPartial === 'function') { try { onPartial(); } catch (e) {} }   // малюємо одразу, не чекаючи потоків коштів/угод
 
     // deposits / withdrawals and closed trades change slowly → refresh every 5 min
     if (Date.now() - _ledgerAt > 300000) {
@@ -2580,7 +2586,20 @@
         });
       }
     } catch (e) {}
+    try { localStorage.setItem('atx-hist-v1', JSON.stringify({ REAL_BAL, REAL_EQ, FLOWS, TRADES })); } catch (e) {}   // кеш для миттєвого старту
     return changed;
+  }
+  function loadHistCache() {                                   // остання відома історія → графіки (Daily PnL тощо) видно одразу, поки йде запит
+    try {
+      const c = JSON.parse(localStorage.getItem('atx-hist-v1') || 'null');
+      if (!c) return;
+      BOT_IDS.forEach(id => {
+        Object.assign(REAL_BAL[id], (c.REAL_BAL || {})[id] || {});
+        Object.assign(REAL_EQ[id], (c.REAL_EQ || {})[id] || {});
+        Object.assign(FLOWS[id], (c.FLOWS || {})[id] || {});
+        TRADES[id] = ((c.TRADES || {})[id] || []);
+      });
+    } catch (e) {}
   }
 
   function fullHistory(real) {                       // тільки реальні точки; дні без запису = останній відомий баланс; до першої точки — порожньо
@@ -3122,6 +3141,8 @@
       const j = await r.json();
       if (!r.ok || !j.candles) throw new Error(j.error || 'no candles');
       st.exchange = j.exchange;
+      st.precision = Math.min(10, Math.max(2, Number(j.precision) || 2));
+      st.series.applyOptions({ priceFormat: { type: 'price', precision: st.precision, minMove: Math.pow(10, -st.precision) } });
       st.series.setData(j.candles);
       if (st.fitted !== key) { st.chart.timeScale().fitContent(); st.fitted = key; }
       const a = st.box.querySelector('.tv-link');
@@ -3149,17 +3170,38 @@
       }
       if (st.loadedKey !== st.coin + '|' + st.tf || Date.now() - st.loadedAt > 60000) tvLoad(st);
       const mine = positions.filter(p => p.symbol === st.coin);
-      const sig = mine.map(p => [p.side, p.entryPrice, p.liquidationPrice].join(':')).join('|');
+      const sig = mine.map(p => [p.side, p.entryPrice, p.liquidationPrice, Math.round(Number(p.unRealizedProfit) * 100), JSON.stringify(p.takeProfits || [])].join(':')).join('|') + '|' + (st.precision || 0);
       if (sig !== st.sig) {
         st.sig = sig;
         st.lines.forEach(l => st.series.removePriceLine(l));
         st.lines = [];
-        const LS = window.LightweightCharts.LineStyle;
+        const LS = window.LightweightCharts.LineStyle, dp = st.precision || 4;
+        const f = v => Number(v).toFixed(dp), sgn = v => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(2);
+        const line = (price, color, style, title) => st.lines.push(st.series.createPriceLine({ price, color, lineWidth: 1, lineStyle: style, axisLabelVisible: true, title }));
+        let qL = 0, qS = 0, cL = 0, cS = 0, total = 0;
+        const info = [];
         mine.forEach(p => {
-          const long = p.side === 'LONG';
-          if (Number(p.entryPrice) > 0) st.lines.push(st.series.createPriceLine({ price: Number(p.entryPrice), color: long ? '#00e676' : '#ff1744', lineWidth: 1, lineStyle: LS.Solid, axisLabelVisible: true, title: (long ? 'LONG' : 'SHORT') + ' entry' }));
-          if (Number(p.liquidationPrice) > 0) st.lines.push(st.series.createPriceLine({ price: Number(p.liquidationPrice), color: '#ffc400', lineWidth: 1, lineStyle: LS.Dashed, axisLabelVisible: true, title: 'LIQ ' + (long ? 'L' : 'S') }));
+          const long = p.side === 'LONG', pnl = Number(p.unRealizedProfit) || 0, q = Math.abs(Number(p.contracts ?? p.positionAmt)) || 0;
+          total += pnl;
+          if (long) { qL += q; cL += q * Number(p.entryPrice); } else { qS += q; cS += q * Number(p.entryPrice); }
+          if (Number(p.entryPrice) > 0) line(Number(p.entryPrice), long ? '#00e676' : '#ff1744', LS.Solid, (long ? 'LONG' : 'SHORT') + ' entry · ' + sgn(pnl));
+          if (Number(p.liquidationPrice) > 0) line(Number(p.liquidationPrice), '#ffc400', LS.Dashed, 'LIQ ' + (long ? 'L' : 'S'));
+          (p.takeProfits || []).forEach(t => {
+            line(t.price, '#00e676', LS.LargeDashed, 'TP ' + (long ? 'L' : 'S') + ' · ' + sgn(t.profit));
+            info.push(`${long ? 'LONG' : 'SHORT'} TP <b>${f(t.price)}</b> → <b class="${t.profit >= 0 ? 'pos' : 'neg'}">${sgn(t.profit)} USDT</b>`);
+          });
         });
+        // Ціна беззбитковості по монеті (сума всіх ніг): вище/нижче неї закриття в профіт
+        const net = qL - qS;
+        if (mine.length && Math.abs(net) > 1e-9 * (qL + qS)) {
+          const be = (cL - cS) / net;
+          if (be > 0) {
+            line(be, total >= 0 ? '#00e676' : '#ff1744', LS.Dotted, 'Break-even ' + (net > 0 ? '↑' : '↓') + ' · ' + sgn(total));
+            info.unshift(`Break-even <b>${f(be)}</b> (profit ${net > 0 ? 'above' : 'below'})`);
+          }
+        }
+        info.unshift(`PnL <b class="${total >= 0 ? 'pos' : 'neg'}">${sgn(total)} USDT</b>`);
+        st.box.querySelector('.tv-info').innerHTML = info.join('<span>·</span>');
       }
     });
   }
@@ -4199,13 +4241,12 @@
 
   
   // Initial render
+  loadHistCache();
   renderAllCharts(7);
   try { paintMaxDrawdowns(); } catch (e) {}
   (async () => {
     try {
-      // wait a tick for live sync to populate __ATX_LIVE_DATA
-      await new Promise(r => setTimeout(r, 2500));
-      const ok = await mergeHistoryIntoRealBal();
+      const ok = await mergeHistoryIntoRealBal(() => { renderAllCharts(currentDays || 7); try { paintMaxDrawdowns(); } catch (e) {} });
       if (ok) {
         renderAllCharts(currentDays || 7);
         try { paintMaxDrawdowns(); } catch (e) {}
