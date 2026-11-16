@@ -1415,7 +1415,7 @@
   /* Visibility */
   .content-a, .content-b, .content-g, .content-d, .content-all { display: none; }
   .content-a.active, .content-b.active, .content-g.active, .content-d.active, .content-all.active { display: block; }
-  .content-all .strategies { grid-template-columns: 1fr 1fr 1fr; }
+  .content-all .strategies { grid-template-columns: 1fr 1fr; }
   @media (max-width: 900px) { .content-all .strategies { grid-template-columns: 1fr; } }
 
   ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -1585,7 +1585,7 @@
   .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .charts-row { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
   .strategies { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .content-all .strategies { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .content-all .strategies { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bottom-charts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .chart-box, .strategy-panel, .metric { min-width: 0; }
   @media (max-width: 900px) { .content-all .strategies, .strategies { grid-template-columns: minmax(0, 1fr); } .charts-row, .bottom-charts { grid-template-columns: minmax(0, 1fr); } }
@@ -1855,667 +1855,13 @@
   </div>
 
   <!-- ==================== STRATEGY ALPHA ==================== -->
-  <div class="content-a">
-    <div class="metrics">
-      <div class="metric">
-        <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">1,297.87 USDT</div>
-        <div class="metric-sub">Start 01.06.26: 1,187.00 · Out: 0</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−88.40 USDT</div>
-        <div class="metric-sub">To BE: +41.11 needed</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+110.87 USDT</div>
-        <div class="metric-sub">+9.34% · bal+out − start</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Risk Level</div>
-        <div class="metric-value amber">HIGH</div>
-        <div class="metric-sub">Liq risk up to 0.0% · THE pair</div>
-        <div class="metric-risk">
-          <div class="metric-risk-track">
-            <div class="rs s" style="width:25%"></div>
-            <div class="rs w" style="width:40%"></div>
-            <div class="rs d" style="width:35%"></div>
-            <div class="metric-risk-needle" style="left:80%"></div>
-          </div>
-      <div class="metric">
-        <div class="metric-label">Max Drawdown</div>
-        <div class="metric-value neg" data-mdd="content-a">—</div>
-        <div class="metric-sub">peak → trough (hist.)</div>
-      </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="charts-row">
-      <div class="chart-box">
-        <div class="chart-header">
-          <div class="chart-title">Deposit Growth</div>
-          <div class="chart-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Equity</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Forecast</div>
-          </div>
-        </div>
-        <div class="chart-wrap"><canvas id="chart-a-equity"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-header">
-          <div class="chart-title">PnL by Position</div>
-        </div>
-        <div class="chart-wrap"><canvas id="chart-a-pnl"></canvas></div>
-      </div>
-    </div>
-
-    <div class="charts-row" style="grid-template-columns:1fr">
-      <div class="chart-box">
-        <div class="chart-header">
-          <div class="chart-title">PnL vs Total Balance</div>
-          <div class="chart-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Total balance</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> PnL (+)</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> PnL (−)</div>
-          </div>
-        </div>
-        <div class="chart-wrap"><canvas id="chart-a-tbpnl"></canvas></div>
-      </div>
-    </div>
-
-    <div class="strategies">
-      <div class="strategy-panel">
-        <div class="strategy-name">
-          Strategy Alpha · THE Dual
-          <span class="badge">k-bot_0512</span>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">PnL</div>
-            <div class="value neg">−88.40 USDT</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Win rate</div>
-            <div class="value neutral">42%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Drawdown</div>
-            <div class="value neg">−19%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Risk</div>
-            <div class="value"><span class="risk-badge high">High</span></div>
-          </div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">Positions</div>
-            <div class="value neutral">2 open</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Used margin</div>
-            <div class="value neutral">39.09</div>
-          </div>
-        </div>
-
-                                        <div class="funding-card" aria-label="THE hedge funding estimate">
-          <div class="funding-head">
-            <div class="funding-title">THE hedge · funding only · 4h</div>
-            <div class="funding-rate">−0.0576% / 8h?</div>
-          </div>
-          <div class="fund-table-wrap"><table class="fund-table">
-            <thead>
-              <tr><th>Leg</th><th class="num">Notional</th><th class="num">1 day</th><th class="num">1 week</th><th class="num">1 month</th><th class="num">1 year</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>LONG <span class="fund-pair">THE</span></td><td class="num">$151.8</td><td class="num neg">−$0.05</td><td class="num neg">−$0.32</td><td class="num neg">−$1.37</td><td class="num neg">−$16.62</td></tr>
-              <tr><td>SHORT <span class="fund-pair">THE</span></td><td class="num">$321.2</td><td class="num pos">+$0.10</td><td class="num pos">+$0.67</td><td class="num pos">+$2.89</td><td class="num pos">+$35.17</td></tr>
-            </tbody>
-            <tfoot>
-              <tr><td>Net hedge</td><td class="num">$169.4 short</td><td class="num pos">+$0.05</td><td class="num pos">+$0.36</td><td class="num pos">+$1.52</td><td class="num pos">+$18.55</td></tr>
-            </tfoot>
-          </table></div>
-          <div class="funding-note">THE hedge funding estimate. Update rates when available.</div>
-        </div>
-        <div class="pos-table">
-          <table>
-            <thead>
-              <tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>THE</td>
-                <td><span class="side-L">LONG</span></td>
-                <td>0.08628</td>
-                <td>0.05324</td>
-                <td class="pnl-neg">−58.12</td>
-              </tr>
-              <tr>
-                <td>THE</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.05477</td>
-                <td>0.05324</td>
-                <td class="pnl-pos">+9.01</td>
-              </tr>
-              <tr>
-                <td>INIT</td>
-                <td><span class="side-L">LONG</span></td>
-                <td>0.22981</td>
-                <td>0.21411</td>
-                <td class="pnl-neg">−6.55</td>
-              </tr>
-              <tr>
-                <td>INIT</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.19264</td>
-                <td>0.21411</td>
-                <td class="pnl-neg">−29.86</td>
-              </tr>
-              <tr>
-                <td>SYN</td>
-                <td><span class="side-L">LONG</span></td>
-                <td>0.19868</td>
-                <td>0.17505</td>
-                <td class="pnl-neg">−10.66</td>
-              </tr>
-              <tr>
-                <td>SYN</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.18021</td>
-                <td>0.17505</td>
-                <td class="pnl-pos">+7.78</td>
-              </tr>
-</tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="strategy-panel dimmed">
-        <div class="strategy-name">
-          Strategy Beta · Multi
-          <span class="badge">k-bot_0493</span>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">PnL</div>
-            <div class="value neg">−619.00 USDT</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Win rate</div>
-            <div class="value neutral">48%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Drawdown</div>
-            <div class="value neg">−100%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Risk</div>
-            <div class="value"><span class="risk-badge vhigh">Liquidated</span></div>
-          </div>
-        </div>
-        <div style="margin-top:24px;text-align:center;font-size:11px;color:var(--text-muted)">
-          Switch to Strategy Beta tab →
-        </div>
-      </div>
-    </div>
-
-    <div class="bottom-charts">
-      <div class="chart-box">
-        <div class="chart-header"><div class="chart-title">Win / Loss Ratio</div></div>
-        <div class="chart-wrap sm"><canvas id="chart-a-winloss"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-header"><div class="chart-title">Margin Usage</div></div>
-        <div class="chart-wrap sm"><canvas id="chart-a-margin"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-header"><div class="chart-title">Daily PnL (7D)</div></div>
-        <div class="chart-wrap sm"><canvas id="chart-a-daily"></canvas></div>
-      </div>
-    </div>
-
-    <div class="forecast">
-      <div class="forecast-title">Forecast · expected range · risk zones · confidence</div>
-      <div class="forecast-grid">
-        <div class="forecast-card base">
-          <div class="fc-label">Base case · 24h</div>
-          <div class="fc-value amber">−95 → −60</div>
-          <div class="fc-desc">Mean-reversion. THE recovers 8–12% from mark. Net improves.</div>
-          <div class="fc-conf">Confidence: <span>45%</span></div>
-        </div>
-        <div class="forecast-card bear">
-          <div class="fc-label">Bear case · 24h</div>
-          <div class="fc-value neg">−160</div>
-          <div class="fc-desc">Continued dump. SHORT profits, LONG deepens. Net still red.</div>
-          <div class="fc-conf">Confidence: <span>30%</span></div>
-        </div>
-        <div class="forecast-card bull">
-          <div class="fc-label">Bull case · 24h</div>
-          <div class="fc-value pos">−40</div>
-          <div class="fc-desc">Sharp bounce. LONG recovers faster than SHORT loses.</div>
-          <div class="fc-conf">Confidence: <span>25%</span></div>
-        </div>
-      </div>
-      <div class="risk-zones">
-        <div class="risk-label">Risk zones · next 24h PnL · current position</div>
-        <div class="risk-bar-track">
-          <div class="risk-seg safe" style="width:25%"></div>
-          <div class="risk-seg warn" style="width:40%"></div>
-          <div class="risk-seg danger" style="width:35%"></div>
-          <div class="risk-marker" style="left:80%" data-label="NOW −88.40"></div>
-        </div>
-        <div class="risk-markers">
-          <span style="color:var(--green)">−40 safe</span>
-          <span style="color:var(--amber)">−95 base</span>
-          <span style="color:var(--red)">−160 danger</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="content-a"></div>
 
   <!-- ==================== STRATEGY B ==================== -->
-  <div class="content-b">
-    <div class="liq-banner">⚠ Strategy Beta was liquidated: account balance 0.00 USDT as of 17.10.26. Net result since start (incl. 81.00 withdrawn): −619.00 USDT.</div>
-    <div class="metrics">
-      <div class="metric">
-        <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">0.00 USDT</div>
-        <div class="metric-sub">Start 01.06.26: 700.00 · Out: 81.00</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neutral">0.00 USDT</div>
-        <div class="metric-sub">No open positions</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value neg">−619.00 USDT</div>
-        <div class="metric-sub">−88.43% · bal+out − start</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Risk Level</div>
-        <div class="metric-value neg">LIQUIDATED</div>
-        <div class="metric-sub">Balance 0.00 · account liquidated</div>
-        <div class="metric-risk">
-          <div class="metric-risk-track">
-            <div class="rs s" style="width:20%"></div>
-            <div class="rs w" style="width:40%"></div>
-            <div class="rs d" style="width:40%"></div>
-            <div class="metric-risk-needle" style="left:100%"></div>
-          </div>
-      <div class="metric">
-        <div class="metric-label">Max Drawdown</div>
-        <div class="metric-value neg" data-mdd="content-b">—</div>
-        <div class="metric-sub">peak → trough (hist.)</div>
-      </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="charts-row">
-      <div class="chart-box">
-        <div class="chart-header">
-          <div class="chart-title">Deposit Growth</div>
-          <div class="chart-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Equity</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Forecast</div>
-          </div>
-        </div>
-        <div class="chart-wrap"><canvas id="chart-b-equity"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-header">
-          <div class="chart-title">PnL by Position</div>
-        </div>
-        <div class="chart-wrap"><canvas id="chart-b-pnl"></canvas></div>
-      </div>
-    </div>
-
-    <div class="charts-row" style="grid-template-columns:1fr">
-      <div class="chart-box">
-        <div class="chart-header">
-          <div class="chart-title">PnL vs Total Balance</div>
-          <div class="chart-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Total balance</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> PnL (+)</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> PnL (−)</div>
-          </div>
-        </div>
-        <div class="chart-wrap"><canvas id="chart-b-tbpnl"></canvas></div>
-      </div>
-    </div>
-
-    <div class="strategies">
-      <div class="strategy-panel dimmed">
-        <div class="strategy-name">
-          Strategy Alpha · THE Dual
-          <span class="badge">k-bot_0512</span>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">PnL</div>
-            <div class="value neg">−88.40 USDT</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Win rate</div>
-            <div class="value neutral">42%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Drawdown</div>
-            <div class="value neg">−19%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Risk</div>
-            <div class="value"><span class="risk-badge high">High</span></div>
-          </div>
-        </div>
-        <div style="margin-top:24px;text-align:center;font-size:11px;color:var(--text-muted)">
-          ← Switch to Strategy Alpha tab
-        </div>
-      </div>
-
-      <div class="strategy-panel">
-        <div class="strategy-name">
-          Strategy Beta · Multi
-          <span class="badge">k-bot_0493</span>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">PnL</div>
-            <div class="value neg">−619.00 USDT</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Win rate</div>
-            <div class="value neutral">48%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Drawdown</div>
-            <div class="value neg">−28%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Risk</div>
-            <div class="value"><span class="risk-badge vhigh">Liquidated</span></div>
-          </div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">Positions</div>
-            <div class="value neutral">0 open</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Used margin</div>
-            <div class="value neutral">0.00</div>
-          </div>
-        </div>
-
-        <div class="pos-table">
-          <table>
-            <thead>
-              <tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr>
-            </thead>
-            <tbody>
-</tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="bottom-charts">
-      <div class="chart-box">
-        <div class="chart-header"><div class="chart-title">Win / Loss Ratio</div></div>
-        <div class="chart-wrap sm"><canvas id="chart-b-winloss"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-header"><div class="chart-title">Exposure by Pair</div></div>
-        <div class="chart-wrap sm"><canvas id="chart-b-exposure"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-header"><div class="chart-title">Daily PnL (7D)</div></div>
-        <div class="chart-wrap sm"><canvas id="chart-b-daily"></canvas></div>
-      </div>
-    </div>
-
-    <div class="forecast">
-      <div class="forecast-title">Forecast · expected range · risk zones · confidence</div>
-      <div class="forecast-grid">
-        <div class="forecast-card base">
-          <div class="fc-label">Base case · 24h</div>
-          <div class="fc-value amber">−110 → −70</div>
-          <div class="fc-desc">HOME range holds. SHORT keeps edge. DASH & STRK stabilize.</div>
-          <div class="fc-conf">Confidence: <span>40%</span></div>
-        </div>
-        <div class="forecast-card bear">
-          <div class="fc-label">Bear case · 24h</div>
-          <div class="fc-value neg">−200</div>
-          <div class="fc-desc">Alt cascade. LONG legs suffer. SHORT only partially offsets.</div>
-          <div class="fc-conf">Confidence: <span>35%</span></div>
-        </div>
-        <div class="forecast-card bull">
-          <div class="fc-label">Bull case · 24h</div>
-          <div class="fc-value pos">−30</div>
-          <div class="fc-desc">Relief rally. HOME LONG recovers hard. Net improves sharply.</div>
-          <div class="fc-conf">Confidence: <span>25%</span></div>
-        </div>
-      </div>
-      <div class="risk-zones">
-        <div class="risk-label">Risk zones · next 24h PnL · current position</div>
-        <div class="risk-bar-track">
-          <div class="risk-seg safe" style="width:20%"></div>
-          <div class="risk-seg warn" style="width:40%"></div>
-          <div class="risk-seg danger" style="width:40%"></div>
-          <div class="risk-marker" style="left:92%" data-label="NOW −619.00"></div>
-        </div>
-        <div class="risk-markers">
-          <span style="color:var(--green)">−30 safe</span>
-          <span style="color:var(--amber)">−90 base</span>
-          <span style="color:var(--red)">−200 danger</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="content-b"></div>
 
   <!-- ==================== STRATEGY GAMMA ==================== -->
-  <div class="content-g">
-    <div class="metrics">
-      <div class="metric">
-        <div class="metric-label">Current Balance</div>
-        <div class="metric-value neutral">571.05 USDT</div>
-        <div class="metric-sub">Start 08.10.26: 500.00 · Out: 0</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Unrealized PnL</div>
-        <div class="metric-value neg">−292.07 USDT</div>
-        <div class="metric-sub">To BE: +126.71 needed</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Net PnL (now)</div>
-        <div class="metric-value pos">+71.05 USDT</div>
-        <div class="metric-sub">+14.21% · bal+out − start</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Risk Level</div>
-        <div class="metric-value neutral">LOW</div>
-        <div class="metric-sub">Bybit · Robot #451 · 2 pairs</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Max Drawdown</div>
-        <div class="metric-value neg" data-mdd="content-g">—</div>
-        <div class="metric-sub">peak → trough (hist.)</div>
-      </div>
-    </div>
-
-    <div class="charts-row">
-      <div class="chart-box">
-        <div class="chart-header">
-          <div class="chart-title">Deposit Growth</div>
-          <div class="chart-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Equity</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Forecast</div>
-          </div>
-        </div>
-        <div class="chart-wrap"><canvas id="chart-g-equity"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-header">
-          <div class="chart-title">PnL vs Total Balance</div>
-          <div class="chart-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Total balance</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> PnL</div>
-          </div>
-        </div>
-        <div class="chart-wrap"><canvas id="chart-g-tbpnl"></canvas></div>
-      </div>
-    </div>
-
-    <div class="charts-row">
-      <div class="chart-box">
-        <div class="chart-header"><div class="chart-title">PnL by Position</div></div>
-        <div class="chart-wrap"><canvas id="chart-g-pnl"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-header"><div class="chart-title">Margin Usage</div></div>
-        <div class="chart-wrap"><canvas id="chart-g-margin"></canvas></div>
-      </div>
-    </div>
-
-    <div class="strategies" style="grid-template-columns:1fr">
-      <div class="strategy-panel">
-        <div class="strategy-name">
-          Strategy Gamma · Bybit Futures
-          <span class="badge">Robot #451</span>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">PnL</div>
-            <div class="value neg">−292.07 USDT</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Win rate</div>
-            <div class="value neutral">—</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Drawdown</div>
-            <div class="value neutral">0%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Risk</div>
-            <div class="value"><span class="risk-badge">Low</span></div>
-          </div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">Positions</div>
-            <div class="value neutral">4 open</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Used margin</div>
-            <div class="value neutral">49.87</div>
-          </div>
-        </div>
-                                        
-        
-        <div class="funding-card" aria-label="Gamma hedges funding estimate">
-          <div class="funding-head">
-            <div class="funding-title">ICNT · ARIA · HUMA · TIA · INIT · funding only</div>
-            <div class="funding-rate">28–29.10 rates · 4h</div>
-          </div>
-          <div class="fund-table-wrap"><table class="fund-table">
-            <thead>
-              <tr><th>Hedge</th><th class="num">Net notional</th><th class="num">Rate</th><th class="num">1 day</th><th class="num">1 week</th><th class="num">1 year</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>ICNT L+S</td><td class="num">$202.1 short</td><td class="num pos">+0.00500%%</td><td class="num pos">+$0.06</td><td class="num pos">+$0.42</td><td class="num pos">+$22.13</td></tr><tr><td>ARIA L+S</td><td class="num">$162.8 short</td><td class="num pos">+0.17387%%</td><td class="num pos">+$1.70</td><td class="num pos">+$11.89</td><td class="num pos">+$619.90</td></tr><tr><td>HUMA L+S</td><td class="num">$174.6 short</td><td class="num pos">+0.00500%%</td><td class="num pos">+$0.05</td><td class="num pos">+$0.37</td><td class="num pos">+$19.12</td></tr><tr><td>TIA L+S</td><td class="num">$142.9 short</td><td class="num pos">+0.00500%%</td><td class="num pos">+$0.04</td><td class="num pos">+$0.30</td><td class="num pos">+$15.65</td></tr><tr><td>INIT L+S</td><td class="num">$205.4 short</td><td class="num neg">−0.02783%%</td><td class="num neg">−$0.34</td><td class="num neg">−$2.40</td><td class="num neg">−$125.17</td></tr>
-            </tbody>
-            <tfoot>
-              <tr><td>Net carry (all)</td><td class="num">—</td><td class="num">—</td><td class="num pos">+$1.51</td><td class="num pos">+$10.58</td><td class="num pos">+$551.63</td></tr>
-            </tfoot>
-          </table></div>
-          <div class="funding-note">Rates: ICNT +0.005% · ARIA +0.17387% · HUMA +0.005% · TIA +0.005% · INIT −0.027826% (per 4h). Net short hedge. Funding-only.</div>
-        </div>
-<div class="pos-table">
-          <table>
-            <thead>
-              <tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>INIT</td>
-                <td><span class="side-L">LONG</span></td>
-                <td>0.22481</td>
-                <td>0.21266</td>
-                <td class="pnl-neg">−5.02</td>
-              </tr>
-              <tr>
-                <td>INIT</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.14775</td>
-                <td>0.21266</td>
-                <td class="pnl-neg">−89.51</td>
-              </tr>
-              <tr>
-                <td>ARIA</td>
-                <td><span class="side-L">LONG</span></td>
-                <td>0.08910</td>
-                <td>0.08977</td>
-                <td class="pnl-pos">+0.52</td>
-              </tr>
-              <tr>
-                <td>ARIA</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.07911</td>
-                <td>0.08977</td>
-                <td class="pnl-neg">−27.60</td>
-              </tr>
-              <tr>
-                <td>HUMA</td>
-                <td><span class="side-L">LONG</span></td>
-                <td>0.02790</td>
-                <td>0.02787</td>
-                <td class="pnl-neg">−0.10</td>
-              </tr>
-              <tr>
-                <td>HUMA</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.02329</td>
-                <td>0.02787</td>
-                <td class="pnl-neg">−40.94</td>
-              </tr>
-              <tr>
-                <td>ICNT</td>
-                <td><span class="side-L">LONG</span></td>
-                <td>0.2379</td>
-                <td>0.1834</td>
-                <td class="pnl-neg">−25.74</td>
-              </tr>
-              <tr>
-                <td>ICNT</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.1291</td>
-                <td>0.1834</td>
-                <td class="pnl-neg">−85.43</td>
-              </tr>
-              <tr>
-                <td>TIA</td>
-                <td><span class="side-L">LONG</span></td>
-                <td>0.7130</td>
-                <td>0.5355</td>
-                <td class="pnl-neg">−20.29</td>
-              </tr>
-              <tr>
-                <td>TIA</td>
-                <td><span class="side-S">SHORT</span></td>
-                <td>0.5408</td>
-                <td>0.5355</td>
-                <td class="pnl-pos">+2.04</td>
-              </tr>
-</tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="content-g"></div>
 
   <!-- ==================== ALL STRATEGIES ==================== -->
   <div class="content-all active">
@@ -2591,111 +1937,7 @@
       </div>
     </div>
 
-    <div class="strategies">
-      <div class="strategy-panel">
-        <div class="strategy-name">
-          Strategy Alpha · THE Dual
-          <span class="badge">k-bot_0512</span>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">PnL</div>
-            <div class="value neg">−88.40 USDT</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Win rate</div>
-            <div class="value neutral">42%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Drawdown</div>
-            <div class="value neg">−19%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Risk</div>
-            <div class="value"><span class="risk-badge high">High</span></div>
-          </div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">Net bias</div>
-            <div class="value neutral">Short-heavy</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Hedge eff.</div>
-            <div class="value neg">Low</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="strategy-panel">
-        <div class="strategy-name">
-          Strategy Beta · Multi
-          <span class="badge">k-bot_0493</span>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">PnL</div>
-            <div class="value neg">−619.00 USDT</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Win rate</div>
-            <div class="value neutral">48%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Drawdown</div>
-            <div class="value neg">−100%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Risk</div>
-            <div class="value"><span class="risk-badge vhigh">Liquidated</span></div>
-          </div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">Net bias</div>
-            <div class="value neutral">Mixed</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Hedge eff.</div>
-            <div class="value amber">Partial</div>
-          </div>
-        </div>
-      </div>
-      <div class="strategy-panel">
-        <div class="strategy-name">
-          Strategy Gamma · Bybit
-          <span class="badge">Robot #451</span>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">PnL</div>
-            <div class="value neg">−292.07 USDT</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Win rate</div>
-            <div class="value neutral">—</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Drawdown</div>
-            <div class="value neutral">0%</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Risk</div>
-            <div class="value"><span class="risk-badge">Low</span></div>
-          </div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-item">
-            <div class="label">Net bias</div>
-            <div class="value neutral">Short</div>
-          </div>
-          <div class="stat-item">
-            <div class="label">Positions</div>
-            <div class="value neutral">4 open</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="strategies" data-all-panels></div>
 
     <div class="bottom-charts">
       <div class="chart-box">
@@ -2792,157 +2034,7 @@
 
     
     
-    <div class="content-d">
-      <div class="metrics">
-        <div class="metric">
-          <div class="metric-label">Current Balance</div>
-          <div class="metric-value neutral">518.75 USDT</div>
-          <div class="metric-sub">Start 26.10.26: 500.00 · Out: 0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Unrealized PnL</div>
-          <div class="metric-value neg">+0.03 USDT</div>
-          <div class="metric-sub">To BE: +33.71 needed</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Net PnL (now)</div>
-          <div class="metric-value pos">+18.75 USDT</div>
-          <div class="metric-sub">+3.75% · bal+out − start</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Risk Level</div>
-          <div class="metric-value neutral">LOW</div>
-          <div class="metric-sub">Binance · APR short · launch</div>
-        </div>
-      <div class="metric">
-        <div class="metric-label">Max Drawdown</div>
-        <div class="metric-value neg" data-mdd="content-d">—</div>
-        <div class="metric-sub">peak → trough (hist.)</div>
-      </div>
-      </div>
-
-      <div class="charts-row">
-        <div class="chart-box">
-          <div class="chart-header">
-            <div class="chart-title">Deposit Growth</div>
-            <div class="chart-legend">
-              <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Equity</div>
-              <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Forecast</div>
-            </div>
-          </div>
-          <div class="chart-wrap"><canvas id="chart-d-equity"></canvas></div>
-        </div>
-        <div class="chart-box">
-          <div class="chart-header">
-            <div class="chart-title">PnL vs Total Balance</div>
-            <div class="chart-legend">
-              <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Total balance</div>
-              <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> PnL</div>
-            </div>
-          </div>
-          <div class="chart-wrap"><canvas id="chart-d-tbpnl"></canvas></div>
-        </div>
-      </div>
-
-      <div class="charts-row">
-        <div class="chart-box">
-          <div class="chart-header"><div class="chart-title">PnL by Position</div></div>
-          <div class="chart-wrap"><canvas id="chart-d-pnl"></canvas></div>
-        </div>
-        <div class="chart-box">
-          <div class="chart-header"><div class="chart-title">Margin Usage</div></div>
-          <div class="chart-wrap"><canvas id="chart-d-margin"></canvas></div>
-        </div>
-      </div>
-
-      <div class="strategies" style="grid-template-columns:1fr">
-        <div class="strategy-panel">
-          <div class="strategy-name">
-            Strategy Delta · Binance Futures
-            <span class="badge">Launch 26.10</span>
-          </div>
-          <div class="stat-grid">
-            <div class="stat-item">
-              <div class="label">PnL</div>
-              <div class="value neg">+0.03 USDT</div>
-            </div>
-            <div class="stat-item">
-              <div class="label">Win rate</div>
-              <div class="value neutral">—</div>
-            </div>
-            <div class="stat-item">
-              <div class="label">Drawdown</div>
-              <div class="value neutral">0%</div>
-            </div>
-            <div class="stat-item">
-              <div class="label">Risk</div>
-              <div class="value neutral">Low</div>
-            </div>
-            <div class="stat-item">
-              <div class="label">Start deposit</div>
-              <div class="value neutral">500.00</div>
-            </div>
-            <div class="stat-item">
-              <div class="label">Used / Margin</div>
-              <div class="value neutral">0.59 / 5.94</div>
-            </div>
-          </div>
-
-          <div class="funding-card" aria-label="APR short funding estimate">
-            <div class="funding-head">
-              <div class="funding-title">Q · funding only · 4h</div>
-              <div class="funding-rate">+0.0050% / 4h</div>
-            </div>
-            <div class="fund-table-wrap"><table class="fund-table">
-              <thead>
-                <tr><th>Leg</th><th class="num">Notional</th><th class="num">1 day</th><th class="num">1 week</th><th class="num">1 month</th><th class="num">1 year</th></tr>
-              </thead>
-              <tbody>
-                
-                
-                
-                <tr>
-                  <td>BEAT</td>
-                  <td><span class="side-S">SHORT</span></td>
-                  <td>0.09286</td>
-                  <td>0.09239</td>
-                  <td class="pnl-pos">+0.03</td>
-                </tr>
-
-
-
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td>Net (short receives +rate)</td>
-                  <td class="num">$6.01</td>
-                  <td class="num pos">+$0.002</td>
-                  <td class="num pos">+$0.01</td>
-                  <td class="num pos">+$0.05</td>
-                  <td class="num pos">+$0.66</td>
-                </tr>
-              </tfoot>
-            </table></div>
-            <div class="funding-note">Rate +0.0050% / 4h. SHORT receives when rate &gt; 0. Notional ≈ 109 × 0.05516. Funding-only.</div>
-          </div>
-
-          <div class="pos-table">
-            <table>
-              <thead><tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr></thead>
-              <tbody>
-                <tr>
-                  <td>APR</td>
-                  <td><span class="side-S">SHORT</span></td>
-                  <td>0.03443</td>
-                  <td>0.03487</td>
-                  <td class="pnl-neg">+0.03</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="content-d"></div>
 
 
 <!-- "Data will be added later" modal (Gamma / Delta / Epsilon) -->
@@ -2980,6 +2072,43 @@
 </div>
 
 <script>
+  // ===== Единый шаблон вкладок стратегий (Alpha / Beta / Gamma / Delta) и панелей на вкладке All =====
+  (function buildStrategyTabs() {
+    const CFG = [
+      { cls: 'a', title: 'Strategy Alpha · THE Dual', badge: 'k-bot_0512' },
+      { cls: 'b', title: 'Strategy Beta · Multi', badge: 'k-bot_0493', dead: true,
+        banner: '⚠ Strategy Beta was liquidated: account balance 0.00 USDT as of 17.10.26. Net result since start (incl. 81.00 withdrawn): −619.00 USDT.' },
+      { cls: 'g', title: 'Strategy Gamma · Bybit Futures', badge: 'Robot #451' },
+      { cls: 'd', title: 'Strategy Delta · Binance Futures', badge: 'Launch 26.10' },
+    ];
+    const dot = (bg, t) => `<div class="legend-item"><div class="legend-dot" style="background:${bg}"></div> ${t}</div>`;
+    const LEG_EQ = dot('var(--green)', 'Equity') + dot('var(--amber)', 'Forecast');
+    const LEG_TB = dot('var(--amber)', 'Total balance') + dot('var(--green)', 'PnL (+)') + dot('var(--red)', 'PnL (−)');
+    const metric = (label, val, cls, sub, attr) => `<div class="metric"><div class="metric-label">${label}</div><div class="metric-value ${cls}"${attr || ''}>${val}</div><div class="metric-sub">${sub}</div></div>`;
+    const risk = c => `<div class="metric"><div class="metric-label">Risk Level</div><div class="metric-value ${c.dead ? 'neg' : 'neutral'}">${c.dead ? 'LIQUIDATED' : '—'}</div><div class="metric-sub">${c.dead ? 'Balance 0.00 · account liquidated' : 'Waiting for live data'}</div><div class="metric-risk"><div class="metric-risk-track"><div class="rs s" style="width:25%"></div><div class="rs w" style="width:40%"></div><div class="rs d" style="width:35%"></div><div class="metric-risk-needle" style="left:${c.dead ? 100 : 5}%"></div></div></div></div>`;
+    const box = (title, id, legend, sm) => `<div class="chart-box"><div class="chart-header"><div class="chart-title">${title}</div>${legend ? `<div class="chart-legend">${legend}</div>` : ''}</div><div class="chart-wrap${sm ? ' sm' : ''}"><canvas id="${id}"></canvas></div></div>`;
+    const stat = (l, v) => `<div class="stat-item"><div class="label">${l}</div><div class="value neutral">${v}</div></div>`;
+    const stats = c => `<div class="stat-grid">${stat('PnL', '—')}${stat('Win rate', '—')}${stat('Drawdown', '—')}<div class="stat-item"><div class="label">Risk</div><div class="value"><span class="risk-badge${c.dead ? ' vhigh' : ''}">${c.dead ? 'Liquidated' : '—'}</span></div></div></div>` +
+      `<div class="stat-grid">${stat('Positions', c.dead ? '0 open' : '—')}${stat('Used margin', c.dead ? '0.00' : '—')}${stat('Net bias', '—')}${stat('Hedge eff.', '—')}</div>`;
+    const head = c => `<div class="strategy-name">${c.title}<span class="badge">${c.badge}</span></div>`;
+    CFG.forEach(c => {
+      const root = document.querySelector('.content-' + c.cls);
+      if (!root) return;
+      root.innerHTML = (c.banner ? `<div class="liq-banner">${c.banner}</div>` : '') +
+        `<div class="metrics">${metric('Current Balance', '—', 'neutral', 'Waiting for live data')}${metric('Unrealized PnL', '—', 'neutral', '—')}${metric('Net PnL (now)', '—', 'neutral', 'bal+out − start')}${risk(c)}${metric('Max Drawdown', '—', 'neutral', 'peak → trough', ` data-mdd="content-${c.cls}"`)}</div>` +
+        `<div class="charts-row">${box('Deposit Growth', `chart-${c.cls}-equity`, LEG_EQ)}${box('PnL by Position', `chart-${c.cls}-pnl`)}</div>` +
+        `<div class="charts-row" style="grid-template-columns:1fr">${box('PnL vs Total Balance', `chart-${c.cls}-tbpnl`, LEG_TB)}</div>` +
+        `<div class="strategies"><div class="strategy-panel">${head(c)}${stats(c)}` +
+        `<div class="funding-card"><div class="funding-head"><div class="funding-title">Funding only</div><div class="funding-rate">live rates · —</div></div><div class="funding-note">${c.dead ? 'No open positions.' : 'Waiting for live positions…'}</div></div>` +
+        `<div class="pos-table"><table><thead><tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr></thead><tbody><tr><td colspan="9" style="color:var(--text-muted)">${c.dead ? 'No open positions' : 'Loading…'}</td></tr></tbody></table></div>` +
+        `</div></div>` +
+        `<div class="bottom-charts">${box('Win / Loss Ratio', `chart-${c.cls}-winloss`, '', true)}${box('Margin Usage', `chart-${c.cls}-margin`, '', true)}${box('Daily PnL (7D)', `chart-${c.cls}-daily`, '', true)}</div>`;
+    });
+    const all = document.querySelector('[data-all-panels]');
+    if (all) all.innerHTML = CFG.map(c => `<div class="strategy-panel">${head(c)}${stats(c)}</div>`).join('');
+  })();
+
+
   // Tab row: edge fades show there is more to scroll; wheel scrolls it sideways on desktop
   const tabsEl = document.querySelector('.tabs');
   function updateTabFades() {
@@ -3711,11 +2840,15 @@
   }
   function equityDays(id) {                                  // equity там, де бекенд її зберіг, інакше баланс гаманця
     const bal = REAL_BAL[id] || {}, eq = REAL_EQ[id] || {};
-    return [...new Set([...Object.keys(bal), ...Object.keys(eq)])].map(k => {
+    const days = [...new Set([...Object.keys(bal), ...Object.keys(eq)])].map(k => {
       const e = eq[k], b = bal[k], c = e ? e.c : b;
       if (c == null || !isFinite(c)) return null;
-      return { key: k, date: keyToDate(k), c, lo: e ? e.lo : c, hi: e ? e.hi : c, F: keyToDate(k) > START_DAY[id] ? flowOn(id, k) : 0 };
+      return { key: k, date: keyToDate(k), c, lo: e ? e.lo : c, hi: e ? e.hi : c, hasEq: !!e, wallet: b != null ? b : c,
+               F: keyToDate(k) > START_DAY[id] ? flowOn(id, k) : 0 };
     }).filter(Boolean).sort((a, b) => a.date - b.date);
+    // Стик «відновлений баланс гаманця» → «equity з нереалізованим PnL»: різниця (= uPnL) не є доходністю дня
+    for (let i = 1; i < days.length; i++) if (!days[i - 1].hasEq && days[i].hasEq) days[i].F += days[i].c - days[i].wallet;
+    return days;
   }
   // Індекс доходності з урахуванням поповнень/виведень (Modified Dietz): поповнення не виглядає як прибуток, виведення — як просадка.
   function dietz(pts) {
@@ -4058,8 +3191,10 @@
     };
     charts.aWin = winLoss('chart-a-winloss', 'alpha');
     charts.bWin = winLoss('chart-b-winloss', 'beta');
+    charts.gWin = winLoss('chart-g-winloss', 'gamma');
+    charts.dWin = winLoss('chart-d-winloss', 'delta');
     charts.aMarg = posMarginChart('chart-a-margin', 'alpha', true);
-    charts.bExp = doughnutChart('chart-b-exposure', [], [], []);   // Beta: liquidated
+    charts.bMarg = posMarginChart('chart-b-margin', 'beta', false);   // Beta: ліквідована → порожньо
     const _ids = ['alpha','beta','gamma','delta'], _live = _ids.map(liveSnap);
     const _bal = _ids.map((id, i) => _live[i] ? _live[i].balance : (() => { const e = equityDays(id); return e.length ? REAL_BAL[id][e[e.length - 1].key] || 0 : 0; })());
     const _upnl = _ids.map((id, i) => _live[i] ? Number(_live[i].unrealizedPnl || 0) : 0);
@@ -4082,6 +3217,8 @@
     const emptyBars = last7Labels.map(() => 0);
     charts.aDaily = barChart('chart-a-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
     charts.bDaily = barChart('chart-b-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
+    charts.gDaily = barChart('chart-g-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
+    charts.dDaily = barChart('chart-d-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
     charts.allDaily = barChart('chart-all-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
 
     // Денний PnL = зміна балансу за день мінус поповнення/виведення цього дня (з тієї ж історії, що й графіки)
@@ -4102,6 +3239,8 @@
     };
     paintDaily(charts.aDaily, dailyA);
     paintDaily(charts.bDaily, dailyB);
+    paintDaily(charts.gDaily, dailyG);
+    paintDaily(charts.dDaily, dailyD);
     paintDaily(charts.allDaily, dailyA.map((v, i) => v + dailyB[i] + dailyG[i] + dailyD[i]));
     try { paintMaxDrawdowns(); paintStrategyPanels(); } catch (e) { console.warn('panels', e); }
     try {
