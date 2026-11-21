@@ -1415,6 +1415,12 @@
   @media (max-width:760px) { .bn-btn { font-size:9px; } }
 
   /* Visibility */
+  .content-funding { display: none; }
+  body[data-view="funding"] .content-funding { display: block; }
+  body[data-view="funding"] .content-a, body[data-view="funding"] .content-b, body[data-view="funding"] .content-g,
+  body[data-view="funding"] .content-d, body[data-view="funding"] .content-all { display: none !important; }
+  body[data-view="funding"] #tab-ind { opacity: 0; }
+  body[data-view="funding"] .tab.active { color: var(--text-dim) !important; }
   .content-a, .content-b, .content-g, .content-d, .content-all { display: none; }
   .content-a.active, .content-b.active, .content-g.active, .content-d.active, .content-all.active { display: block; }
   .content-all .strategies { grid-template-columns: 1fr 1fr; }
@@ -1642,12 +1648,33 @@
   }
 
 
+  /* ---------- Telegram Mini App ---------- */
+  .tg-app { padding-top: var(--tg-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); -webkit-tap-highlight-color: transparent; overscroll-behavior-y: contain; }
+  .tg-app .lead-btn, .tg-app .footer { display: none; }
+
   /* ---------- single-strategy tabs: panel uses the full width ---------- */
   .content-a .strategies, .content-b .strategies, .content-g .strategies, .content-d .strategies { grid-template-columns: minmax(0, 1fr); }
   @media (min-width: 1000px) {
     .content-a .stat-grid, .content-b .stat-grid, .content-g .stat-grid, .content-d .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   }
   .pos-table { scrollbar-width: thin; scrollbar-color: rgba(120,110,170,.5) transparent; }
+
+  /* ---------- trade history ---------- */
+  .th-box { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .th-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 8px; }
+  .th-title { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); }
+  .th-sum { font-size: 12.5px; color: var(--text-dim); display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .th-box .pos { color: var(--green); } .th-box .neg { color: var(--red); }
+  .th-tag { font-size: 10px; color: var(--amber, #f0b90b); margin-left: 5px; text-transform: uppercase; letter-spacing: .04em; }
+  .th-more[hidden] { display: none; }
+  .th-more { display: block; margin: 10px auto 0; background: rgba(255,255,255,.04); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 6px 16px; font: inherit; font-size: 12px; cursor: pointer; }
+  .th-table td small { color: var(--text-muted); }
+
+  /* ---------- liquidated strategy ---------- */
+  .tab.liq::after { content: 'LIQUIDATED'; margin-left: 8px; padding: 2px 6px; border-radius: 6px; font-size: 9px; font-weight: 700; letter-spacing: .04em; color: #fff; background: rgba(255,23,68,.85); vertical-align: middle; }
+  .liq-pill { margin-left: 10px; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: .04em; color: #fff; background: rgba(255,23,68,.85); }
+  .frozen-note { font-size: 12px; color: var(--red); margin: 6px 2px; }
+  .pos-table tr.frozen td { opacity: .72; }
 
   /* ---------- open positions chart (TradingView Lightweight Charts) ---------- */
   .tv-box { border-right: none; }
@@ -1656,8 +1683,11 @@
   .tv-tabs, .tv-tf { display: flex; gap: 6px; flex-wrap: wrap; }
   .tv-tabs button, .tv-tf button { background: rgba(255,255,255,.04); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 5px 11px; font: inherit; font-size: 12px; cursor: pointer; }
   .tv-tabs button.on, .tv-tf button.on { color: var(--amber, #f0b90b); border-color: var(--amber, #f0b90b); background: rgba(240,185,11,.08); }
+  .tv-tp { font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 5px; }
+  .tv-tp-in { width: 58px; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 8px; color: var(--white); padding: 4px 6px; font: inherit; font-size: 12px; }
   .tv-link { font-size: 12px; color: var(--amber, #f0b90b); text-decoration: none; white-space: nowrap; }
-  .tv-info { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--text-dim); margin: 2px 0 10px; }
+  .tv-info .tv-dot { color: var(--text-muted); }
+  .tv-info { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 13px; color: var(--text-dim); margin: 2px 0 10px; }
   .tv-info b { color: var(--white); font-weight: 600; }
   .tv-info .pos { color: var(--green); } .tv-info .neg { color: var(--red); }
   .tv-info:empty { display: none; }
@@ -1806,11 +1836,11 @@
         <button type="button" class="theme-opt" data-theme="prime">Pro</button>
       </div>
       <div class="period-wrap">
-        <div class="period" id="period-toggle" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false">7D ▾</div>
+        <div class="period" id="period-toggle" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false">30D ▾</div>
         <div class="period-menu" id="period-menu" role="listbox" hidden>
           <div class="period-opt" data-days="1">1D</div>
-          <div class="period-opt active" data-days="7">7D</div>
-          <div class="period-opt" data-days="30">30D</div>
+          <div class="period-opt" data-days="7">7D</div>
+          <div class="period-opt active" data-days="30">30D</div>
           <div class="period-opt" data-days="180">180D</div>
           <div class="period-opt" data-days="365">1Y</div>
           <div class="period-opt" data-days="all">AllTime</div>
@@ -1843,7 +1873,7 @@
   </div>
 
     <!-- ==================== FUNDING ==================== -->
-  <div class="content-funding" style="display:none;">
+  <div class="content-funding">
     <div class="metrics" style="grid-template-columns: repeat(4, 1fr);">
       <div class="metric"><div class="metric-label">Binance</div><div class="metric-value neutral" id="funding-binance">—</div></div>
       <div class="metric"><div class="metric-label">Bybit</div><div class="metric-value neutral" id="funding-bybit">—</div></div>
@@ -2102,6 +2132,7 @@
 </div>
 
 <script src="https://unpkg.com/lightweight-charts@4.2.1/dist/lightweight-charts.standalone.production.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
   // ===== Единый шаблон вкладок стратегий (Alpha / Beta / Gamma / Delta) и панелей на вкладке All =====
   (function buildStrategyTabs() {
@@ -2129,10 +2160,11 @@
         `<div class="metrics">${metric('Current Balance', '—', 'neutral', 'Waiting for live data')}${metric('Unrealized PnL', '—', 'neutral', '—')}${metric('Net PnL (now)', '—', 'neutral', 'bal+out − start')}${risk(c)}${metric('Max Drawdown', '—', 'neutral', 'peak → trough', ` data-mdd="content-${c.cls}"`)}</div>` +
         `<div class="charts-row">${box('Deposit Growth', `chart-${c.cls}-equity`, LEG_EQ)}${box('PnL by Position', `chart-${c.cls}-pnl`)}</div>` +
         `<div class="charts-row" style="grid-template-columns:1fr">${box('PnL vs Total Balance', `chart-${c.cls}-tbpnl`, LEG_TB)}</div>` +
-        `<div class="charts-row" style="grid-template-columns:1fr"><div class="chart-box tv-box" data-tv="${c.id}"><div class="chart-header"><div class="chart-title">Open Positions · TradingView</div><div class="tv-ctrl"><div class="tv-tabs"></div><div class="tv-tf"><button data-tf="15m">15m</button><button data-tf="1h" class="on">1h</button><button data-tf="4h">4h</button><button data-tf="1d">1D</button></div><a class="tv-link" target="_blank" rel="noopener">Open in TradingView ↗</a></div></div><div class="tv-info"></div><div class="tv-wrap empty"><div class="tv-chart"></div><div class="tv-empty">No open positions</div></div></div></div>` +
+        `<div class="charts-row" style="grid-template-columns:1fr"><div class="chart-box tv-box" data-tv="${c.id}"><div class="chart-header"><div class="chart-title">Open Positions · TradingView</div><div class="tv-ctrl"><div class="tv-tabs"></div><div class="tv-tf"><button data-tf="1m">1m</button><button data-tf="15m">15m</button><button data-tf="1h" class="on">1h</button><button data-tf="4h">4h</button><button data-tf="1d">1D</button></div><label class="tv-tp" title="Ціль профіту для пари long+short: % від розміру позиції (більша нога)">TP <input class="tv-tp-in" type="number" min="0.05" step="0.05" value="0.5">%</label><a class="tv-link" target="_blank" rel="noopener">Open in TradingView ↗</a></div></div><div class="tv-info"></div><div class="tv-wrap empty"><div class="tv-chart"></div><div class="tv-empty">No open positions</div></div></div></div>` +
         `<div class="strategies"><div class="strategy-panel">${head(c)}${stats(c)}` +
         `<div class="funding-card"><div class="funding-head"><div class="funding-title">Funding only</div><div class="funding-rate">live rates · —</div></div><div class="funding-note">${c.dead ? 'No open positions.' : 'Waiting for live positions…'}</div></div>` +
         `<div class="pos-table"><table><thead><tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr></thead><tbody><tr><td colspan="9" style="color:var(--text-muted)">${c.dead ? 'No open positions' : 'Loading…'}</td></tr></tbody></table></div>` +
+        `<div class="th-box" data-th="${c.id}"><div class="th-head"><div class="th-title">Trade History</div><div class="th-sum"></div></div><div class="pos-table th-table"><table><thead><tr><th>Opened</th><th>Closed</th><th>Asset</th><th>Qty (coins)</th><th>Qty ($)</th><th>Fee</th><th>Funding</th><th>Income</th><th>Profit</th></tr></thead><tbody><tr><td colspan="9" style="color:var(--text-muted)">Loading…</td></tr></tbody></table></div><button class="th-more" hidden>Show more</button></div>` +
         `</div></div>` +
         `<div class="bottom-charts">${box('Win / Loss Ratio', `chart-${c.cls}-winloss`, '', true)}${box('Margin Usage', `chart-${c.cls}-margin`, '', true)}${box('Daily PnL (7D)', `chart-${c.cls}-daily`, '', true)}</div>`;
     });
@@ -2221,6 +2253,7 @@
         openSoonModal(tab.dataset.soon);
         return;
       }
+      if (document.body.dataset.view === 'funding') setView('strategy');
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       moveTabIndicator();
@@ -2635,7 +2668,7 @@
     return { hist, all: hist.concat(fc) };
   }
 
-  let currentDays = 7; // matches the 7D label shown in the dropdown
+  let currentDays = 30; // matches the 30D label shown in the dropdown
   let charts = {};
 
   function destroyCharts() {
@@ -3011,7 +3044,7 @@
     if (!el._fx) fxReg(el, plain ? rPlain : rVal, usd); else { el._usd = usd; el._fx(el); }
   }
   function setValCls(el, cls) { el.classList.remove('pos', 'neg', 'neutral', 'amber'); el.classList.add(cls); }
-  function paintRiskMetric(scope, positions) {
+  function paintRiskMetric(scope, positions, status) {
     const root = document.querySelector(scope);
     if (!root) return;
     root.querySelectorAll('.metric').forEach(m => {
@@ -3019,6 +3052,12 @@
       if (!l || !/risk level/i.test(l.textContent)) return;
       const val = m.querySelector('.metric-value'), sub = m.querySelector('.metric-sub'), needle = m.querySelector('.metric-risk-needle');
       const r = riskOf(positions);
+      if (status === 'liquidated') {
+        val.textContent = 'LIQUIDATED'; setValCls(val, 'neg');
+        if (sub) sub.textContent = 'Account liquidated · positions frozen';
+        if (needle) needle.style.left = '100%';
+        return;
+      }
       if (r.none || r.unknown) {
         val.textContent = r.none ? 'NONE' : 'N/A'; setValCls(val, 'neutral');
         if (sub) sub.textContent = r.none ? 'No open positions' : 'No liquidation price (hedged)';
@@ -3037,11 +3076,12 @@
       const id = /Alpha/.test(name) ? 'alpha' : /Beta/.test(name) ? 'beta' : /Gamma/.test(name) ? 'gamma' : /Delta/.test(name) ? 'delta' : null;
       if (!id) return;
       const snap = liveSnap(id), raw = equityDays(id), arr = dietz(raw);
+      const dead = id === 'beta' || !!(snap && snap.status === 'liquidated');
       const items = {};
       panel.querySelectorAll('.stat-item').forEach(it => { const l = it.querySelector('.label'); if (l) items[l.textContent.trim().toLowerCase()] = { it, l, v: it.querySelector('.value') }; });
 
       const pnl = items['pnl'] || items['unrealized pnl'] || items['net pnl'];
-      if (pnl && snap) {
+      if (pnl && snap && !dead) {
         pnl.l.textContent = 'Unrealized PnL';
         const u = Number(snap.unrealizedPnl || 0);
         setMoney(pnl.v, u, true); setValCls(pnl.v, u < 0 ? 'neg' : u > 0 ? 'pos' : 'neutral');
@@ -3067,8 +3107,8 @@
           win.it.title = 'No closed-trade data yet: share of days when equity grew';
         }
       }
-      if (pnl && !snap && id === 'beta' && raw.length) {                // Beta (ліквідована): підсумковий результат = залишок − внесений капітал
-        const net = raw[raw.length - 1].c - capitalAt('beta', TODAY);
+      if (pnl && dead && raw.length) {                // Beta (ліквідована): підсумковий результат = залишок − внесений капітал
+        const net = raw[raw.length - 1].c - capitalAt(id, TODAY);
         pnl.l.textContent = 'Net PnL';
         setMoney(pnl.v, net, true); setValCls(pnl.v, net < 0 ? 'neg' : net > 0 ? 'pos' : 'neutral');
       }
@@ -3076,11 +3116,11 @@
         const risk = items['risk'];
         if (risk) {
           const r = riskOf(snap.positions || []);
-          risk.v.innerHTML = r.none ? '<span class="risk-badge">None</span>' : r.unknown ? '<span class="risk-badge">n/a</span>'
+          risk.v.innerHTML = snap.status === 'liquidated' ? '<span class="risk-badge vhigh">Liquidated</span>' : r.none ? '<span class="risk-badge">None</span>' : r.unknown ? '<span class="risk-badge">n/a</span>'
             : `<span class="risk-badge ${r.v.badge}">${r.v.label}</span>`;
         }
         const pos = items['positions'];
-        if (pos) pos.v.textContent = (snap.positions || []).length + ' open';
+        if (pos) pos.v.textContent = (snap.positions || []).length + (snap.status === 'liquidated' ? ' frozen' : ' open');
         const um = items['used margin'];
         if (um && snap.usedMargin != null) setMoney(um.v, Number(snap.usedMargin), false, true);
         const h = hedgeStats(snap.positions || []);
@@ -3098,16 +3138,71 @@
     });
     const live = BOT_IDS.map(liveSnap);
     const all = [];
-    live.forEach(sn => { if (sn) all.push(...(sn.positions || [])); });
-    paintRiskMetric('.content-a', (live[0] || {}).positions || []);
-    paintRiskMetric('.content-g', (live[2] || {}).positions || []);
-    paintRiskMetric('.content-d', (live[3] || {}).positions || []);
+    live.forEach(sn => { if (sn && sn.status !== 'liquidated') all.push(...(sn.positions || [])); });
+    paintRiskMetric('.content-a', (live[0] || {}).positions || [], (live[0] || {}).status);
+    paintRiskMetric('.content-g', (live[2] || {}).positions || [], (live[2] || {}).status);
+    paintRiskMetric('.content-d', (live[3] || {}).positions || [], (live[3] || {}).status);
     if (live.some(Boolean)) paintRiskMetric('.content-all', all);
   }
 
+  // ===== Trade history: cycles (open → close) per strategy: date/time, asset, qty (coins, $), fee, funding, income, profit =====
+  const TH = {};
+  const thPad = v => String(v).padStart(2, '0');
+  const thDT = ts => { const d = new Date(ts); return thPad(d.getDate()) + '.' + thPad(d.getMonth() + 1) + '.' + String(d.getFullYear()).slice(2) + ' ' + thPad(d.getHours()) + ':' + thPad(d.getMinutes()); };
+  const thN = (v, max = 4) => Number(v).toLocaleString('en-US', { maximumFractionDigits: v >= 1000 ? 0 : max });
+  const thS = (v, dec = 2) => `<span class="${v >= 0 ? 'pos' : 'neg'}">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(Math.abs(v) < 0.01 && v !== 0 ? 4 : dec)}</span>`;
+  const thLegs = (l, sh, fmt) => [l > 0 ? 'L ' + fmt(l) : '', sh > 0 ? 'S ' + fmt(sh) : ''].filter(Boolean).join(' / ') || '—';
+  function thRender(id) {
+    const box = document.querySelector('[data-th="' + id + '"]'), st = TH[id];
+    if (!box || !st) return;
+    const tbody = box.querySelector('tbody'), cycles = st.cycles || [];
+    const closed = cycles.filter(c => c.status === 'closed'), active = cycles.length - closed.length;
+    const wins = closed.filter(c => c.profit > 0).length;
+    const sum = k => cycles.reduce((a, c) => a + (c[k] || 0), 0);
+    box.querySelector('.th-sum').innerHTML = cycles.length
+      ? `<span>Closed <b>${closed.length}</b> · <span class="pos">${wins}</span> / <span class="neg">${closed.length - wins}</span></span><span>Active <b>${active}</b></span><span>Fee ${thS(-sum('fee'))}</span><span>Funding ${thS(sum('funding'))}</span><span>Profit ${thS(sum('profit'))}</span>` : '';
+    if (!cycles.length) { tbody.innerHTML = '<tr><td colspan="9" style="color:var(--text-muted)">No trades recorded yet</td></tr>'; box.querySelector('.th-more').hidden = true; return; }
+    tbody.innerHTML = cycles.slice(0, st.shown).map(c => `<tr>
+      <td>${thDT(c.openTs)}${c.preexisting ? ' *' : ''}</td>
+      <td>${c.closeTs ? thDT(c.closeTs) : '<span class="th-tag" style="margin:0">active</span>'}</td>
+      <td>${String(c.symbol).replace(/(USDT|USDC)$/, '')}</td>
+      <td>${thLegs(c.qtyLong, c.qtyShort, thN)}</td>
+      <td>${thLegs(c.usdLong, c.usdShort, v => '$' + thN(v, 2))}</td>
+      <td>${thS(-c.fee)}</td>
+      <td>${thS(c.funding)}${c.closeTs ? '' : '<span class="th-tag">accruing</span>'}</td>
+      <td>${thS(c.income)}</td>
+      <td><b>${thS(c.profit)}</b></td></tr>`).join('');
+    const more = box.querySelector('.th-more');
+    more.hidden = cycles.length <= st.shown;
+    more.textContent = `Show more (${cycles.length - st.shown})`;
+  }
+  async function thLoad(id) {
+    const st = TH[id] || (TH[id] = { at: 0, cycles: [], shown: 25 });
+    st.at = Date.now();
+    try {
+      const r = await fetch(BINANCE_PROXY_URL.replace(/\/$/, '') + '/api/trade-history?strategy=' + id + '&limit=300', { cache: 'no-store' });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || 'bad response');
+      st.cycles = j.cycles || [];
+      thRender(id);
+    } catch (e) { console.warn('trade-history', id, e.message); st.at = Date.now() - 45000; }
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('.th-more');
+    if (!b) return;
+    const id = b.closest('[data-th]').dataset.th;
+    TH[id].shown += 25; thRender(id);
+  });
+  setInterval(() => document.querySelectorAll('[data-th]').forEach(box => {
+    if (!box.offsetParent) return;                                                  // лише видима вкладка
+    const id = box.dataset.th;
+    if (!TH[id] || Date.now() - TH[id].at > 60000) thLoad(id);
+  }), 2000);
+
   // ===== Open positions chart: TradingView Lightweight Charts + entry / liquidation lines from live positions =====
   const TV = {}, TV_POS = {};
-  const TV_TF = { '15m': '15', '1h': '60', '4h': '240', '1d': 'D' };
+  const tvPct = () => { const v = parseFloat(localStorage.getItem('atx-tp-pct')); return v > 0 ? v : 0.5; };   // ціль профіту для пари long+short, % (за замовчуванням 0.5)
+  const TV_TF = { '1m': '1', '15m': '15', '1h': '60', '4h': '240', '1d': 'D' };
   function tvState(id) {
     if (TV[id]) return TV[id];
     const box = document.querySelector('[data-tv="' + id + '"]');
@@ -3126,6 +3221,15 @@
     const series = chart.addCandlestickSeries({ upColor: '#26a69a', downColor: '#ef5350', borderVisible: false, wickUpColor: '#26a69a', wickDownColor: '#ef5350' });
     const st = { id, box, el, chart, series, lines: [], coin: null, tf: '1h', loadedKey: '', loadedAt: 0, sig: '', tabsSig: '', exchange: 'BINANCE' };
     new ResizeObserver(() => { if (el.clientWidth) chart.applyOptions({ width: el.clientWidth, height: el.clientHeight }); }).observe(el);
+    const tpIn = box.querySelector('.tv-tp-in');
+    tpIn.value = tvPct();
+    tpIn.addEventListener('change', () => {
+      const v = parseFloat(tpIn.value);
+      if (v > 0) { try { localStorage.setItem('atx-tp-pct', String(v)); } catch (e) {} }
+      document.querySelectorAll('.tv-tp-in').forEach(x => { x.value = tvPct(); });
+      Object.values(TV).forEach(t => { t.sig = ''; });
+      tvTick();
+    });
     box.querySelectorAll('.tv-tf button').forEach(b => b.addEventListener('click', () => {
       st.tf = b.dataset.tf;
       box.querySelectorAll('.tv-tf button').forEach(x => x.classList.toggle('on', x === b));
@@ -3168,9 +3272,9 @@
         tabs.innerHTML = coins.map(c => `<button data-c="${c}" class="${c === st.coin ? 'on' : ''}">${c.replace(/(USDT|USDC)$/, '')}</button>`).join('');
         tabs.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { st.coin = b.dataset.c; st.loadedKey = ''; tvTick(); }));
       }
-      if (st.loadedKey !== st.coin + '|' + st.tf || Date.now() - st.loadedAt > 60000) tvLoad(st);
+      if (st.loadedKey !== st.coin + '|' + st.tf || Date.now() - st.loadedAt > (st.tf === '1m' ? 20000 : 60000)) tvLoad(st);
       const mine = positions.filter(p => p.symbol === st.coin);
-      const sig = mine.map(p => [p.side, p.entryPrice, p.liquidationPrice, Math.round(Number(p.unRealizedProfit) * 100), JSON.stringify(p.takeProfits || [])].join(':')).join('|') + '|' + (st.precision || 0);
+      const sig = mine.map(p => [p.side, p.entryPrice, p.liquidationPrice, Math.round(Number(p.unRealizedProfit) * 100), JSON.stringify(p.takeProfits || []), p.lastFundingRate, p.nextFundingTime].join(':')).join('|') + '|' + (st.precision || 0) + '|' + tvPct();
       if (sig !== st.sig) {
         st.sig = sig;
         st.lines.forEach(l => st.series.removePriceLine(l));
@@ -3200,12 +3304,79 @@
             info.unshift(`Break-even <b>${f(be)}</b> (profit ${net > 0 ? 'above' : 'below'})`);
           }
         }
+        // Пара long+short: TP, при якому сумарний профіт = pct% розміру позиції (більша нога за ціною входу)
+        if (qL > 0 && qS > 0) {
+          const pct = tvPct(), target = pct / 100 * Math.max(cL, cS), mark = Number(mine[0].markPrice) || 0;
+          if (Math.abs(net) > 1e-9 * (qL + qS)) {
+            const tp = (cL - cS) / net + target / net;                 // PnL(P) = net × (P − BE)
+            if (tp > 0) {
+              const away = mark > 0 ? (tp / mark - 1) * 100 : null;
+              line(tp, '#00e676', LS.LargeDashed, 'TP ' + pct + '% · ' + sgn(target));
+              info.push(`TP ${pct}% <b>${f(tp)}</b>${away != null ? ` (${away >= 0 ? '+' : '−'}${Math.abs(away).toFixed(1)}% from mark)` : ''} → <b class="pos">${sgn(target)} USDT</b>`);
+            } else info.push(`TP ${pct}%: not reachable (price would be ≤ 0)`);
+          } else info.push(`Balanced hedge — PnL does not depend on price, TP ${pct}% = <b class="pos">${sgn(target)} USDT</b> (reach via funding)`);
+        }
+        // Ставка фандингу + зворотний відлік до наступної виплати
+        const fp = mine.find(p => p.lastFundingRate != null);
+        const frozen = mine.some(p => p.frozen);
+        if (frozen) info.push('<b class="neg">LIQUIDATED</b> — last known positions');
+        if (fp && !frozen) {
+          const rate = Number(fp.lastFundingRate), ih = Number(fp.fundingIntervalHours) || 8;
+          let nxt = fp.nextFundingTime ? Date.parse(fp.nextFundingTime) : NaN;
+          while (isFinite(nxt) && nxt < Date.now()) nxt += ih * 3600000;          // знімок міг застаріти між синхронізаціями
+          let nS = 0, nL = 0;
+          mine.forEach(p => { if (p.side === 'LONG') nL += Number(p.notional) || 0; else nS += Number(p.notional) || 0; });
+          const est = (nS - nL) * rate;                                            // net short отримує при rate > 0
+          info.push(`Funding <b class="${rate >= 0 ? 'pos' : 'neg'}">${rate >= 0 ? '+' : '−'}${Math.abs(rate * 100).toFixed(4)}%</b>/${ih}h` +
+            (isFinite(nxt) ? ` · next in <b class="tv-cd" data-t="${nxt}">--:--:--</b>` : '') +
+            ` · est. <b class="${est >= 0 ? 'pos' : 'neg'}">${sgn(est)} USDT</b>`);
+        }
         info.unshift(`PnL <b class="${total >= 0 ? 'pos' : 'neg'}">${sgn(total)} USDT</b>`);
-        st.box.querySelector('.tv-info').innerHTML = info.join('<span>·</span>');
+        st.box.querySelector('.tv-info').innerHTML = info.map(x => '<span class="tv-i">' + x + '</span>').join('<span class="tv-dot">·</span>');
       }
     });
   }
   setInterval(tvTick, 1500);
+  setInterval(() => {                                                              // зворотний відлік до фандингу, щосекунди
+    document.querySelectorAll('.tv-cd').forEach(el => {
+      const ms = Number(el.dataset.t) - Date.now();
+      if (!(ms > 0)) { el.textContent = 'now'; return; }
+      const t = Math.floor(ms / 1000), h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), sec = t % 60;
+      el.textContent = [h, m, sec].map(v => String(v).padStart(2, '0')).join(':');
+    });
+  }, 1000);
+
+  // ===== Liquidated strategy: label, frozen positions (kept from the backend / last seen in this browser) =====
+  const BOT_NAME = { a: 'Alpha', b: 'Beta', g: 'Gamma', d: 'Delta' };
+  function prepSnapshot(id, snap) {                         // кешує останні відомі позиції; для ліквідованої — показує їх замороженими
+    if (!snap || snap.error) return snap;
+    try {
+      if (snap.status !== 'liquidated' && (snap.positions || []).length) localStorage.setItem('atx-lastpos-' + id, JSON.stringify(snap.positions));
+      if (snap.status === 'liquidated' && !(snap.positions || []).length) {
+        const c = JSON.parse(localStorage.getItem('atx-lastpos-' + id) || '[]');
+        if (c.length) { snap.positions = c.map(p => ({ ...p, frozen: true })); snap.frozen = true; }
+      }
+    } catch (e) {}
+    return snap;
+  }
+  function markLiquidated(cls, snap) {
+    const root = document.querySelector('.content-' + cls);
+    if (!root) return;
+    const on = !!(snap && !snap.error && snap.status === 'liquidated');
+    root.classList.toggle('is-liquidated', on);
+    const tab = document.querySelector('.tab[data-tab="' + cls + '"]');
+    if (tab) tab.classList.toggle('liq', on);
+    let banner = root.querySelector('.liq-banner.auto');
+    const when = on && snap.liquidatedAt ? new Date(snap.liquidatedAt).toLocaleString('uk-UA', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+    if (on) {
+      if (!banner) { banner = document.createElement('div'); banner.className = 'liq-banner auto'; root.insertBefore(banner, root.firstChild); }
+      banner.textContent = `⚠ Strategy ${BOT_NAME[cls]} was liquidated${when ? ' on ' + when : ''}. The last known positions are kept below.`;
+    } else if (banner) banner.remove();
+    const nm = root.querySelector('.strategy-name');
+    if (nm) { let pill = nm.querySelector('.liq-pill'); if (on && !pill) { pill = document.createElement('span'); pill.className = 'liq-pill'; pill.textContent = 'LIQUIDATED'; nm.appendChild(pill); } else if (!on && pill) pill.remove(); }
+    const table = root.querySelector('.pos-table');
+    if (table) { let note = root.querySelector('.frozen-note'); if (on && (snap.positions || []).length) { if (!note) { note = document.createElement('div'); note.className = 'frozen-note'; table.parentNode.insertBefore(note, table); } note.textContent = 'Frozen at liquidation — last known positions, prices are not live.'; } else if (note) note.remove(); }
+  }
 
   // ===== Live widgets driven by REAL open positions (margin / PnL per position / funding) =====
   function liveSnap(id) {
@@ -3350,8 +3521,8 @@
     charts.allAlloc = doughnutChart('chart-all-alloc', ['Alpha','Beta','Gamma','Delta'], _bal.map(S),
       ['rgba(0,230,118,0.8)', 'rgba(0,229,255,0.8)', 'rgba(179,136,255,0.8)', 'rgba(255,196,0,0.8)']);
     const riskCnt = {};                                           // скільки стратегій у кожному рівні ризику (за найгіршою позицією)
-    _live.forEach(sn => { if (!sn) return; const r = riskOf(sn.positions || []); const k = r.none ? 'No positions' : r.unknown ? 'N/A' : r.v.label; riskCnt[k] = (riskCnt[k] || 0) + 1; });
-    const riskCol = { 'Low': 'rgba(0,230,118,0.8)', 'Medium': 'rgba(255,196,0,0.6)', 'High': 'rgba(255,196,0,0.9)', 'Very high': 'rgba(255,23,68,0.8)', 'N/A': 'rgba(120,130,150,0.6)', 'No positions': 'rgba(120,130,150,0.35)' };
+    _live.forEach(sn => { if (!sn) return; const r = riskOf(sn.positions || []); const k = sn.status === 'liquidated' ? 'Liquidated' : r.none ? 'No positions' : r.unknown ? 'N/A' : r.v.label; riskCnt[k] = (riskCnt[k] || 0) + 1; });
+    const riskCol = { 'Low': 'rgba(0,230,118,0.8)', 'Medium': 'rgba(255,196,0,0.6)', 'High': 'rgba(255,196,0,0.9)', 'Very high': 'rgba(255,23,68,0.8)', 'N/A': 'rgba(120,130,150,0.6)', 'Liquidated': 'rgba(255,23,68,0.55)', 'No positions': 'rgba(120,130,150,0.35)' };
     charts.allRisk = doughnutChart('chart-all-risk', Object.keys(riskCnt), Object.values(riskCnt), Object.keys(riskCnt).map(k => riskCol[k]));
     charts.allPnl = barChart('chart-all-pnl', ['Alpha','Beta','Gamma','Delta'], _upnl.map(S),
       _upnl.map(v => v < 0 ? 'rgba(255,23,68,0.8)' : 'rgba(0,230,118,0.8)'));
@@ -3366,14 +3537,6 @@
     const dailyTitle = 'Daily PnL (' + (currentDays >= ALL_DAYS ? 'AllTime' : dailyN + 'D') + ')';
     ['a', 'b', 'g', 'd', 'all'].forEach(c => { const cv = document.getElementById('chart-' + c + '-daily'); const t = cv && cv.closest('.chart-box') && cv.closest('.chart-box').querySelector('.chart-title'); if (t) t.textContent = dailyTitle; });
     
-    // Малюємо порожні бари відразу (щоб графік не був порожнім)
-    const emptyBars = last7Labels.map(() => 0);
-    charts.aDaily = barChart('chart-a-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
-    charts.bDaily = barChart('chart-b-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
-    charts.gDaily = barChart('chart-g-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
-    charts.dDaily = barChart('chart-d-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
-    charts.allDaily = barChart('chart-all-daily', last7Labels, emptyBars, last7Labels.map(() => 'rgba(255,255,255,0.1)'));
-
     // Денний PnL = зміна балансу за день мінус поповнення/виведення цього дня (з тієї ж історії, що й графіки)
     const dailyOf = (id) => last7Dates.map(d => {
       const k = keyOf(d), pk = keyOf(addDays(d, -1));
@@ -3383,17 +3546,12 @@
       return Math.round((cur - prev - F) * 100) / 100;
     });
     const dailyA = dailyOf('alpha'), dailyB = dailyOf('beta'), dailyG = dailyOf('gamma'), dailyD = dailyOf('delta');
-    const paintDaily = (chart, vals) => {
-      if (!chart) return;
-      chart.data.datasets[0].data = vals.map(S);
-      chart.data.datasets[0].backgroundColor = vals.map(v => v >= 0 ? 'rgba(0,230,118,0.75)' : 'rgba(255,23,68,0.75)');
-      chart.update('none');
-    };
-    paintDaily(charts.aDaily, dailyA);
-    paintDaily(charts.bDaily, dailyB);
-    paintDaily(charts.gDaily, dailyG);
-    paintDaily(charts.dDaily, dailyD);
-    paintDaily(charts.allDaily, dailyA.map((v, i) => v + dailyB[i] + dailyG[i] + dailyD[i]));
+    const dailyBars = (canvasId, vals) => barChart(canvasId, last7Labels, vals.map(S), vals.map(v => v >= 0 ? 'rgba(0,230,118,0.75)' : 'rgba(255,23,68,0.75)'));
+    charts.aDaily = dailyBars('chart-a-daily', dailyA);
+    charts.bDaily = dailyBars('chart-b-daily', dailyB);
+    charts.gDaily = dailyBars('chart-g-daily', dailyG);
+    charts.dDaily = dailyBars('chart-d-daily', dailyD);
+    charts.allDaily = dailyBars('chart-all-daily', dailyA.map((v, i) => v + dailyB[i] + dailyG[i] + dailyD[i]));
     try { paintMaxDrawdowns(); paintStrategyPanels(); } catch (e) { console.warn('panels', e); }
     try {
       const pb = document.getElementById('period-toggle'), has = BOT_IDS.some(id => Object.keys(REAL_BAL[id]).length);
@@ -3532,7 +3690,7 @@
     if (/^[−+]?\d[\d,]* (safe|base|danger)$/.test(t)) { el._orig = t; fxReg(el, rZone); }
   });
   document.querySelectorAll('.risk-marker[data-label]').forEach(el => { el._orig = el.getAttribute('data-label'); fxReg(el, rNow); });
-  document.querySelectorAll('.pos-table th:last-child').forEach(el => fxReg(el, rTh));
+  document.querySelectorAll('.pos-table:not(.th-table) th:last-child').forEach(el => fxReg(el, rTh));   // заголовок PnL лише в таблицях позицій
 
   // ===== Live-style PnL animation (visual only) =====
   // Position PnLs wobble in the tenths/hundredths; Unrealized PnL, "To BE", strategy PnL
@@ -3746,88 +3904,16 @@
 
      // ===== FUNDING TAB LOGIC =====
   
-  // Обробка кліку на кнопку Funding
-  document.querySelectorAll('.bn-btn[data-nav="funding"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      // 1. Ховаємо всі контейнери стратегій
-      document.querySelectorAll('.content-a, .content-b, .content-g, .content-d, .content-all').forEach(c => c.style.display = 'none');
-      
-      // 2. Показуємо контейнер фандингу
-      const fundingView = document.querySelector('.content-funding');
-      if(fundingView) fundingView.style.display = 'block';
-      
-      // 3. ЗНІМАЄМО АКТИВНИЙ КЛАС З УСІХ ВКЛАДОК СТРАТЕГІЙ
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      // Також прибираємо підсвічування (індикатор), якщо він є
-      const tabInd = document.getElementById('tab-ind');
-      if (tabInd) tabInd.style.width = '0px';
-      
-      // 4. Знімаємо активний клас з усіх кнопок меню і ставимо на "Funding"
-      document.querySelectorAll('.bn-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      
-      // 5. Завантажуємо дані
-      loadFundingSummary();
-    });
-  });
-
-  // При перемиканні на інші вкладки (Strategy, Settings, Support) ховаємо фандинг
-  // і повертаємо відображення для Strategy
-  document.querySelectorAll('.bn-btn[data-nav="strategy"], .bn-btn[data-nav="settings"], .bn-btn[data-nav="support"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const fundingView = document.querySelector('.content-funding');
-      if(fundingView) fundingView.style.display = 'none';
-      
-      // Якщо натиснули Strategy - показуємо активну вкладку стратегій (за замовчуванням All Strategies)
-      if (btn.dataset.nav === 'strategy') {
-        // Знаходимо, яка вкладка стратегії була активною, або показуємо "All"
-        const activeTab = document.querySelector('.tab.active');
-        const map = { a: 'content-a', b: 'content-b', g: 'content-g', d: 'content-d', all: 'content-all' };
-        const targetClass = activeTab ? map[activeTab.dataset.tab] : 'content-all';
-        
-        // Показуємо потрібний контейнер
-        document.querySelectorAll('.content-a, .content-b, .content-g, .content-d, .content-all').forEach(c => c.style.display = 'none');
-        const targetView = document.querySelector('.' + (targetClass || 'content-all'));
-        if(targetView) targetView.style.display = 'block';
-        
-        // Якщо вкладки не було активної (ми їх прибрали), повертаємо "All Strategies"
-        if (!activeTab) {
-            const allTab = document.querySelector('.tab[data-tab="all"]');
-            if (allTab) {
-                allTab.classList.add('active');
-                // Оновлюємо індикатор
-                const tabInd = document.getElementById('tab-ind');
-                if (tabInd) {
-                    tabInd.style.width = allTab.offsetWidth + 'px';
-                    tabInd.style.transform = 'translateX(' + allTab.offsetLeft + 'px)';
-                }
-            }
-        }
-      }
-    });
-  });
-
-  // При перемиканні на інші вкладки (Strategy, Settings, Support) ховаємо фандинг
-  // і повертаємо відображення для Strategy
-  document.querySelectorAll('.bn-btn[data-nav="strategy"], .bn-btn[data-nav="settings"], .bn-btn[data-nav="support"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const fundingView = document.querySelector('.content-funding');
-      if(fundingView) fundingView.style.display = 'none';
-      
-      // Якщо натиснули Strategy - показуємо активну вкладку стратегій (за замовчуванням All Strategies)
-      if (btn.dataset.nav === 'strategy') {
-        // Знаходимо, яка вкладка стратегії була активною, або показуємо "All"
-        const activeTab = document.querySelector('.tab.active');
-        const map = { a: 'content-a', b: 'content-b', g: 'content-g', d: 'content-d', all: 'content-all' };
-        const targetClass = activeTab ? map[activeTab.dataset.tab] : 'content-all';
-        
-        // Показуємо потрібний контейнер
-        document.querySelectorAll('.content-a, .content-b, .content-g, .content-d, .content-all').forEach(c => c.style.display = 'none');
-        const targetView = document.querySelector('.' + (targetClass || 'content-all'));
-        if(targetView) targetView.style.display = 'block';
-      }
-    });
-  });
+  // Єдиний перемикач розділів: body[data-view] = strategy | funding (видимість — лише через CSS, без інлайн-стилів)
+  function setView(v) {
+    document.body.dataset.view = v;
+    document.querySelectorAll('.bn-btn[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === v));
+    if (v === 'funding') loadFundingSummary();
+    else setTimeout(() => { try { moveTabIndicator(); } catch (e) {} window.dispatchEvent(new Event('resize')); }, 30);
+  }
+  document.querySelectorAll('.bn-btn[data-nav="funding"], .bn-btn[data-nav="strategy"]').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.nav)));
+  document.querySelectorAll('.bn-btn[data-nav="settings"], .bn-btn[data-nav="support"]').forEach(btn => btn.addEventListener('click', () => { document.body.dataset.view = 'strategy'; }));
+  document.body.dataset.view = 'strategy';
 
   async function loadFundingSummary() {
     const tbody = document.getElementById('funding-tbody');
@@ -4085,7 +4171,7 @@
       const liqPct = p.liqDistancePct != null ? Number(p.liqDistancePct).toFixed(2) + '%' : '—';
       const risk = p.liqRisk || '';
       const riskCls = risk === 'critical' || risk === 'high' ? 'pnl-neg' : (risk === 'low' ? 'pnl-pos' : '');
-      return `<tr>
+      return `<tr class="${p.frozen ? 'frozen' : ''}">
         <td>${pair}</td>
         <td>${fmtSide(p.side)}</td>
         <td>${size}</td>
@@ -4186,6 +4272,8 @@
 
       let liveN = 0;
       const ab = (scope, snap, id, label) => {
+        prepSnapshot(id, snap);
+        markLiquidated(scope.replace('.content-', ''), snap);
         if (snap && !snap.error) TV_POS[id] = snap.positions || [];
         const f = flowTotals(id);
         return applyBot(scope, snap, START_CAPITAL[id] + f.dep, f.out, label + (f.dep > 0 ? ` (+${fmtNum(f.dep)} in)` : ''));
@@ -4240,15 +4328,41 @@
 
 
   
+  // ===== Telegram Mini App: працює всередині Telegram (поза ним нічого не змінюється) =====
+  (function telegramApp() {
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (!tg || !tg.initData) return;
+    document.body.classList.add('tg-app');
+    try { tg.ready(); tg.expand(); } catch (e) {}
+    try { if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); } catch (e) {}      // свайп вниз по графіках не закриває застосунок
+    const hex = () => { const m = getComputedStyle(document.body).backgroundColor.match(/\d+/g) || [15, 15, 15]; return '#' + m.slice(0, 3).map(v => Number(v).toString(16).padStart(2, '0')).join(''); };
+    try { tg.setHeaderColor(hex()); tg.setBackgroundColor(hex()); if (tg.setBottomBarColor) tg.setBottomBarColor(hex()); } catch (e) {}
+    const insets = () => {
+      const a = tg.contentSafeAreaInset || {}, b = tg.safeAreaInset || {};
+      document.documentElement.style.setProperty('--tg-top', ((a.top || 0) + (b.top || 0)) + 'px');
+    };
+    insets();
+    ['safeAreaChanged', 'contentSafeAreaChanged', 'viewportChanged'].forEach(ev => { try { tg.onEvent(ev, insets); } catch (e) {} });
+    try {                                                                           // «Назад» у Telegram: з Funding → до стратегій
+      tg.BackButton.onClick(() => setView('strategy'));
+      const sync = () => { document.body.dataset.view === 'funding' ? tg.BackButton.show() : tg.BackButton.hide(); };
+      new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['data-view'] });
+      sync();
+    } catch (e) {}
+    document.addEventListener('click', e => {                                       // тактильний відгук
+      if (e.target.closest && e.target.closest('.tab, .bn-btn, .tv-tf button, .tv-tabs button, .period-opt') && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+    });
+  })();
+
   // Initial render
   loadHistCache();
-  renderAllCharts(7);
+  renderAllCharts(30);
   try { paintMaxDrawdowns(); } catch (e) {}
   (async () => {
     try {
-      const ok = await mergeHistoryIntoRealBal(() => { renderAllCharts(currentDays || 7); try { paintMaxDrawdowns(); } catch (e) {} });
+      const ok = await mergeHistoryIntoRealBal(() => { renderAllCharts(currentDays || 30); try { paintMaxDrawdowns(); } catch (e) {} });
       if (ok) {
-        renderAllCharts(currentDays || 7);
+        renderAllCharts(currentDays || 30);
         try { paintMaxDrawdowns(); } catch (e) {}
         console.info('Charts refreshed from /api/history + live balances');
       }
