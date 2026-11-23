@@ -1673,8 +1673,19 @@
   /* ---------- liquidated strategy ---------- */
   /*.tab.liq::after { content: 'LIQUIDATED'; margin-left: 8px; padding: 2px 6px; border-radius: 6px; font-size: 9px; font-weight: 700; letter-spacing: .04em; color: #fff; background: rgba(255,23,68,.85); vertical-align: middle; }
   */
-  .liq-banner { margin: 14px 0 0; padding: 14px 18px; border: 1px solid var(--red-border, rgba(255,23,68,.5)); background: transparent; color: var(--red); border-radius: 12px; font-size: 14px; line-height: 1.5; }
   
+  /* .liq-banner { margin: 14px 0 0; padding: 14px 18px; border: 1px solid var(--red-border, rgba(255,23,68,.5)); background: transparent; color: var(--red); border-radius: 12px; font-size: 14px; line-height: 1.5; }
+  */
+  .liq-banner {
+    margin: 14px 0 0;
+    padding: 14px 18px;
+    border: 1px solid var(--red);
+    background: transparent;
+    color: var(--red);
+    border-radius: 4px; /* або 0, якщо потрібні гострі кути як у LIQUIDATED */
+    font-size: 14px;
+    line-height: 1.5;
+  }
   .liq-pill { margin-left: 10px; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: .04em; color: #fff; background: rgba(255,23,68,.85); }
   .frozen-note { font-size: 12px; color: var(--red); margin: 6px 2px; }
   .pos-table tr.frozen td { opacity: .72; }
