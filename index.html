@@ -2574,6 +2574,7 @@
       }
     } catch (e) { console.warn('history merge', e.message); }
 
+    try { refreshLiquidated(); } catch (e) {}                   // історія вже є → перевіряємо «рахунок знищено» для вже отриманих знімків
     if (changed && typeof onPartial === 'function') { try { onPartial(); } catch (e) {} }   // малюємо одразу, не чекаючи потоків коштів/угод
 
     // deposits / withdrawals and closed trades change slowly → refresh every 5 min
@@ -3161,7 +3162,7 @@
     const sum = k => cycles.reduce((a, c) => a + (c[k] || 0), 0);
     box.querySelector('.th-sum').innerHTML = cycles.length
       ? `<span>Closed <b>${closed.length}</b> · <span class="pos">${wins}</span> / <span class="neg">${closed.length - wins}</span></span><span>Active <b>${active}</b></span><span>Fee ${thS(-sum('fee'))}</span><span>Funding ${thS(sum('funding'))}</span><span>Profit ${thS(sum('profit'))}</span>` : '';
-    if (!cycles.length) { tbody.innerHTML = '<tr><td colspan="9" style="color:var(--text-muted)">No trades recorded yet</td></tr>'; box.querySelector('.th-more').hidden = true; return; }
+    if (!cycles.length) { tbody.innerHTML = `<tr><td colspan="9" style="color:var(--text-muted)">${st.fills === 0 ? 'History is being loaded from the exchange — the first sync can take a few minutes' : 'No trades recorded yet'}</td></tr>`; box.querySelector('.th-more').hidden = true; return; }
     tbody.innerHTML = cycles.slice(0, st.shown).map(c => `<tr>
       <td>${thDT(c.openTs)}${c.preexisting ? ' *' : ''}</td>
       <td>${c.closeTs ? thDT(c.closeTs) : '<span class="th-tag" style="margin:0">active</span>'}</td>
@@ -3183,7 +3184,7 @@
       const r = await fetch(BINANCE_PROXY_URL.replace(/\/$/, '') + '/api/trade-history?strategy=' + id + '&limit=300', { cache: 'no-store' });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error || 'bad response');
-      st.cycles = j.cycles || [];
+      st.cycles = j.cycles || []; st.fills = j.fills;
       thRender(id);
     } catch (e) { console.warn('trade-history', id, e.message); st.at = Date.now() - 45000; }
   }
@@ -3348,8 +3349,22 @@
 
   // ===== Liquidated strategy: label, frozen positions (kept from the backend / last seen in this browser) =====
   const BOT_NAME = { a: 'Alpha', b: 'Beta', g: 'Gamma', d: 'Delta' };
+  function inferLiquidated(id, snap) {
+    if (snap.status === 'liquidated' || (snap.positions || []).length) return;
+    const from = addDays(TODAY, -45), recent = equityDays(id).filter(d => d.date >= from);
+    if (!recent.length) return;
+    let peak = 0, peakDate = null;
+    recent.forEach(d => { if (d.c > peak) { peak = d.c; peakDate = d.date; } });
+    const eq = Number.isFinite(snap.equity) ? snap.equity : snap.balance;
+    if (peak >= 50 && eq < 0.05 * peak) {
+      const fall = recent.find(d => d.date > peakDate && d.c < 0.05 * peak);
+      snap.status = 'liquidated'; snap.inferred = true;
+      snap.liquidatedAt = fall ? new Date(fall.date.getTime() + 12 * 3600e3).toISOString() : new Date().toISOString();
+    }
+  }
   function prepSnapshot(id, snap) {                         // кешує останні відомі позиції; для ліквідованої — показує їх замороженими
     if (!snap || snap.error) return snap;
+    try { inferLiquidated(id, snap); } catch (e) {}
     try {
       if (snap.status !== 'liquidated' && (snap.positions || []).length) localStorage.setItem('atx-lastpos-' + id, JSON.stringify(snap.positions));
       if (snap.status === 'liquidated' && !(snap.positions || []).length) {
@@ -3358,6 +3373,15 @@
       }
     } catch (e) {}
     return snap;
+  }
+  function refreshLiquidated() {
+    const live = window.__ATX_LIVE_DATA;
+    if (!live) return;
+    [['a', 'alpha'], ['b', 'beta'], ['g', 'gamma'], ['d', 'delta']].forEach(([c, id]) => {
+      const sn = live[id];
+      if (!sn || sn.error) return;
+      prepSnapshot(id, sn); markLiquidated(c, sn); TV_POS[id] = sn.positions || [];
+    });
   }
   function markLiquidated(cls, snap) {
     const root = document.querySelector('.content-' + cls);
@@ -3370,7 +3394,7 @@
     const when = on && snap.liquidatedAt ? new Date(snap.liquidatedAt).toLocaleString('uk-UA', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
     if (on) {
       if (!banner) { banner = document.createElement('div'); banner.className = 'liq-banner auto'; root.insertBefore(banner, root.firstChild); }
-      banner.textContent = `⚠ Strategy ${BOT_NAME[cls]} was liquidated${when ? ' on ' + when : ''}. The last known positions are kept below.`;
+      banner.textContent = `⚠ Strategy ${BOT_NAME[cls]} was liquidated${when ? ' on ' + when : ''}.` + ((snap.positions || []).length ? ' The last known positions are kept below.' : '');
     } else if (banner) banner.remove();
     const nm = root.querySelector('.strategy-name');
     if (nm) { let pill = nm.querySelector('.liq-pill'); if (on && !pill) { pill = document.createElement('span'); pill.className = 'liq-pill'; pill.textContent = 'LIQUIDATED'; nm.appendChild(pill); } else if (!on && pill) pill.remove(); }
@@ -4176,11 +4200,11 @@
         <td>${fmtSide(p.side)}</td>
         <td>${size}</td>
         <td>$${notional.toFixed(2)}</td>
-        <td>${formatPx(p.entryPrice)}</td>
-        <td>${formatPx(p.markPrice)}</td>
+        <td>${p.entryPrice ? formatPx(p.entryPrice) : '—'}</td>
+        <td>${p.markPrice ? formatPx(p.markPrice) : '—'}</td>
         <td>${p.liquidationPrice ? formatPx(p.liquidationPrice) : '—'}</td>
         <td class="${riskCls}" title="${risk}">${liqPct}</td>
-        <td class="${cls}">${sign}${fmtNum(Math.abs(pnl))}</td>
+        <td class="${p.unRealizedProfit == null ? '' : cls}">${p.unRealizedProfit == null ? '—' : sign + fmtNum(Math.abs(pnl))}</td>
       </tr>`;
     }).join('');
   }
