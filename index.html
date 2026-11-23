@@ -1419,7 +1419,7 @@
   body[data-view="funding"] .content-funding { display: block; }
   body[data-view="funding"] .content-a, body[data-view="funding"] .content-b, body[data-view="funding"] .content-g,
   body[data-view="funding"] .content-d, body[data-view="funding"] .content-all { display: none !important; }
-  body[data-view="funding"] #tab-ind { opacity: 0; }
+  body[data-view="funding"] #tab-ind, body.nav-other #tab-ind { opacity: 0; }
   body[data-view="funding"] .tab.active { color: var(--text-dim) !important; }
   .content-a, .content-b, .content-g, .content-d, .content-all { display: none; }
   .content-a.active, .content-b.active, .content-g.active, .content-d.active, .content-all.active { display: block; }
@@ -1660,7 +1660,11 @@
   .pos-table { scrollbar-width: thin; scrollbar-color: rgba(120,110,170,.5) transparent; }
 
   /* ---------- trade history ---------- */
-  .th-box { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .th-box { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); max-width: 1000px; }
+  .th-table { max-height: 340px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .th-table table { width: 100%; }
+  .th-table th, .th-table td { padding: 7px 10px; font-size: 12.5px; white-space: nowrap; }
+  .th-table thead th { position: sticky; top: 0; z-index: 2; background: var(--bg-panel); box-shadow: 0 1px 0 var(--border); }
   .th-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 8px; }
   .th-title { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); }
   .th-sum { font-size: 12.5px; color: var(--text-dim); display: flex; flex-wrap: wrap; gap: 4px 14px; }
@@ -1737,7 +1741,7 @@
 
   /* ---- liquidated strategy (Beta) ---- */
   .liq-banner { margin: 14px 0 0; padding: 14px 18px; border: 1px solid var(--red-border, rgba(255,23,68,.5)); background: var(--red-bg, rgba(255,23,68,.1)); color: var(--red); border-radius: 12px; font-size: 14px; line-height: 1.5; }
-  .tab[data-tab="b"]::after { content: "LIQUIDATED"; margin-left: 8px; padding: 1px 6px; font-size: 8px; letter-spacing: 1.2px; border: 1px solid var(--red); color: var(--red); vertical-align: 2px; }
+  .tab[data-tab="b"]::after, .tab.liq::after { content: "LIQUIDATED"; margin-left: 8px; padding: 1px 6px; font-size: 8px; letter-spacing: 1.2px; border: 1px solid var(--red); color: var(--red); vertical-align: 2px; }
 </style>
 </head>
 <body>
@@ -2178,7 +2182,7 @@
         `<div class="strategies"><div class="strategy-panel">${head(c)}${stats(c)}` +
         `<div class="funding-card"><div class="funding-head"><div class="funding-title">Funding only</div><div class="funding-rate">live rates · —</div></div><div class="funding-note">${c.dead ? 'No open positions.' : 'Waiting for live positions…'}</div></div>` +
         `<div class="pos-table"><table><thead><tr><th>Pair</th><th>Side</th><th>Size</th><th>Notional</th><th>Entry</th><th>Mark</th><th>Liq</th><th>Liq%</th><th>PnL</th></tr></thead><tbody><tr><td colspan="9" style="color:var(--text-muted)">${c.dead ? 'No open positions' : 'Loading…'}</td></tr></tbody></table></div>` +
-        `<div class="th-box" data-th="${c.id}"><div class="th-head"><div class="th-title">Trade History</div><div class="th-sum"></div></div><div class="pos-table th-table"><table><thead><tr><th>Opened</th><th>Closed</th><th>Asset</th><th>Qty (coins)</th><th>Qty ($)</th><th>Fee</th><th>Funding</th><th>Income</th><th>Profit</th></tr></thead><tbody><tr><td colspan="9" style="color:var(--text-muted)">Loading…</td></tr></tbody></table></div><button class="th-more" hidden>Show more</button></div>` +
+        `<div class="th-box" data-th="${c.id}"><div class="th-head"><div class="th-title">Trade History</div><div class="th-sum"></div></div><div class="pos-table th-table"><table><thead><tr><th>Opened</th><th>Closed</th><th>Asset</th><th title="for a long+short pair: long / short">Qty (coins)</th><th title="for a long+short pair: long / short">Qty ($)</th><th>Fee</th><th>Funding</th><th>Income</th><th>Profit</th></tr></thead><tbody><tr><td colspan="9" style="color:var(--text-muted)">Loading…</td></tr></tbody></table></div><button class="th-more" hidden>Show more</button></div>` +
         `</div></div>` +
         `<div class="bottom-charts">${box('Win / Loss Ratio', `chart-${c.cls}-winloss`, '', true)}${box('Margin Usage', `chart-${c.cls}-margin`, '', true)}${box('Daily PnL (7D)', `chart-${c.cls}-daily`, '', true)}</div>`;
     });
@@ -2267,7 +2271,7 @@
         openSoonModal(tab.dataset.soon);
         return;
       }
-      if (document.body.dataset.view === 'funding') setView('strategy');
+      setView('strategy');
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       moveTabIndicator();
@@ -3135,7 +3139,7 @@
             : `<span class="risk-badge ${r.v.badge}">${r.v.label}</span>`;
         }
         const pos = items['positions'];
-        if (pos) pos.v.textContent = (snap.positions || []).length + (snap.status === 'liquidated' ? ' frozen' : ' open');
+        if (pos) pos.v.textContent = (snap.positions || []).length + (snap.status === 'liquidated' && snap.frozen ? ' frozen' : ' open');
         const um = items['used margin'];
         if (um && snap.usedMargin != null) setMoney(um.v, Number(snap.usedMargin), false, true);
         const h = hedgeStats(snap.positions || []);
@@ -3166,7 +3170,7 @@
   const thDT = ts => { const d = new Date(ts); return thPad(d.getDate()) + '.' + thPad(d.getMonth() + 1) + '.' + String(d.getFullYear()).slice(2) + ' ' + thPad(d.getHours()) + ':' + thPad(d.getMinutes()); };
   const thN = (v, max = 4) => Number(v).toLocaleString('en-US', { maximumFractionDigits: v >= 1000 ? 0 : max });
   const thS = (v, dec = 2) => `<span class="${v >= 0 ? 'pos' : 'neg'}">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(Math.abs(v) < 0.01 && v !== 0 ? 4 : dec)}</span>`;
-  const thLegs = (l, sh, fmt) => [l > 0 ? 'L ' + fmt(l) : '', sh > 0 ? 'S ' + fmt(sh) : ''].filter(Boolean).join(' / ') || '—';
+  const thLegs = (l, sh, fmt) => [l > 0 ? fmt(l) : '', sh > 0 ? fmt(sh) : ''].filter(Boolean).join(' / ') || '—';   // лише числа; для пари: long / short
   function thRender(id) {
     const box = document.querySelector('[data-th="' + id + '"]'), st = TH[id];
     if (!box || !st) return;
@@ -3177,7 +3181,7 @@
     box.querySelector('.th-sum').innerHTML = cycles.length
       ? `<span>Closed <b>${closed.length}</b> · <span class="pos">${wins}</span> / <span class="neg">${closed.length - wins}</span></span><span>Active <b>${active}</b></span><span>Fee ${thS(-sum('fee'))}</span><span>Funding ${thS(sum('funding'))}</span><span>Profit ${thS(sum('profit'))}</span>` : '';
     if (!cycles.length) { tbody.innerHTML = `<tr><td colspan="9" style="color:var(--text-muted)">${st.fills === 0 ? 'History is being loaded from the exchange — the first sync can take a few minutes' : 'No trades recorded yet'}</td></tr>`; box.querySelector('.th-more').hidden = true; return; }
-    tbody.innerHTML = cycles.slice(0, st.shown).map(c => `<tr>
+    tbody.innerHTML = cycles.map(c => `<tr>
       <td>${thDT(c.openTs)}${c.preexisting ? ' *' : ''}</td>
       <td>${c.closeTs ? thDT(c.closeTs) : '<span class="th-tag" style="margin:0">active</span>'}</td>
       <td>${String(c.symbol).replace(/(USDT|USDC)$/, '')}</td>
@@ -3187,9 +3191,7 @@
       <td>${thS(c.funding)}${c.closeTs ? '' : '<span class="th-tag">accruing</span>'}</td>
       <td>${thS(c.income)}</td>
       <td><b>${thS(c.profit)}</b></td></tr>`).join('');
-    const more = box.querySelector('.th-more');
-    more.hidden = cycles.length <= st.shown;
-    more.textContent = `Show more (${cycles.length - st.shown})`;
+    box.querySelector('.th-more').hidden = true;                                       // прокрутка всередині секції замість «Show more»
   }
   async function thLoad(id) {
     const st = TH[id] || (TH[id] = { at: 0, cycles: [], shown: 25 });
@@ -3363,6 +3365,8 @@
 
   // ===== Liquidated strategy: label, frozen positions (kept from the backend / last seen in this browser) =====
   const BOT_NAME = { a: 'Alpha', b: 'Beta', g: 'Gamma', d: 'Delta' };
+  const STATIC_LIQUIDATED = ['gamma'];                       // ліквідовані вручну (мітка + банер + Risk), позиції показуємо як є
+  const STATIC_LIQ_CLS = { gamma: 'g' };
   function inferLiquidated(id, snap) {
     if (snap.status === 'liquidated' || (snap.positions || []).length) return;
     const from = addDays(TODAY, -45), recent = equityDays(id).filter(d => d.date >= from);
@@ -3379,6 +3383,7 @@
   function prepSnapshot(id, snap) {                         // кешує останні відомі позиції; для ліквідованої — показує їх замороженими
     if (!snap || snap.error) return snap;
     try { inferLiquidated(id, snap); } catch (e) {}
+    if (STATIC_LIQUIDATED.includes(id) && snap.status !== 'liquidated') snap.status = 'liquidated';
     try {
       if (snap.status !== 'liquidated' && (snap.positions || []).length) localStorage.setItem('atx-lastpos-' + id, JSON.stringify(snap.positions));
       if (snap.status === 'liquidated' && !(snap.positions || []).length) {
@@ -3408,12 +3413,10 @@
     const when = on && snap.liquidatedAt ? new Date(snap.liquidatedAt).toLocaleString('uk-UA', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
     if (on) {
       if (!banner) { banner = document.createElement('div'); banner.className = 'liq-banner auto'; root.insertBefore(banner, root.firstChild); }
-      banner.textContent = `⚠ Strategy ${BOT_NAME[cls]} was liquidated${when ? ' on ' + when : ''}.` + ((snap.positions || []).length ? ' The last known positions are kept below.' : '');
+      banner.textContent = `⚠ Strategy ${BOT_NAME[cls]} was liquidated${when ? ' on ' + when : ''}.` + ((snap.positions || []).length ? (snap.frozen ? ' The last known positions are kept below.' : ' Existing positions are kept below.') : '');
     } else if (banner) banner.remove();
-    const nm = root.querySelector('.strategy-name');
-    if (nm) { let pill = nm.querySelector('.liq-pill'); if (on && !pill) { pill = document.createElement('span'); pill.className = 'liq-pill'; pill.textContent = 'LIQUIDATED'; nm.appendChild(pill); } else if (!on && pill) pill.remove(); }
     const table = root.querySelector('.pos-table');
-    if (table) { let note = root.querySelector('.frozen-note'); if (on && (snap.positions || []).length) { if (!note) { note = document.createElement('div'); note.className = 'frozen-note'; table.parentNode.insertBefore(note, table); } note.textContent = 'Frozen at liquidation — last known positions, prices are not live.'; } else if (note) note.remove(); }
+    if (table) { let note = root.querySelector('.frozen-note'); if (on && (snap.frozen || (snap.positions || []).some(p => p.frozen))) { if (!note) { note = document.createElement('div'); note.className = 'frozen-note'; table.parentNode.insertBefore(note, table); } note.textContent = 'Frozen at liquidation — last known positions, prices are not live.'; } else if (note) note.remove(); }
   }
 
   // ===== Live widgets driven by REAL open positions (margin / PnL per position / funding) =====
@@ -3952,6 +3955,16 @@
   document.querySelectorAll('.bn-btn[data-nav="funding"], .bn-btn[data-nav="strategy"]').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.nav)));
   document.querySelectorAll('.bn-btn[data-nav="settings"], .bn-btn[data-nav="support"]').forEach(btn => btn.addEventListener('click', () => { document.body.dataset.view = 'strategy'; }));
   document.body.dataset.view = 'strategy';
+  let _lastTab = null;
+  function syncTabHighlight() {                              // підсвітка вкладки стратегії — лише коли активна кнопка Strategies
+    const nav = document.querySelector('.bn-btn[data-nav].active');
+    const on = !nav || nav.dataset.nav === 'strategy';
+    document.body.classList.toggle('nav-other', !on);
+    const act = document.querySelector('.tab.active');
+    if (!on && act) { _lastTab = act; act.classList.remove('active'); }
+    if (on && !act && _lastTab) { _lastTab.classList.add('active'); try { moveTabIndicator(); } catch (e) {} }
+  }
+  try { new MutationObserver(syncTabHighlight).observe(document.querySelector('.top-nav'), { attributes: true, subtree: true, attributeFilter: ['class'] }); } catch (e) {}
 
   async function loadFundingSummary() {
     const tbody = document.getElementById('funding-tbody');
@@ -4311,7 +4324,7 @@
       let liveN = 0;
       const ab = (scope, snap, id, label) => {
         prepSnapshot(id, snap);
-        markLiquidated(scope.replace('.content-', ''), snap);
+        if (snap && !snap.error) markLiquidated(scope.replace('.content-', ''), snap);
         if (snap && !snap.error) TV_POS[id] = snap.positions || [];
         const f = flowTotals(id);
         return applyBot(scope, snap, START_CAPITAL[id] + f.dep, f.out, label + (f.dep > 0 ? ` (+${fmtNum(f.dep)} in)` : ''));
@@ -4393,6 +4406,7 @@
   })();
 
   // Initial render
+  Object.entries(STATIC_LIQ_CLS).forEach(([id, cls]) => markLiquidated(cls, { status: 'liquidated', positions: [] }));
   loadHistCache();
   renderAllCharts(30);
   try { paintMaxDrawdowns(); } catch (e) {}
